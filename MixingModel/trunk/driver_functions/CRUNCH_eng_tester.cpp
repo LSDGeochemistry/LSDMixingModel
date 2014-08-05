@@ -1,10 +1,10 @@
 #include <iostream>
-#include "CRUNCH_engine.hpp"
+#include "../CRUNCH_engine.hpp"
 using namespace std;
 
 int main ()
 {
-	string crunch_pname = "/home/smudd/SMMDataStore/devel_projects/CrunchFlow/trunk";
+	string crunch_pname = "/home/smudd/SMMDataStore/CRUNCH_binary/";
 	string run_pname = "/home/smudd/SMMDataStore/devel_projects/MixingModel/trunk/test_run";
   string master_fname = "master_crunch.in";
 
