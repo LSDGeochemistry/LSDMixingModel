@@ -15,8 +15,8 @@ class CRUNCH_engine
 {
 	public:
 	CRUNCH_engine()							{ create(); }
-	CRUNCH_engine(string master_filename, string crunch_path, string run_path)	
-                  { create(master_filename, crunch_path, run_path); }
+	CRUNCH_engine(string crunch_path, string run_path, string master_filename)	
+                  { create(crunch_path, run_path, master_filename); }
 
 	// printing functions
 	void print_master();
@@ -34,7 +34,7 @@ class CRUNCH_engine
 	// this gets information about the parent material (mostly for getting the ssa)
 	void parse_parent_material_file();
 
-    void create_CRUNCH_in_file(int& n_conditions,
+  void create_CRUNCH_in_file(int& n_conditions,
 						vector<double>& pH_values,
 						vector<double>& top_depths,vector<double>& bottom_depths,
 						list< vector<double> >& concentrations, list< vector<double> >& mineral_vpercents,
@@ -56,10 +56,14 @@ class CRUNCH_engine
 
 	// this calls crunch. The infile must exist!
 	void call_CRUNCH();
+	
+	// this little script copies the output of crunch to the run folder
+	// n_ts is the number of the timestep
+  void move_CRUNCH_output_files(int n_ts);	
 
 	private:
 	void create();
-	void create(string master_filename, string crunch_path, string run_path);
+	void create(string crunch_path, string run_path, string master_filename);
 
 	// this populates the mineral names and species names
 	void get_minerals_and_species();

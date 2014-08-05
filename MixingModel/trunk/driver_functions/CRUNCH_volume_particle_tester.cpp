@@ -14,7 +14,7 @@ int main ()
 {
 	//long seed = time(NULL);               // seed for random number generator
 	//string run_name = "c:/code/Mixing_paper/CRUNCH_column/run1/run1";
-	string run_name = "./run1/run1";
+	string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// set up the infiles
@@ -564,8 +564,10 @@ int main ()
 	cout << "exited get data bay cell LINE 556" << endl;
 
 	string master_fname = "master_crunch.in";
+	string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
+	string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
 
-	CRUNCH_engine Ceng(master_fname);
+	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);
 
 	// get the pH vector
 	vector<double> pH_vec;
