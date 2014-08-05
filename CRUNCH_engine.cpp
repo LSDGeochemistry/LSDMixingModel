@@ -11,19 +11,23 @@
 #include "mathutil.hpp"
 using namespace std;
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::create()
 {
 	cout << "you need to initialize with a master file!" << endl;
 }
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function creates a CRUNCH_engine object by reading a master file
 // the crunch infile wil be created based on this infile
-void CRUNCH_engine::create(string master_filename, string crunch_path, string run_path)
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_engine::create(string crunch_path, string run_path, string master_filename)
 {
   // first make sure the pathname has a slash
-  string lchar = crunch_path.substr(crunch_path.length()-2,1);
+  cout << "Crunch path is: " << crunch_path << endl;
+  string lchar = crunch_path.substr(crunch_path.length()-1,1);
   string slash = "/";
   cout << "lchar is " << lchar << " and slash is " << slash << endl;
     
@@ -31,20 +35,22 @@ void CRUNCH_engine::create(string master_filename, string crunch_path, string ru
   {
     cout << "You forgot the frontslash at the end of the path. Appending." << endl;  
     crunch_path = crunch_path+slash;
+    cout << "The CRUNCH pathname is: " << crunch_path << endl;
   } 
-  cout << "The CRUNCH pathname is: " << crunch_path << endl;
   CRUNCH_path = crunch_path;
   
   // first make sure the run pathname has a slash
-  lchar = run_path.substr(run_path.length()-2,1);
-    
+  lchar = run_path.substr(run_path.length()-1,1);
+  cout << "run path is: " << run_path << endl;  
   if (lchar != slash)
   {
     cout << "You forgot the frontslash at the end of the path. Appending." << endl;  
     run_path = run_path+slash;
+    cout << "The RUN pathname is: " << run_path << endl;
   } 
-  cout << "The RUN pathname is: " << run_path << endl;
   RUN_path = run_path;  
+  
+  cout << "And master fname is: " << master_filename << endl;
 
 	ifstream master_in;
 	string this_master = RUN_path+master_filename;
@@ -66,6 +72,7 @@ void CRUNCH_engine::create(string master_filename, string crunch_path, string ru
 	get_constant_conditions();
 	//parse_parent_material_file();
 	get_mineral_properties();
+  cout << "Finished constructing crunch engine object." << endl;
 }
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -371,27 +378,27 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	string num = itoa(n_ts);
 	string ext = ".out";
 	string area_fname = "area";
-	area_fname  = area_fname+num+ext;
+	area_fname  = RUN_path+area_fname+num+ext;
 	ifstream area_in;
 	area_in.open(area_fname.c_str());
 	string conc_fname = "totcon";
-	conc_fname  = conc_fname+num+ext;
+	conc_fname  = RUN_path+conc_fname+num+ext;
 	ifstream conc_in;
 	conc_in.open(conc_fname.c_str());
 	string pH_fname = "pH";
-	pH_fname  = pH_fname+num+ext;
+	pH_fname  = RUN_path+pH_fname+num+ext;
 	ifstream pH_in;
 	pH_in.open(pH_fname.c_str());
 	string rate_fname = "rate";
-	rate_fname  = rate_fname+num+ext;
+	rate_fname  = RUN_path+rate_fname+num+ext;
 	ifstream rate_in;
 	rate_in.open(rate_fname.c_str());
 	string volume_fname = "volume";
-	volume_fname  = volume_fname+num+ext;
+	volume_fname  = RUN_path+volume_fname+num+ext;
 	ifstream volume_in;
 	volume_in.open(volume_fname.c_str());
 	string gas_fname = "gas";
-	gas_fname  = gas_fname+num+ext;
+	gas_fname  = RUN_path+gas_fname+num+ext;
 	ifstream gas_in;
 	gas_in.open(gas_fname.c_str());
 
@@ -698,11 +705,11 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	string num = itoa(n_ts);
 	string ext = ".out";
 	string conc_fname = "totcon";
-	conc_fname  = conc_fname+num+ext;
+	conc_fname  = RUN_path+conc_fname+num+ext;
 	ifstream conc_in;
 	conc_in.open(conc_fname.c_str());
 	string gas_fname = "gas";
-	gas_fname  = gas_fname+num+ext;
+	gas_fname  = RUN_path+gas_fname+num+ext;
 	ifstream gas_in;
 	gas_in.open(gas_fname.c_str());
 
@@ -797,7 +804,7 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 	ofstream CRUNCH_write;
 	CRUNCH_write.precision(7);			// this precision is specifically chosen to
 										// match that of CRUNCH in and out files.
-	string cmodel_name = CRUNCH_path+"column_model.in";									
+	string cmodel_name = RUN_path+"column_model.in";									
 	CRUNCH_write.open(cmodel_name.c_str());
 
 	// you need to sweep through the list of strings associated with the master
@@ -973,15 +980,15 @@ void CRUNCH_engine::call_CRUNCH()
   // control over where you put the files, so the the pest file needs to be
   // in the same directory as the crunch executable. 
   ofstream pest_out;
-	string full_pest_name = CRUNCH_path+"PestControl.ant";
+	string full_pest_name = "PestControl.ant";
+	string pest_name = RUN_path+ "column_model.in";
 	pest_out.open(full_pest_name.c_str());
-	pest_out << "column_model.in" << endl;
+	pest_out << pest_name << endl;
 	pest_out.close();
 
 	// check to see if infile exists:
 	ifstream c_in;
-	string c_in_fullname = CRUNCH_path+"column_model.in";
-	c_in.open(c_in_fullname.c_str());
+	c_in.open(pest_name.c_str());
 	if (c_in.fail())
 	{
 		cout << "No infile for crunch!!\n";
@@ -994,6 +1001,10 @@ void CRUNCH_engine::call_CRUNCH()
 	if (system(NULL)) puts ("Ok");
 	else exit (1);
 	cout << "Executing CRUNCH...\n";
+	
+	
+	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007";
+	cout << "command_line_str is: " << command_line_str << endl;
 
 	// this system call is buggy. It works on old laptop (probably an old version of cygwin)
 	// with the latest version of cygwin it only works if CrunchFlow2007 is sitting in the
@@ -1003,11 +1014,76 @@ void CRUNCH_engine::call_CRUNCH()
 
 	// here is another version. This tells cygwin to use the command interface.
 	// it seems to run a bit slower than the above version but is more portable
-	i=system("cmd /c CrunchFlow2007");
+	i=system(command_line_str.c_str());
+	
+	int n_ts = 1;
+	move_CRUNCH_output_files(n_ts);
 }
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This moves the output files from crunch, which are dumped into the 
+// directory of the executable, into the run directory. 
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_engine::move_CRUNCH_output_files(int n_ts)
+{
+
+  string num = itoa(n_ts);
+	string ext = ".out";
+	
+	// get the areas
+	string area_fname = "area";
+	string area_fname_src  = area_fname+num+ext;
+	string area_fname_dest  = RUN_path+area_fname+num+ext;
+	ifstream src_area(area_fname_src.c_str());
+	ofstream dst_area(area_fname_dest.c_str());
+	dst_area << src_area.rdbuf();
+	
+	// get the concentrations
+	string conc_fname = "totcon";
+	string conc_fname_src  = conc_fname+num+ext;
+	string conc_fname_dest  = RUN_path+conc_fname+num+ext;
+	ifstream src_conc(conc_fname_src.c_str());
+	ofstream dst_conc(conc_fname_dest.c_str());
+	dst_conc << src_conc.rdbuf();	
+
+	// get the pH
+	string pH_fname = "pH";
+	string pH_fname_src  = pH_fname+num+ext;
+	string pH_fname_dest  = RUN_path+pH_fname+num+ext;
+	ifstream src_pH(pH_fname_src.c_str());
+	ofstream dst_pH(pH_fname_dest.c_str());
+	dst_pH << src_pH.rdbuf();	
+
+	// get the rate
+	string rate_fname = "rate";
+	string rate_fname_src  = rate_fname+num+ext;
+	string rate_fname_dest  = RUN_path+rate_fname+num+ext;
+	ifstream src_rate(rate_fname_src.c_str());
+	ofstream dst_rate(rate_fname_dest.c_str());
+	dst_rate << src_rate.rdbuf();	
+
+	// get the volume
+	string volume_fname = "volume";
+	string volume_fname_src  = volume_fname+num+ext;
+	string volume_fname_dest  = RUN_path+volume_fname+num+ext;
+	ifstream src_volume(volume_fname_src.c_str());
+	ofstream dst_volume(volume_fname_dest.c_str());
+	dst_volume << src_volume.rdbuf();	
+	
+	// get the gas
+	string gas_fname = "gas";
+	string gas_fname_src  = gas_fname+num+ext;
+	string gas_fname_dest  = RUN_path+gas_fname+num+ext;
+	ifstream src_gas(gas_fname_src.c_str());
+	ofstream dst_gas(gas_fname_dest.c_str());
+	dst_gas << src_gas.rdbuf();	
+}
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function get the molar weight and molar volume from the database file
 void CRUNCH_engine::get_mineral_properties()
 {
@@ -1045,7 +1121,7 @@ void CRUNCH_engine::get_mineral_properties()
 	cout << "database name is: " << dbase_fname << endl;
 	
 	// update the dbase so that it looks in the crunch folder
-	string dbase_fname_with_path = CRUNCH_path+dbase_fname;
+	string dbase_fname_with_path = dbase_fname;
 
 	// load the database into a list
 	list<string> dbase_list;
