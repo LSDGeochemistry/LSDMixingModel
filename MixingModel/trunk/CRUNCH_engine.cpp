@@ -20,10 +20,35 @@ void CRUNCH_engine::create()
 
 // this function creates a CRUNCH_engine object by reading a master file
 // the crunch infile wil be created based on this infile
-void CRUNCH_engine::create(string master_filename)
+void CRUNCH_engine::create(string master_filename, string crunch_path, string run_path)
 {
+  // first make sure the pathname has a slash
+  string lchar = crunch_path.substr(crunch_path.length()-2,1);
+  string slash = "/";
+  cout << "lchar is " << lchar << " and slash is " << slash << endl;
+    
+  if (lchar != slash)
+  {
+    cout << "You forgot the frontslash at the end of the path. Appending." << endl;  
+    crunch_path = crunch_path+slash;
+  } 
+  cout << "The CRUNCH pathname is: " << crunch_path << endl;
+  CRUNCH_path = crunch_path;
+  
+  // first make sure the run pathname has a slash
+  lchar = run_path.substr(run_path.length()-2,1);
+    
+  if (lchar != slash)
+  {
+    cout << "You forgot the frontslash at the end of the path. Appending." << endl;  
+    run_path = run_path+slash;
+  } 
+  cout << "The RUN pathname is: " << run_path << endl;
+  RUN_path = run_path;  
+
 	ifstream master_in;
-	master_in.open(master_filename.c_str());
+	string this_master = RUN_path+master_filename;
+	master_in.open(this_master.c_str());
 	string stemp;
 	char temp[500];
 
@@ -231,7 +256,8 @@ void CRUNCH_engine::parse_parent_material_file()
 {
 	// read in the material file
 	ifstream material_in;
-	material_in.open("parent_material.pmat");
+	string pmat_full_name = RUN_path+"parent_material.pmat";
+	material_in.open(pmat_full_name.c_str());
 	if (material_in.fail())
 	{
 		cout << "parent material file does not exist\n";
@@ -294,8 +320,8 @@ void CRUNCH_engine::modify_CRUNCH_value(string value_name, double value)
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this  reads a series of files containing
 // information about pore chemistry, mineral contents, mineral
 // surface areas, etc at nodes in the profile and then prints
@@ -307,6 +333,7 @@ void CRUNCH_engine::modify_CRUNCH_value(string value_name, double value)
 //
 // we will have both 'soil' zones and 'saprolite' zones. In fact these will be
 // zones of pdz and caz.
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 						vector<double>& pH_values, vector<double>& spacings,
 						vector<double>& top_depths, vector<double>& bottom_depths,
@@ -546,12 +573,13 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function looks at the depths and sets the string for the discretization
 // line to reflect the cells defined but the top and bottom depths vectors
 // these vectors are generated both by the particle model and by the
 // parse_CRUNCH_files
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::set_spacing_line_from_depths(vector<double>& top_depths,
 												  vector<double>& bottom_depths)
 {
@@ -571,7 +599,8 @@ void CRUNCH_engine::set_spacing_line_from_depths(vector<double>& top_depths,
 		temp_spacing = bottom_depths[i]-top_depths[i];
 		if ( fabs(temp_spacing-spacings[s_counter]) > 1e-9)
 		{
-			//cout << "temp_spacing: " << temp_spacing << " and old spacing: " << spacings[s_counter] << endl;
+			//cout << "temp_spacing: " << temp_spacing << " and old spacing: " 
+      //     << spacings[s_counter] << endl;
 			spacings.push_back(temp_spacing);
 			n_cells_in_spacing.push_back(1);
 			s_counter++;
@@ -615,14 +644,15 @@ void CRUNCH_engine::set_spacing_line_from_depths(vector<double>& top_depths,
 		l_iter++;
 	}
 }
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function sets the concentration list vecs to some background concentration
 //
 // the parameters A and  B are for a fit to Ph data where pH = A ln(d) * B
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 vector<double> CRUNCH_engine::set_up_pH_for_particle(
 						vector<double>& top_depths,vector<double>& bottom_depths,
 						double A, double B)
@@ -640,17 +670,16 @@ vector<double> CRUNCH_engine::set_up_pH_for_particle(
 
 	return pH;
 }
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function gets default concentrations
 //
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 							vector<double>& top_depths,vector<double>& bottom_depths)
-
-
 {
 	list< vector<double> > concentrations;
 	list< vector<double> > updated_concentrations;
@@ -747,15 +776,16 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	return updated_concentrations;
 
 }
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function creates a CRUNCH infile using a number of different data elements
 // these data elements are obtained from either an existing crunch run
 // or a combination of a crunch run (to get solute concentrations) and a particle
 // run
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 						vector<double>& pH_values,
 						vector<double>& top_depths,vector<double>& bottom_depths,
@@ -767,7 +797,8 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 	ofstream CRUNCH_write;
 	CRUNCH_write.precision(7);			// this precision is specifically chosen to
 										// match that of CRUNCH in and out files.
-	CRUNCH_write.open("column_model.in");
+	string cmodel_name = CRUNCH_path+"column_model.in";									
+	CRUNCH_write.open(cmodel_name.c_str());
 
 	// you need to sweep through the list of strings associated with the master
 	// file and change two things:
@@ -937,14 +968,20 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::call_CRUNCH()
 {
-	ofstream pest_out;
-	pest_out.open("PestControl.ant");
+	
+  // this sets up the file for running crunch. NOTE: crunch has limited 
+  // control over where you put the files, so the the pest file needs to be
+  // in the same directory as the crunch executable. 
+  ofstream pest_out;
+	string full_pest_name = CRUNCH_path+"PestControl.ant";
+	pest_out.open(full_pest_name.c_str());
 	pest_out << "column_model.in" << endl;
 	pest_out.close();
 
 	// check to see if infile exists:
 	ifstream c_in;
-	c_in.open("column_model.in");
+	string c_in_fullname = CRUNCH_path+"column_model.in";
+	c_in.open(c_in_fullname.c_str());
 	if (c_in.fail())
 	{
 		cout << "No infile for crunch!!\n";
@@ -1006,11 +1043,14 @@ void CRUNCH_engine::get_mineral_properties()
 		l_iter++;
 	}
 	cout << "database name is: " << dbase_fname << endl;
+	
+	// update the dbase so that it looks in the crunch folder
+	string dbase_fname_with_path = CRUNCH_path+dbase_fname;
 
 	// load the database into a list
 	list<string> dbase_list;
 	ifstream dbase_in;
-	dbase_in.open(dbase_fname.c_str());
+	dbase_in.open(dbase_fname_with_path.c_str());
 	char dbase_line[5000];
 	string linestr;
 	// then load in the database file into a list of strings
@@ -1019,6 +1059,7 @@ void CRUNCH_engine::get_mineral_properties()
 		linestr = dbase_line;
 		dbase_list.push_back(linestr);
 	}
+	dbase_in.close();
 
 	// first get the number of temperature points
 	l_iter = dbase_list.begin();

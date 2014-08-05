@@ -4,9 +4,11 @@ using namespace std;
 
 int main ()
 {
-	string master_fname = "master_crunch.in";
+	string crunch_pname = "/home/smudd/SMMDataStore/devel_projects/CrunchFlow/trunk";
+	string run_pname = "/home/smudd/SMMDataStore/devel_projects/MixingModel/trunk/test_run";
+  string master_fname = "master_crunch.in";
 
-	CRUNCH_engine Ceng(master_fname);
+	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);
 	//Ceng.print_master();
 
 	double new_tspacing = 20;
