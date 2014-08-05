@@ -15,7 +15,8 @@ class CRUNCH_engine
 {
 	public:
 	CRUNCH_engine()							{ create(); }
-	CRUNCH_engine(string master_filename)	{ create(master_filename); }
+	CRUNCH_engine(string master_filename, string crunch_path, string run_path)	
+                  { create(master_filename, crunch_path, run_path); }
 
 	// printing functions
 	void print_master();
@@ -58,11 +59,14 @@ class CRUNCH_engine
 
 	private:
 	void create();
-	void create(string master_filename);
+	void create(string master_filename, string crunch_path, string run_path);
 
 	// this populates the mineral names and species names
 	void get_minerals_and_species();
 	void get_constant_conditions();
+
+  string CRUNCH_path;
+  string RUN_path;
 
 	list<string> master_infile;
 	list<string> p_species_names;
