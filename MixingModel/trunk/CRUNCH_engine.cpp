@@ -4,6 +4,7 @@
 #include <iostream>
 #include <list>
 #include <string>
+#include <algorithm>
 #include <fstream>
 #include <cstdlib>
 #include <math.h>
@@ -725,6 +726,34 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	conc_in.getline(data_line,5000);
 	conc_in.getline(data_line,5000);
 	conc_in.getline(data_line,5000);
+	
+	// this third line contains the species names. You need to make sure that 
+	// the CO2(aq) is in the correct place
+	temp_string = data_line;
+	split_string(temp_string, delim, line_words);	
+	int n_line_words = int(line_words.size());
+	int CO2_column = 2;
+	for(int i = 0; i<n_line_words; i++)
+	{
+	  string thisword =  line_words[i];
+    //string nospace = remove_if(thisword.begin(), thisword.end(), isspace);    
+    string CO2word = "CO2(aq)";
+    //cout << "i is: " << i << " and species is: " <<   thisword << " and word is: " << CO2word << endl;
+    if(thisword == CO2word)
+    {
+      //cout << "Found aqueous CO2 in column: " << i << endl;
+      CO2_column = i; 
+    }
+    
+  }
+  
+  if (CO2_column != 2)
+  {
+	  cout << "CRUNCH_engine::get_default_concentrations WARNING CO2 not in 2nd position" 
+	       << "check that your primary species has CO2 listed second in the crunch infile" << endl;
+	}
+	
+	
 	while (conc_in.getline(data_line,5000))
 	{
 		temp_string = data_line;
@@ -743,7 +772,7 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 		line_words = empty_str_vec;
 	}
 
-	// now replace concentrations with gas concentrations
+	// now replace CO2 concentrations with gas concentrations
 	gas_in.getline(data_line,5000);
 	gas_in.getline(data_line,5000);
 	gas_in.getline(data_line,5000);
