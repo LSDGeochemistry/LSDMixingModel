@@ -555,7 +555,8 @@ int main ()
  	list< vector<double> > mineral_ssa_old;
  	list< vector<double> > mineral_mass_old;
  	list< vector<double> > mineral_surface_area_old;
-	CRN_tpb.get_data_by_cell_volumetric_for_CRUNCH(bn,n_PDZ_intervals, n_CAZ_intervals,bottom_depth,
+	CRN_tpb.get_data_by_cell_volumetric_for_CRUNCH(bn,n_PDZ_intervals, 
+                n_CAZ_intervals,bottom_depth,
 								verts_s, verts_z, verts_d,
 								cell_node1, cell_node2, cell_node3, cell_node4, vpi,
 								mineral_vfracs_old,mineral_ssa_old,
@@ -571,7 +572,7 @@ int main ()
 
 	// get the pH vector
 	vector<double> pH_vec;
-	double A = 0.2083;			// fitted from kates data
+	double A = 0.2083;			// fitted from kate's data
 	double B = 6.2221;			//
 	pH_vec = Ceng.set_up_pH_for_particle(d_top_locs,d_bottom_locs, A, B);
 
@@ -582,7 +583,8 @@ int main ()
 	}
 
 	int n_ts = 1;
-	list < vector<double> > default_concentrations = Ceng.get_default_concentrations(n_ts,d_top_locs,d_bottom_locs);
+	list < vector<double> > default_concentrations 
+            = Ceng.get_default_concentrations(n_ts,d_top_locs,d_bottom_locs);
 	list < vector<double> >::iterator lv_iter;
 
 	//int n_cells = d_top_locs.size();
