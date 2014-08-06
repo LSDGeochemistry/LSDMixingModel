@@ -245,12 +245,10 @@ int main ()
 	//     << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
 	//     << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
 
-	// get the particle types
-	Particle_info pi(particle_types_fname.c_str());
-	vector<int> starting_pID = pi.get_type_index();
-	int n_ptypes = starting_pID.size();
 
+  // load the particle mass fractions
 	ifstream pmfrac_in;
+	int n_ptypes = vpi.get_n_types();
 	pmfrac_in.open(part_mfracs_fname.c_str());
 	vector<double> starting_p_mfrac(n_ptypes);
 	for (int i = 0; i<n_ptypes; i++)
@@ -311,13 +309,12 @@ int main ()
 	}
 	cout << "LINE 300 got surface erate" << endl;
 
-
 	// initialize a CRN_particle_list
 	CRN_tParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-    vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-    vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-    list<CRN_tParticle>::iterator part_iter;	// list iterator
+  vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
+  vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
+  list<CRN_tParticle>::iterator part_iter;	// list iterator
 
 	// raise the flowtube so the downstream boundary is at elevation
 	// 100
@@ -543,7 +540,7 @@ int main ()
 								n_PDZ_intervals, n_CAZ_intervals,
 								bottom_depth,
 								verts_s, verts_z, verts_d,
-							    cell_node1, cell_node2, cell_node3, cell_node4);
+							  cell_node1, cell_node2, cell_node3, cell_node4);
 
 
 	//CRN_tpb.get_data_by_cell(bn,n_PDZ_intervals, n_CAZ_intervals,bottom_depth,

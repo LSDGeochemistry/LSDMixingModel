@@ -369,6 +369,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 	return 1;
 }
 
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // NOTE: delta lowered is the same size as eta, each h node has one lowering thickness
 // (thus affecting two bins each)
 // this inserts particles into the simulation. One keeps track of soil production,
@@ -393,13 +394,17 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 //		0: Granger
 //		1: Schaller
 //
-// TO DO: need to implement an insertiona algorithm that can cope with a 'deep' insertion wherein both the
+// TO DO: need to implement an insertiona algorithm that can cope with a 'deep' 
+// insertion wherein both the
 // soil column and parent material are populated.
-// probably the best approach is this: check to see if the insertion zone goes across the boundary. If it does,
+// probably the best approach is this: check to see if the insertion zone
+// goes across the boundary. If it does,
 // then split the insertion zones into two parts
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
-									double C_10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He,
+									double C_10Be, double C_26Al, double C_36Cl, double C_14C,
+                  double C_21Ne, double C_3He,
 									VolumeParticleInfo vpi)
 {
 
@@ -580,11 +585,15 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 
 	//for (int i = 0; i< n_bins; i++)
 	//{
-	//	cout << "LINE 347 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " << particle_bins[i].size() << endl;
+	//	cout << "LINE 347 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " 
+  //         << particle_bins[i].size() << endl;
 	//}
 	return 1;
 }
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // NOTE: delta lowered is the same size as eta, each h node has one lowering thickness
 // (thus affecting two bins each)
 // this inserts particles into the simulation. One keeps track of soil production,
@@ -608,6 +617,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 // CRN_muon_param_switch:
 //		0: Granger
 //		1: Schaller
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 int CRN_tParticle_bins::insert_particles(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
@@ -3795,7 +3805,7 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 	double s_h_up;
 
 	double fuzzy_boundary = 0.001;
-	// now loop through the bins, calcualting vertices
+	// now loop through the bins, calculating vertices
 	for (int bn = 0; bn< n_bins; bn++)
 	{
 		s_h_up = s[ h_node_us[bn]];
