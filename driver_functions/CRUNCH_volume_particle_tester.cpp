@@ -514,6 +514,8 @@ int main ()
 	age_pdf_out.close();
 
 */
+
+
 	int bn = 0;
 	int n_PDZ_intervals = 2;
 	int n_CAZ_intervals = 3;
@@ -633,6 +635,25 @@ int main ()
 										mineral_vfracs_old,mineral_vfracs_new,
 										mineral_surface_area_old,mineral_mass_old);
 
+
+/*
+  // print the data to a vtk file
+  //double t_ime = 0;
+  vtk_particle_fname = "parts_test";
+  vtk_cell_fname = "cells_test";
+  bottom_depth = 2;
+  int n_depthintervals_soil = 5;
+  int n_depthintervals_parent = 3;
+  int reference_frame_switch = 1;
+  
+	// get the particle types
+	Particle_info pi(particle_types_fname.c_str());
+
+  CRN_tpb.cell_and_particle_chemistry_printing_vtk(t_ime, ft_test,
+								pi,vtk_particle_fname, vtk_cell_fname,
+								n_depthintervals_soil, n_depthintervals_parent,
+								bottom_depth, reference_frame_switch);
+*/
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
