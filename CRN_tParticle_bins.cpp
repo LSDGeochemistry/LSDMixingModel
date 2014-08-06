@@ -2417,13 +2417,10 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bulk(double t_ime, double max_a
 
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // these function give you the mean age, and cdf and pdf of partcles
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::print_age_cdfpdf_eroded_bins(double t_ime, double max_age, int n_spacings,
 								double K_times_D, double D, double sigma,
@@ -2601,10 +2598,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bins(double t_ime, double max_a
 
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function caluclates values within cells
 //
@@ -2614,6 +2608,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bins(double t_ime, double max_a
 // on each edge of a bin there are (n_depthintervals_soil+n_depthintervals_parent)+1 depth
 // intervals
 //
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::cell_printing_vtk(double t_ime, flowtube ft,
 								string vtk_fname,
 								int n_depthintervals_soil, int n_depthintervals_parent,
@@ -2807,10 +2802,7 @@ void CRN_tParticle_bins::cell_printing_vtk(double t_ime, flowtube ft,
 
 	vtk_out.close();
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -2823,6 +2815,7 @@ void CRN_tParticle_bins::cell_printing_vtk(double t_ime, flowtube ft,
 // on each edge of a bin there are (n_depthintervals_soil+n_depthintervals_parent)+1 depth
 // intervals
 //
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube ft,
 								 string vtk_particle_fname, string vtk_cell_fname,
 								int n_depthintervals_soil, int n_depthintervals_parent,
@@ -3108,7 +3101,8 @@ void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube f
 		vtk_particle_out << s_loc[i] << " " << z_loc[i] << " 0.0" <<endl;
 	}
 
-	vtk_particle_out << endl << "POINT_DATA "<<n_parts << endl << "SCALARS Particle_age float 1"
+	vtk_particle_out << endl << "POINT_DATA "<<n_parts << endl 
+            << "SCALARS Particle_age float 1"
 	        << endl << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_parts; i++)
 	{
@@ -3140,14 +3134,9 @@ void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube f
 	vtk_cell_out.close();
 	vtk_particle_out.close();
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-
-
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function caluclates values within cells
 //
@@ -3157,6 +3146,7 @@ void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube f
 // on each edge of a bin there are (n_depthintervals_soil+n_depthintervals_parent)+1 depth
 // intervals
 //
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, flowtube ft,
 								 Particle_info& pi,
 								 string vtk_particle_fname, string vtk_cell_fname,
@@ -3237,7 +3227,8 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 
 		// calcualte the depth of the bins in the soil
 		us_soil_depthinterval = (us_zeta-us_eta)/double(n_depthintervals_soil);
-		us_parent_depthinterval = (bottom_depth-(us_zeta-us_eta))/double(n_depthintervals_parent);
+		us_parent_depthinterval = (bottom_depth-(us_zeta-us_eta))/
+                            double(n_depthintervals_parent);
 
 		// first get the soil nodes
 		for (int sdi = 0; sdi<n_depthintervals_soil; sdi++)
@@ -3330,7 +3321,8 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 
 
 	vtk_cell_out << endl << "CELL_DATA " << n_cells << endl;
-	vtk_cell_out << "SCALARS SOIL_OR_PARENT int 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS SOIL_OR_PARENT int 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << cell_code[i] <<endl;
@@ -3517,7 +3509,8 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 
 	//for (int i = 0; i< n_cells; i++)
 	//{
-	//	cout << "cell number: " << i << " and n_parts in cell: " << n_parts_in_cell[i] << endl;
+	//	cout << "cell number: " << i << " and n_parts in cell: " 
+  //         << n_parts_in_cell[i] << endl;
 	//}
 
 	vector<double>::iterator v_iter;
@@ -3629,33 +3622,39 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 	}
 
 
-	vtk_cell_out << "SCALARS p_in_cell int 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS p_in_cell int 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << n_parts_in_cell[i] <<endl;
 	}
 
-	vtk_cell_out << "SCALARS mean_age float 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS mean_age float 1" << endl 
+              << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << mean_age_in_depth_intervals[i] <<endl;
 	}
-	vtk_cell_out << "SCALARS mean_mass_frac float 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS mean_mass_frac float 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << mean_mfrac_in_depth_intervals[i] <<endl;
 	}
-	vtk_cell_out << "SCALARS mean_clay_frac float 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS mean_clay_frac float 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << mean_cfrac_in_depth_intervals[i] <<endl;
 	}
-	vtk_cell_out << "SCALARS mean_rate_frac float 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS mean_rate_frac float 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << mean_rfrac_in_depth_intervals[i] <<endl;
 	}
-	vtk_cell_out << "SCALARS Conc_10Be float 1" << endl << "LOOKUP_TABLE default" << endl;
+	vtk_cell_out << "SCALARS Conc_10Be float 1" << endl 
+               << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_cells; i++)
 	{
 		vtk_cell_out << mean_C10Be_in_depth_intervals[i] <<endl;
@@ -3680,7 +3679,8 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 		}
 	}
 
-	vtk_particle_out << endl << "POINT_DATA "<<n_parts << endl << "SCALARS Particle_age float 1"
+	vtk_particle_out << endl << "POINT_DATA "<<n_parts << endl 
+                   << "SCALARS Particle_age float 1"
 	        << endl << "LOOKUP_TABLE default" << endl;
 	for (int i = 0; i< n_parts; i++)
 	{
@@ -3735,14 +3735,8 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 
 
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-
-
-
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function caluclates values within cells
 //
@@ -3752,6 +3746,7 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 // on each edge of a bin there are (n_depthintervals_soil+n_depthintervals_parent)+1 depth
 // intervals
 //
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 								int n_depthintervals_soil, int n_depthintervals_parent,
 								double bottom_depth,
@@ -3787,7 +3782,8 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 	cell_node2 = empty_i_vec;
 	cell_node3 = empty_i_vec;
 	cell_node4 = empty_i_vec;
-	vector<int> cell_code;			// used to differentiate soil from parent material. The numbers are
+	vector<int> cell_code;			// used to differentiate soil from parent material. 
+                  // The numbers are
 									// arbitrary, but for now 0 == parent and 1 == soil
 	int soil_code = 1;
 	int parent_code = 0;
@@ -3828,7 +3824,8 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 
 		// calculate the depth of the bins in the soil
 		us_soil_depthinterval = (us_zeta-us_eta)/double(n_depthintervals_soil);
-		us_parent_depthinterval = (bottom_depth-(us_zeta-us_eta))/double(n_depthintervals_parent);
+		us_parent_depthinterval = (bottom_depth-(us_zeta-us_eta))/
+                               double(n_depthintervals_parent);
 
 		// first get the soil nodes
 		for (int sdi = 0; sdi<n_depthintervals_soil; sdi++)
@@ -3861,7 +3858,6 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 		verts_s.push_back(bin_edge_loc[bn]);
 		verts_z.push_back(us_zeta-bottom_depth);
 		verts_d.push_back(bottom_depth);
-
 	}
 
 
@@ -3933,9 +3929,12 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 			part_iter = particle_bins[bn].begin();
 			while (part_iter != particle_bins[bn].end())
 			{
-
-				pip_test = pnpoly(sverts_for_pip, zverts_for_pip, (*part_iter).getxLoc(), (*part_iter).get_zetaLoc());
-				if (pip_test == 1)
+        // check to see if the particle is within the cell
+				pip_test = pnpoly(sverts_for_pip, zverts_for_pip, (*part_iter).getxLoc(), 
+                           (*part_iter).get_zetaLoc());
+				
+        // if not, change the cell
+        if (pip_test == 1)
 				{
 					(*part_iter).setCellIndex(depth_interval_index);
 				}
@@ -3944,15 +3943,13 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 		}
 	}
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function is purely for checking the cell index
-void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_s, vector<double>& verts_z,
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_s,
+                vector<double>& verts_z,
 								vector<double>& verts_d,
 								vector<int>& cell_node1, vector<int>& cell_node2,
 								vector<int>& cell_node3, vector<int>& cell_node4)
@@ -3968,7 +3965,8 @@ void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_
 
 	part_iter = particle_bins[bn].begin();
 	int n_particles_in_bin = particle_bins[bn].size();
-	cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
+	cout << endl << endl << endl << " n_parts in bin: " 
+       << n_particles_in_bin << endl;
 	while (part_iter != particle_bins[bn].end())
 	{
 		cell_index = (*part_iter).getCellIndex();
@@ -3977,7 +3975,8 @@ void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_
 		dLoc = (*part_iter).getdLoc();
 
 		// now print out the particle information
-		cout << endl << "Particle zLoc: " << zLoc << " sLoc: " << sLoc << " and d loc: " << dLoc
+		cout << endl << "Particle zLoc: " << zLoc << " sLoc: " << sLoc 
+         << " and d loc: " << dLoc
 		     << " cell index: " << cell_index << endl;
 		cout << "s1: " << verts_s[ cell_node1[cell_index] ]
 		     << " z1: " << verts_z[ cell_node1[cell_index] ]
@@ -3996,15 +3995,14 @@ void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_
 	}
 
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function is purely for checking the cell index
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ_intervals,
 									double bottom_depth, vector<double> verts_s, vector<double> verts_z,
 								vector<double>& verts_d,
@@ -4060,13 +4058,12 @@ void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ
 
 	}
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// this function is used to collect data about the volume fractions and specific surface areas in
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// this function is used to collect data about the volume fractions and 
+// specific surface areas in
 // cells that are then fed into CRUNCHflow
 //
 // it creates some list vecs where the vector elements are for the cells (i.e. the boxes in which the
@@ -4074,6 +4071,7 @@ void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ
 //
 // !!!NOTE!!! This function resets the list vecs and returns new ones.
 //
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PDZ_intervals, int n_CAZ_intervals,
 									double bottom_depth, vector<double> verts_s, vector<double> verts_z,
 									vector<double>& verts_d,
@@ -4179,17 +4177,16 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 				mass_iter++;
 			}
 
-			// add to running total of surface area, volume and mass for different particle types.
+			// add to running total of surface area, volume and 
+      // mass for different particle types.
 			(*surf_area_iter)[cell_index]+=particleSurfaceArea;
 			(*volume_iter)[cell_index]+=particleVolume;
 			(*mass_iter)[cell_index]+=particleMass;
-
 
 		}
 
 		part_iter++;
 	}
-
 
 	cout << "starting cell: " << starting_cell << " ending cell: " << ending_cell << endl;
 	cout << "cell_node size: " << cell_node1.size() << " " << cell_node2.size() << " "
@@ -4220,10 +4217,14 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 
 
 		cout << endl << "cell number: " << ci << endl;
-		//cout << "thick upslope: " << thick_upslope << " thick_downslope: " << thick_downslope << " area: " << A_bins[bn] << endl;
-		cout << "n parts in cell: " << particles_in_cells[ci] << " " << "volume of cell: " << cell_volume << endl;
-		cout << "volume of parts: " << volume_of_particles_in_cell[ci] << " mass of particles: " << mass_in_cell[ci] << endl;
-		cout << "porosity: " << porosity_in_cell[ci] << " and bulk density: " << mass_in_cell[ci]/cell_volume << endl;
+		//cout << "thick upslope: " << thick_upslope << " thick_downslope: "
+         // << thick_downslope << " area: " << A_bins[bn] << endl;
+		cout << "n parts in cell: " << particles_in_cells[ci] << " " 
+         << "volume of cell: " << cell_volume << endl;
+		cout << "volume of parts: " << volume_of_particles_in_cell[ci] 
+         << " mass of particles: " << mass_in_cell[ci] << endl;
+		cout << "porosity: " << porosity_in_cell[ci] << " and bulk density: " 
+        << mass_in_cell[ci]/cell_volume << endl;
 		cout << "s1: " << verts_s[ cell_node1[ci] ]
 		     << " z1: " << verts_z[ cell_node1[ci] ]
 		     << " d1: " << verts_d[ cell_node1[ci] ] << endl;
@@ -4308,44 +4309,50 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	mineral_mass = mass_of_types_in_cells;
 	cout << "LINE 4138 finished getting particle data" << endl;
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
 
 
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function weathers the particles.
 // it takes two list_vecs: both of which are the volume fractions of the particles
-// the two files are volum fraction before and after. The volume fraction is per volume
-// porous media
+// the two files are volum fraction before and after. The volume fraction 
+// is per volume porous media
 //
-// For each particle type, then, this function calcualtes a loss or gain of that type of particle.
-// The algorithm then needs to calcualte the corresponding change in mass as well as the total surface area
+// For each particle type, then, this function calculates a loss or gain 
+// of that type of particle.
+// The algorithm then needs to calcualte the corresponding change 
+// in mass as well as the total surface area
 // of the particle.
 //
-// the mass loss for each particle is then divided amongst the particles of different size classes:
-// a mass loss per surafce area is calucalted followed and thus the mass loss is calcualted by
+// the mass loss for each particle is then divided amongst 
+// the particles of different size classes:
+// a mass loss per surafce area is calucalted followed and 
+// thus the mass loss is calcualted by
 // multiplying the surface area of a given particle type by its total surface area
 //
-// ***WARNING*** CRUNCH files are only output with precision of 6, so there are rounding errors.
-// these in fact can artificailly increase or decrease weatehring, and for slowly weathering
+// ***WARNING*** CRUNCH files are only output with precision of 6, 
+// so there are rounding errors.
+// these in fact can artificially increase or decrease weathering, 
+// and for slowly weathering
 // minerals over 1 year the error is the same magnitude as the weathering rate
 //
-// FIX: the weathering rate is calculated based _only_ upon the precision returned by CRUNCH
+// FIX: the weathering rate is calculated based _only_ 
+// upon the precision returned by CRUNCH
 //
-void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_intervals, int n_CAZ_intervals,
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_intervals, 
+                  int n_CAZ_intervals,
 									double bottom_depth, vector<double> verts_s, vector<double> verts_z,
 									vector<double>& verts_d,
 									vector<int>& cell_node1, vector<int>& cell_node2,
 									vector<int>& cell_node3, vector<int>& cell_node4,
 									VolumeParticleInfo vpi,
 									list< vector<double> >& mineral_vpercents_old,
-                                    list< vector<double> >& mineral_vpercents_new,
-                                    list< vector<double> >& surface_area_in_cell_old,
-                                    list< vector<double> >& mass_in_cell_old)
+                  list< vector<double> >& mineral_vpercents_new,
+                  list< vector<double> >& surface_area_in_cell_old,
+                  list< vector<double> >& mass_in_cell_old)
 {
 	// set up some variables
 	double thick_upslope;
@@ -4379,6 +4386,7 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 
 	// now go through the bin finding the change in volume and
 	// the change in mass within the cells
+	// cell nodes are the coordinates of the cell corners: there are 4
 	for(int ci = starting_cell; ci< ending_cell; ci++)
 	{
 		// calculate the thicknesses of the upslope and downslope sections of the cells
@@ -4412,12 +4420,17 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 		{
 			cout << "density: " << vpi.get_type_density(i) << endl;
 
-			// the mass in a cell may be calculated quite exactly, but CRUNCHflow only takes a volume fraction data element
-			// with a precision of 7, and only reports a volume fraction with a precision of 7. So here I have to convert
-			// the volume percent to something that is a volume fraction with a precision of 7 and calcualte
+			// the mass in a cell may be calculated quite exactly, 
+      // but CRUNCHflow only takes a volume fraction data element
+			// with a precision of 7, and only reports a volume fraction
+      // with a precision of 7. So here I have to convert
+			// the volume percent to something that is a volume fraction 
+      // with a precision of 7 and calcualte
 			// the rate based on this mass
-			// there also has to be a very annoying series of if else statements to acocunt for the fact the CRUNCHflow
-			// does things in scientific notation so if the volume percent is, say 3, the logiuc has to be different
+			// there also has to be a very annoying series of if else 
+      // statements to acocunt for the fact the CRUNCHflow
+			// does things in scientific notation so if the volume percent is, 
+      // say 3, the logiuc has to be different
 			// than for a volume percent of 10.
 			if ((*mvp_old_iter)[ci] == 100)
 			{
@@ -4463,7 +4476,8 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			vf_change_in_CRUNCH_precision = vf_in_CRUNCH_precision_new-vf_in_CRUNCH_precision_old;
 			mass_change = vf_change_in_CRUNCH_precision*cell_volume*vpi.get_type_density(i);
 
-			cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: " << vf_in_CRUNCH_precision_new
+			cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: " 
+           << vf_in_CRUNCH_precision_new
 			     << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
 
 			if ( (*surface_area_old_iter)[ci] <=0)
@@ -4476,10 +4490,11 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			}
 
 			cout << "mass loss: " << mass_change
-			     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci] << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
+			     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci] 
+           << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
 
-			//cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision - (*mass_old_iter)[ci] <<endl;
-
+			//cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision - 
+      // (*mass_old_iter)[ci] <<endl;
 
 			mvp_old_iter++;
 			mvp_new_iter++;
@@ -4488,10 +4503,7 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 
 		}
 		cout << endl;
-
-
 	}
-
 
 	// now loop through all the particles, removing mass based on their surface areas
 	double massLoss;
@@ -4504,22 +4516,14 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 		part_iter++;
 	}
 }
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-
-
-
-
-
-
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function retrieves copies of particles that are in a sampling interval
-list<CRN_tParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn, double d_top, double d_bottom)
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+list<CRN_tParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn, 
+                double d_top, double d_bottom)
 {
 	// list that evenutally gets returns
 	list<CRN_tParticle> sampled_list;
@@ -4542,17 +4546,16 @@ list<CRN_tParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn, 
 	}
 	return sampled_list;
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this loops through vectors holding the top and bottom locations of the samples
 // and calcualtes the averages of their parameter values
-void CRN_tParticle_bins::calculate_sample_averages(int bn, vector<double>& d_top_locs, vector<double>& d_bottom_locs,
-													vector<double>& sample_mean_age, vector<double>& sample_mean_C10Be,
-													vector<double>& sample_mean_Cf10Be)
+void CRN_tParticle_bins::calculate_sample_averages(int bn, 
+                   vector<double>& d_top_locs, vector<double>& d_bottom_locs,
+									 vector<double>& sample_mean_age, vector<double>& sample_mean_C10Be,
+									 vector<double>& sample_mean_Cf10Be)
 {
 	// get the number of samples
 	int n_samples = d_top_locs.size();
@@ -4603,13 +4606,10 @@ void CRN_tParticle_bins::calculate_sample_averages(int bn, vector<double>& d_top
 		sample_mean_Cf10Be.push_back( tot_Cf10Be/double(n_particles) );
 	}
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::calculate_sample_averages(vector<double>& s_locs,
 								vector<double>& d_top_locs, vector<double>& d_bottom_locs,
 								Particle_info& pi,
@@ -4758,11 +4758,9 @@ void CRN_tParticle_bins::calculate_sample_averages(vector<double>& s_locs,
 
 	//pi.details_to_screen();
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function takes PDZ and CAZ intervals and creates vectors of top and
 // bottom depths for particle bins.
 // Note there will be some discrepancy along the soil-saprolite boundary because the
@@ -4849,7 +4847,6 @@ void CRN_tParticle_bins::partition_bins_into_cells(int bn, flowtube ft,
 
 
 }
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 #endif
