@@ -185,7 +185,7 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
   // this function also updates the cell indices of the particles
   for (int bn = 0; bn<n_bins; bn++)
   {
-    cout << "size vmvo: " << vec_mineral_vfracs_old.size() << " and bn: " << bn << endl;
+    //cout << "size vmvo: " << vec_mineral_vfracs_old.size() << " and bn: " << bn << endl;
     // now collect the data from from the particles
     // this collects data from each cell in this bin
 	  list< vector<double> > mineral_vfracs_old;
