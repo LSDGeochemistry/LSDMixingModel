@@ -35,7 +35,12 @@ class CRUNCH_bins
     /// @author SMM
     /// @date 07/08/2014
     int retrieve_index_of_cell(int bin, int cell);
-    
+
+    /// @brief This function prints the corners of the cell to screen
+    /// @author SMM
+    /// @date 07/08/2014
+    void cell_location_to_screen(int bin, int cell);
+
     /// @brief this gathers all the information from the CRN tParticle bin
     /// object including the locations of the cell boundaries, 
     /// and the relevant geochemical information
@@ -79,7 +84,11 @@ class CRUNCH_bins
     /// this map stores indices, such as the node corners
     map< string, vector<int> > cell_index_map; 
     
-       
+    // vec list vecs to hold mineral information
+	  vector< list< vector<double> > > vec_mineral_vfracs_old;
+ 	  vector< list< vector<double> > > vec_mineral_ssa_old;
+ 	  vector< list< vector<double> > > vec_mineral_mass_old;
+ 	  vector< list< vector<double> > > vec_mineral_surface_area_old;       
 
 	private:
 	  void create();
