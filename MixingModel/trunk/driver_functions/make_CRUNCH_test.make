@@ -13,7 +13,8 @@ SOURCES=CRUNCH_volume_particle_tester.cpp \
 	../FT_util.cpp \
 	../chronos_particle_info.cpp \
 	../flowtube.cpp \
-	../CRN_tParticle_bins.cpp
+	../CRN_tParticle_bins.cpp \
+	../CRUNCH_bins.hpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=CRUNCH_vp_test.exe
 

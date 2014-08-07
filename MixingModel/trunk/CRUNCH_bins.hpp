@@ -6,9 +6,11 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include "CRN_tParticle_bins.hpp"
 #include "VolumeParticleInfo.hpp"
 #include "CRN_tParticle_bins.hpp"
+#include "flowtube.hpp"
 using namespace std;
 
 #ifndef CRUNCH_bins_H
@@ -24,8 +26,9 @@ class CRUNCH_bins
 	  /// object, and the number of cells
 	  /// @author SMM
 	  /// @date 07/08/2014
-	  CRUNCH_bins( int n_pdz, int n_caz, VolumeParticleInfo start_vpi)
-	                    { create(n_pdz, n_caz, start_vpi); }
+	  CRUNCH_bins( int n_pdz_per_bin, int n_caz_per_bin, double b_depth, 
+                                 VolumeParticleInfo start_vpi)
+	                    { create(n_pdz_per_bin, n_caz_per_bin, b_depth, start_vpi); }
 
     /// @brief the data is stored in vectors, you need to get the index into
     /// the vector of from the bin and cell number
@@ -38,7 +41,8 @@ class CRUNCH_bins
     /// and the relevant geochemical information
     /// @author SMM
     /// @date 07/08/2014
-    void populate_cells_with_geochemical_data_from_CRNtPb(CRN_tParticle_bins& CRN_tPb);
+    void populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
+                                  CRN_tParticle_bins& CRN_tPb);
         
 
   protected:
@@ -47,16 +51,22 @@ class CRUNCH_bins
     int n_bins;
     
     /// The number of particle types
-    int n_types
+    int n_types;
     
     /// the volume particle info
     VolumeParticleInfo vpi;
     
     /// The number of PDZ cells
-    int n_pdz_cells;
+    int n_pdz_cells_per_bin;
     
     /// The number of CAZ cells
-    int n_caz_cells;
+    int n_caz_cells_per_bin;  
+    
+    /// The total number of cells
+    int total_cells;
+    
+    /// The bottom depth of the cells you want
+    double bottom_depth;
     
     /// This stores all the coordinates of the cell edges
     vector<double> cell_corners;
@@ -66,12 +76,16 @@ class CRUNCH_bins
     /// using a series of strings 
     map< string, vector<double> > cell_data_map; 
     
+    /// this map stores indices, such as the node corners
+    map< string, vector<int> > cell_index_map; 
+    
        
 
 	private:
 	  void create();
 	  
-	  void create(int n_pdz, int n_caz, VolumeParticleInfo this_vpi);
+	  void create(int n_pdz_per_bin, int n_caz_per_bin, 
+                double bottom_depth, VolumeParticleInfo this_vpi);
   
 };
 
