@@ -475,6 +475,8 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
 		new_bottom_depth[eta_node] = insert_zone_bottom;
 
+    cout << "Line 478, bel: " << bin_edge_loc[bn] << " and ds bel: "  << bin_edge_loc[bn+1] << endl;
+
 		// loop through each particle type and each size class
 		for (int type = 0; type<n_types; type++)
 		{
@@ -583,11 +585,11 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 
 	old_bottom_depth = new_bottom_depth;
 
-	//for (int i = 0; i< n_bins; i++)
-	//{
-	//	cout << "LINE 347 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " 
-  //         << particle_bins[i].size() << endl;
-	//}
+	for (int i = 0; i< n_bins; i++)
+	{
+		cout << "LINE 588 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " 
+           << particle_bins[i].size() << endl;
+	}
 	return 1;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -3870,10 +3872,56 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 		verts_d.push_back(bottom_depth);
 	}
 
+	// now get the last wall of the bin
+	int lbn = n_bins-1;
+  double s_h_ds = s[ h_node_ds[lbn]];
+	double s_ds = bin_edge_loc[lbn+1];
+	double ds_zeta = zeta[ h_node_ds[lbn] ];
+	double ds_eta = eta[ h_node_ds[lbn] ];
+
+	// calculate the depth of the bins in the soil
+	double ds_soil_depthinterval = (ds_zeta-ds_eta)/double(n_depthintervals_soil);
+	double ds_parent_depthinterval = (bottom_depth-(ds_zeta-us_eta))/
+                             double(n_depthintervals_parent);
+
+	// first get the soil nodes
+	for (int sdi = 0; sdi<n_depthintervals_soil; sdi++)
+	{
+		// get the s-coordinate vertex
+		verts_s.push_back(s_ds);
+
+		// get the vertical index
+		verts_z.push_back( ds_zeta - (double(sdi))*ds_soil_depthinterval);
+
+		// get the depth index
+		verts_d.push_back( (double(sdi))*ds_soil_depthinterval);
+
+	}
+
+	// now the parent material nodes
+	for (int pdi = 0; pdi<n_depthintervals_parent; pdi++)
+	{
+		// get the s-coordinate vertex
+		verts_s.push_back(s_ds);
+
+		// get the vertical index
+		verts_z.push_back( ds_eta - (double(pdi))*ds_parent_depthinterval);
+
+		// get the depth index
+		verts_d.push_back( (ds_zeta-ds_eta)+(double(pdi))*ds_parent_depthinterval);
+	}
+
+	// and now the bottom node
+	verts_s.push_back(s_ds);
+	verts_z.push_back(ds_zeta-bottom_depth);
+	verts_d.push_back(bottom_depth);
+
+
+
 
 	// loop through cells plotting vertices
 	//for (int bn = 0; bn<n_bins-1; bn++)
-	for (int bn = 0; bn<n_bins-1; bn++)
+	for (int bn = 0; bn<n_bins; bn++)
 	{
 		for (int di = 0; di<total_depth_intervals; di++)
 		{
@@ -3905,7 +3953,7 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 
 	vector<double> sverts_for_pip(4);
 	vector<double> zverts_for_pip(4);
-	for (int bn = 0; bn< n_bins-1; bn++)
+	for (int bn = 0; bn< n_bins; bn++)
 	{
 		n_parts_in_bin = particle_bins[bn].size();
 		p_start = p_end;
@@ -4153,6 +4201,8 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	part_iter = particle_bins[bn].begin();
 	int n_particles_in_bin = particle_bins[bn].size();
 	cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
+	cout << "LINE 4202 First part, zl: " << (*part_iter).get_zetaLoc() << " sl: " << (*part_iter).getxLoc()
+	     << " dL: " << (*part_iter).getdLoc() << endl;
 	while (part_iter != particle_bins[bn].end())
 	{
 		cell_index = (*part_iter).getCellIndex();
