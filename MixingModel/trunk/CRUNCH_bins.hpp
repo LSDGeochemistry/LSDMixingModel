@@ -49,7 +49,11 @@ class CRUNCH_bins
     void populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
                                   CRN_tParticle_bins& CRN_tPb);
         
-
+    /// @brief this function prints data members to vtk
+    /// @author SMM
+    /// @date 08/08/2014
+    void vtk_cell_printing(int reference_frame_switch);
+    
   protected:
   
     /// The number of bins

@@ -219,3 +219,104 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
 										  
   
 }                                                
+
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//
+// vtk cell printing
+// This function prints the cell data to a vtk file that can be read by prgrams 
+// such as paraview
+//
+// it takes a reference frame switch. If this == 1, then the reference frame
+// is fixed to the surface elevation (it is a plot of depths with the
+// topography removed)
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
+{
+	// now print the vtk file
+	// find the number of particles
+	
+	//cout << "verts size: " << n_verts << endl;
+
+  // check if the data exists
+  if(cell_data_map.find("verts_s") == cell_data_map.end()) 
+  {
+    cout << "CRUNCH_bins::cell_location_to_screen " 
+         << "You haven't got any cell information! " << endl;
+  }  
+  else
+  {
+    // get the number of vertices
+    int n_verts = cell_data_map["verts_z"].size();
+    
+    int n_cells = (n_caz_cells_per_bin+n_pdz_cells_per_bin)*n_bins;
+  
+    // header lines of the vtk file
+  	vtk_cell_out << "# vtk DataFile Version 2.0" << endl 
+            << "Unstructured Grid Ptrack_cells"
+  	        << endl << "ASCII" << endl << endl 
+            << "DATASET UNSTRUCTURED_GRID" << endl
+  	        << "POINTS " << n_verts << " float" << endl;
+  	if (reference_frame_switch == 1)
+  	{
+  		for (int i = 0; i< n_verts; i++)
+  		{
+  			vtk_cell_out << verts_s[i] << " " << -verts_d[i] << " 0.0" <<endl;
+  		}
+  	}
+  	else
+  	{
+  		for (int i = 0; i< n_verts; i++)
+  		{
+  			vtk_cell_out << verts_s[i] << " " << verts_z[i] << " 0.0" <<endl;
+  		}
+  	}
+  
+  	int n_cells = cell_code.size();
+  	vtk_cell_out << endl << "CELLS "<<n_cells << " " << n_cells*5 << endl;
+  	for (int i = 0; i< n_cells; i++)
+  	{
+  		vtk_cell_out << 4 << " " << cell_node1[i] << " " << cell_node2[i] << " "
+  		        << cell_node3[i] << " " << cell_node4[i] << endl;
+  	}
+  
+  	vtk_cell_out << endl << "CELL_TYPES " << n_cells << endl;
+  	for (int i = 0; i< n_cells; i++)
+  	{
+  		vtk_cell_out << "9" << endl;
+  	}
+    
+  	vtk_cell_out << endl << "CELL_DATA " << n_cells << endl;
+  	vtk_cell_out << "SCALARS SOIL_OR_PARENT int 1" << endl 
+                 << "LOOKUP_TABLE default" << endl; 
+    int s_or_p;
+    int cell_counter = 0;
+    for (int bn = 0; bn<n_bin; bn++)
+    {
+      for(int cib = 0; cib< (n_pdz_cells_per_bin+n_caz_cells_per_bin); cib++)
+      {
+        if(cib <n_pdz_cells_per_bin))
+        {
+          s_or_p = 1;
+        }  
+        else
+        {
+          s_or_p = 0;
+        }
+      }
+      vtk_cell_out << s_or_p << endl;
+    }
+    
+  
+  	vtk_cell_out << "SCALARS CELL_NUM int 1" 
+                 << endl << "LOOKUP_TABLE default" << endl;
+  	for (int i = 0; i< n_cells; i++)
+  	{
+  		vtk_cell_out << i <<endl;
+  	}
+
+    // now print out cell properties
+	  vtk_cell_out << "SCALARS mean_age float 1" << endl 
+              << "LOOKUP_TABLE default" << endl;
+}
