@@ -11,6 +11,7 @@
 #include "VolumeParticleInfo.hpp"
 #include "CRN_tParticle_bins.hpp"
 #include "flowtube.hpp"
+#include "CRUNCH_engine.hpp"
 using namespace std;
 
 #ifndef CRUNCH_bins_H
@@ -52,7 +53,38 @@ class CRUNCH_bins
     /// @brief this function prints data members to vtk
     /// @author SMM
     /// @date 08/08/2014
-    void vtk_cell_printing(int reference_frame_switch);
+    void vtk_print_cell_header(int reference_frame_switch, ofstream& vtk_cell_out);
+ 
+    /// @brief this takes a map of vectors and prints them to a VTK cell
+    /// file
+    /// @author SMM
+    /// @date 08/08/2014
+    void vtk_print_cell_from_map_of_vectors(ofstream& vtk_cell_out, 
+                                       map<string, vector<double> >& data_map);
+                                       
+    /// @brief This function prints the vtk files for the solid state
+    /// properties of the minerals. Before you run this you need to 
+    /// print the vtk_print_cell_header function (although this
+    /// will be bundled in a wrapper later)
+    /// @author SMM
+    /// @date 08/08/2014
+    void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);                                  
+    
+    
+    /// @brief this function takes vectors of list vecs and reorganises them
+    /// into vectors so that it is easier to plot the data to cells
+    /// it also places them in a map container so the key to the map
+    /// is used to name the variable in the vtk files
+    /// @authors SMM
+    /// @date 08/08/2014
+    map< string,vector<double> > parse_vec_list_vec_to_vec_map(string master_name, 
+                            list<string> element_list,
+                            vector< list < vector<double> > >& vlv);
+                            
+    /// @brief this function takes a VolumeParticleInfo file and 
+    /// gets a list of the minerals as a list<string>. This is then used
+    /// for printing the parameters to vtk files
+    list<string> get_names_of_minerals();                        
     
   protected:
   
@@ -93,6 +125,20 @@ class CRUNCH_bins
  	  vector< list< vector<double> > > vec_mineral_ssa_old;
  	  vector< list< vector<double> > > vec_mineral_mass_old;
  	  vector< list< vector<double> > > vec_mineral_surface_area_old;       
+
+    // vecvec to hold details about columns (that is, these are not mineral
+    // or species specific)
+	  vector< vector<double> > vec_spacings;
+	  vector< vector<double> > vec_CRUNCH_tdepths;
+	  vector< vector<double> > vec_CRUNCH_bdepths;
+	  vector< vector<double> > vec_pH_vec;
+	  
+	  // these are vlvs to hold information from crunch
+    vector< list< vector<double> > > vec_new_conc;
+	  vector< list< vector<double> > > vec_mineral_vfracs_new;
+	  vector< list< vector<double> > > vec_new_min_ssa;
+	  vector< list< vector<double> > > vec_new_rxn_rates;
+
 
 	private:
 	  void create();

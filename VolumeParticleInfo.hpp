@@ -19,6 +19,7 @@ class VolumeParticleInfo
     int get_n_sizes()					{ return n_sizes; }
     double get_ParticleTargetMass()		{ return ParticleTargetMass; }
     string get_type_name(int index);
+    
     double get_type_density(int index);
 
  private:

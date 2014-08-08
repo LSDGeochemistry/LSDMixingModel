@@ -14,8 +14,8 @@ using namespace std;
 int main ()
 {
 	//long seed = time(NULL);               // seed for random number generator
-	//string run_name = "c:/code/Mixing_paper/CRUNCH_column/run1/run1";
-	string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
+	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
+	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// set up the infiles
@@ -536,6 +536,20 @@ int main ()
     int bin = 3;
     Geochem_bins.cell_location_to_screen(bin, i);
   }
+  
+  // now test the vtk initialisation
+  ofstream vtk_cell_out;
+  vtk_cell_out.open("Test_vtk_cell.vtk");
+  int reference_frame_switch = 1;
+  Geochem_bins.vtk_print_cell_header(reference_frame_switch, vtk_cell_out);
+  
+  // test parsing of mineral names
+  list<string> mineral_names = Geochem_bins.get_names_of_minerals(); 
+  
+  // now test the vector mapper
+  
+  
+  
 /*
 	vector<double> d_top_locs;
 	vector<double> d_bottom_locs;
