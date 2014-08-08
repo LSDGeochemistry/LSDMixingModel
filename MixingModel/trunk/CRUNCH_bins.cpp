@@ -17,6 +17,7 @@
 #include "CRUNCH_bins.hpp"
 #include "VolumeParticleInfo.hpp"
 #include "CRN_tParticle_bins.hpp"
+#include "CRUNCH_engine.hpp"
 using namespace std;
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -232,7 +233,8 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
 // topography removed)
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
+void CRUNCH_bins::vtk_print_cell_header(int reference_frame_switch, 
+                                     ofstream& vtk_cell_out)
 {
 	// now print the vtk file
 	// find the number of particles
@@ -249,6 +251,16 @@ void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
   {
     // get the number of vertices
     int n_verts = cell_data_map["verts_z"].size();
+    vector<double> verts_s = cell_data_map["verts_s"];
+    vector<double> verts_d = cell_data_map["verts_d"];
+    vector<double> verts_z = cell_data_map["verts_z"];
+    
+    // now get the indices into the cell nodes
+    vector<int> cell_node1 = cell_index_map["cell_node1"];
+    vector<int> cell_node2 = cell_index_map["cell_node2"];
+    vector<int> cell_node3 = cell_index_map["cell_node3"];
+    vector<int> cell_node4 = cell_index_map["cell_node4"];
+    
     
     int n_cells = (n_caz_cells_per_bin+n_pdz_cells_per_bin)*n_bins;
   
@@ -272,8 +284,7 @@ void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
   			vtk_cell_out << verts_s[i] << " " << verts_z[i] << " 0.0" <<endl;
   		}
   	}
-  
-  	int n_cells = cell_code.size();
+
   	vtk_cell_out << endl << "CELLS "<<n_cells << " " << n_cells*5 << endl;
   	for (int i = 0; i< n_cells; i++)
   	{
@@ -292,11 +303,11 @@ void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
                  << "LOOKUP_TABLE default" << endl; 
     int s_or_p;
     int cell_counter = 0;
-    for (int bn = 0; bn<n_bin; bn++)
+    for (int bn = 0; bn<n_bins; bn++)
     {
       for(int cib = 0; cib< (n_pdz_cells_per_bin+n_caz_cells_per_bin); cib++)
       {
-        if(cib <n_pdz_cells_per_bin))
+        if(cib <n_pdz_cells_per_bin)
         {
           s_or_p = 1;
         }  
@@ -304,8 +315,9 @@ void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
         {
           s_or_p = 0;
         }
+        vtk_cell_out << s_or_p << endl;
       }
-      vtk_cell_out << s_or_p << endl;
+      
     }
     
   
@@ -315,8 +327,217 @@ void CRUNCH_bins::vtk_cell_printing(int reference_frame_switch)
   	{
   		vtk_cell_out << i <<endl;
   	}
-
-    // now print out cell properties
-	  vtk_cell_out << "SCALARS mean_age float 1" << endl 
-              << "LOOKUP_TABLE default" << endl;
+  }
 }
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// This prints data from a map to a vtk file
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_print_cell_from_map_of_vectors(ofstream& vtk_cell_out, 
+                                       map<string, vector<double> >& data_map)
+{
+  int n_cells_in_bin = n_pdz_cells_per_bin+n_caz_cells_per_bin;
+  
+  map<string, vector<double> >::iterator map_iter;  // the iterator for the map object
+  
+  map_iter = data_map.begin();
+  
+  while(map_iter != data_map.end())
+  {
+    string this_key = map_iter->first;
+    vector<double> this_data = map_iter->second;
+    
+    if(total_cells != int(this_data.size()))
+    {
+      cout << "LINE 350 trying to print map data but the data is not the same "
+          << "size as the number of cells" << endl;
+    }
+    else
+    {
+      vtk_cell_out << "SCALARS " << this_key << " float 1" << endl 
+                   << "LOOKUP_TABLE default" << endl;
+       for(int cn = 0; cn<total_cells; cn++)
+       {
+         vtk_cell_out << this_data[cn] << endl;
+       }                                
+    }
+    map_iter++;
+  }   
+}                                                    
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This function parses specific vec list vecs
+// for vtk printing
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
+{
+  // test if the geochem data has been derived
+  //int n_cells_in_bin = n_pdz_cells_in_bin+n_caz_cells_in_bin;
+  //list< vector<double> > this_lv = vec_mineral_vfracs_old[0];
+  //vector<double> = 
+  
+  // get the names of the minerals
+  list<string> mineral_names = get_names_of_minerals();
+  
+  // get the maps
+  string mvname = "Mineral_volume_fractions"; 
+  map< string, vector<double> > mvfracs =  parse_vec_list_vec_to_vec_map(mvname, 
+                            mineral_names, vec_mineral_vfracs_old);
+  string mssaname = "Mineral_specific_surface_area_m2perg"; 
+  map< string, vector<double> > mssafracs =  parse_vec_list_vec_to_vec_map(mssaname, 
+                            mineral_names, vec_mineral_ssa_old);
+  string mmname = "Mineral_mass_kg"; 
+  map< string, vector<double> > mmfracs =  parse_vec_list_vec_to_vec_map(mmname, 
+                            mineral_names, vec_mineral_mass_old);
+  string msaname = "Mineral_surface_area_m2"; 
+  map< string, vector<double> > msafracs =  parse_vec_list_vec_to_vec_map(msaname, 
+                            mineral_names, vec_mineral_surface_area_old);                                                                                    
+
+  // now print the map data to the vtk file
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mvfracs);
+  
+  
+  
+
+}
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This function takes a vector list vector and converts its contents
+// to a map of vectors. Each vector contains data from the lists
+// with elements correspond to a cell.
+//
+// This function is mostly used with the vtk printing so you can see all the
+// elements that are printed to the vtk files.
+//
+// The rationale for using a map is to be able to print to 
+// the vtk file with a name of a field 
+// 
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string master_name, 
+                            list<string> element_list,
+                            vector< list < vector<double> > >& vlv)
+{
+  // this is the map that stores the data
+  map<string, vector<double> > data_map;
+  
+  
+  if (int(vlv.size()) != n_bins)
+  {
+    cout << "Parsing vlv to map, your vlv size does not correspont to the number "
+         << "of bins" << endl; 
+  }
+  else
+  {
+    // get the numer of elements in the lists
+    int n_names = int(element_list.size());
+    int n_elements_in_list = int(vlv[0].size());
+    
+    list< string >::iterator str_iter;	// list iterator for the string list
+       
+    // make sure the naming vector has the right number of elements
+    string uscore = "_";   
+    if (n_names != n_elements_in_list)
+    {
+      cout << "Parsing vlv to map, list names don't seem to correspond to " 
+           << "elements in list." << endl;
+      cout << "creating a stand in list" << endl;
+      list<string> number_list;
+      for(int i = 0; i<n_elements_in_list; i++)
+      {
+        string number_for_list = itoa(i);
+        number_for_list =  master_name+uscore+number_for_list;
+        number_list.push_back( number_for_list );
+      }     
+      element_list = number_list;
+    }
+    else
+    {
+    
+      str_iter = element_list.begin();
+      while(str_iter != element_list.end())
+      {
+        string this_name = master_name+uscore+*str_iter;
+        *str_iter = this_name;
+        str_iter++;
+      }      
+    }
+    
+    // now you need to populate the map with empty vectors
+    
+    vector<double> empty_vec;
+    str_iter = element_list.begin();
+    while(str_iter != element_list.end())
+    {
+      cout << "CRUNCH_bins, adding key: " << *str_iter << endl;
+      data_map[ *str_iter ] =  empty_vec;
+      str_iter++;
+    }
+       
+    // now go through the lvl, appending the vectors
+	  list< vector<double> >::iterator vec_iter;	// list iterator for the vector
+    
+    // loop through the bins    
+    for (int bn = 0; bn < n_bins; bn++ )
+    {
+      // now loop through the elements
+      vec_iter = vlv[bn].begin();
+      str_iter = element_list.begin();
+      while(vec_iter != vlv[bn].end())
+      {
+        // append the vector to the vector in the map
+        vector<double> this_vec = *vec_iter;
+        vector<double> map_vec = data_map[ *str_iter ];
+        map_vec.insert(map_vec.end(), this_vec.begin(), this_vec.end());
+        data_map[ *str_iter ] = map_vec;
+        
+        // increment the iterators
+        vec_iter++;
+        str_iter++;
+      } 
+    }                         
+  }
+
+  // check the contents of the map
+  map< string, vector<double> >::iterator map_iter;
+  
+  map_iter = data_map.begin();
+  while(map_iter != data_map.end())
+  {
+    vector<double> thisvec = map_iter->second;
+    cout << "key is: " << map_iter->first 
+         << " and size is " <<  int(thisvec.size()) << endl;  
+  }
+
+  return data_map;
+}                            
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//
+// This returns a list of the particle names
+//  used for printing to vtk
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+list<string> CRUNCH_bins::get_names_of_minerals()
+{
+  int n_types = vpi.get_n_types();
+  
+  list<string> names_of_minerals;
+  
+  for(int i = 0; i<n_types; i++)
+  {
+    //cout << "Line 463, mineral name is: " <<  vpi.get_type_name(i) << endl;
+    names_of_minerals.push_back( vpi.get_type_name(i));
+  }
+  return names_of_minerals;
+}
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
