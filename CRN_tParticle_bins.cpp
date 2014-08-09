@@ -4128,9 +4128,13 @@ void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ
 // particles reside) and the list elements are for the different types.
 //
 // !!!NOTE!!! This function resets the list vecs and returns new ones.
+// It is an extrmeley stupid way to go about this since the vectors are storing
+// lots of zeros which are not ever used, but I don't have the time to 
+// fix this. SMM 09/08/2014
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PDZ_intervals, int n_CAZ_intervals,
+void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PDZ_intervals, 
+                  int n_CAZ_intervals,
 									double bottom_depth, vector<double> verts_s, vector<double> verts_z,
 									vector<double>& verts_d,
 									vector<int>& cell_node1, vector<int>& cell_node2,
@@ -4361,6 +4365,8 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		}
 
 	}
+	
+	
 
 	// update the listvecs
 	mineral_vpercents = volume_percents_of_types_in_cells;
@@ -4401,6 +4407,10 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 // FIX: the weathering rate is calculated based _only_ 
 // upon the precision returned by CRUNCH
 //
+// NOTE The list_vecs passed to this function store vectors that have indices to 
+// ALL the cells, not just those cells in the bin. This is actually extremely stupid 
+// since the vectors are replaced each timestep, but it will take too long at the moment
+// to fix this!
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_intervals, 
                   int n_CAZ_intervals,
@@ -4429,7 +4439,7 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 	list< vector<double> >::iterator loss_per_surface_area_iter;
 	list<CRN_tParticle>::iterator    part_iter;	// list iterator
 
-	// get some information about the cells so that the list vecs can be built
+	// get some information about the cells so that the list vecs can be built  
 	int n_cells = (n_PDZ_intervals+n_CAZ_intervals)*n_bins;
 	int starting_cell = bn*(n_PDZ_intervals+n_CAZ_intervals);
 	int ending_cell = (bn+1)*(n_PDZ_intervals+n_CAZ_intervals);

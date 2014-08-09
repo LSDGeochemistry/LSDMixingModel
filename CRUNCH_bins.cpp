@@ -387,7 +387,7 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
   list<string> mineral_names = get_names_of_minerals();
   
   // get the maps
-  string mvname = "Mineral_volume_fractions"; 
+  string mvname = "Mineral_volume_percents"; 
   map< string, vector<double> > mvfracs =  parse_vec_list_vec_to_vec_map(mvname, 
                             mineral_names, vec_mineral_vfracs_old);
   string mssaname = "Mineral_specific_surface_area_m2perg"; 
@@ -404,8 +404,6 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mvfracs);
   
   
-  
-
 }
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -484,10 +482,16 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
        
     // now go through the lvl, appending the vectors
 	  list< vector<double> >::iterator vec_iter;	// list iterator for the vector
+	  vector<double>::iterator element_iter_start;      // this is used to modify elements of the resulting vectors
+    vector<double>::iterator element_iter_end; 
     
     // loop through the bins    
     for (int bn = 0; bn < n_bins; bn++ )
     {
+    
+      // get some information about the number of cells
+    	int starting_cell = bn*(n_pdz_cells_per_bin+n_caz_cells_per_bin);
+
       // now loop through the elements
       vec_iter = vlv[bn].begin();
       str_iter = element_list.begin();
@@ -495,8 +499,15 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
       {
         // append the vector to the vector in the map
         vector<double> this_vec = *vec_iter;
+        element_iter_start =  this_vec.begin()+starting_cell;
+        element_iter_end = this_vec.begin()+starting_cell+n_pdz_cells_per_bin+n_caz_cells_per_bin;
+        vector<double> vec_with_correct_cells;
+        vec_with_correct_cells.assign (element_iter_start,element_iter_end);
+               
+        cout << "bn: " << bn << " mineral: " <<  *str_iter << " vector size: " 
+             << vec_with_correct_cells.size() << endl;
         vector<double> map_vec = data_map[ *str_iter ];
-        map_vec.insert(map_vec.end(), this_vec.begin(), this_vec.end());
+        map_vec.insert(map_vec.end(), vec_with_correct_cells.begin(), vec_with_correct_cells.end());
         data_map[ *str_iter ] = map_vec;
         
         // increment the iterators
@@ -514,7 +525,9 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
   {
     vector<double> thisvec = map_iter->second;
     cout << "key is: " << map_iter->first 
-         << " and size is " <<  int(thisvec.size()) << endl;  
+         << " and size is " <<  int(thisvec.size())  
+         << " and n total cells are: " << total_cells << endl;  
+    map_iter++;
   }
 
   return data_map;
