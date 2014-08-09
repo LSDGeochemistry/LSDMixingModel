@@ -518,8 +518,8 @@ int main ()
 
 
 	//int n_bins = CRN_tpb.get_n_bins();
-	int n_PDZ_intervals = 2;
-	int n_CAZ_intervals = 4;
+	int n_PDZ_intervals = 1;
+	int n_CAZ_intervals = 3;
 	double bottom_depth = 2.0; 
 	int tot_intervals = n_PDZ_intervals+n_CAZ_intervals;
 
@@ -544,10 +544,10 @@ int main ()
   Geochem_bins.vtk_print_cell_header(reference_frame_switch, vtk_cell_out);
   
   // test parsing of mineral names
-  list<string> mineral_names = Geochem_bins.get_names_of_minerals(); 
+  //list<string> mineral_names = Geochem_bins.get_names_of_minerals(); 
   
   // now test the vector mapper
-  
+  Geochem_bins.vtk_print_cell_mineral_solid_state(vtk_cell_out);
   
   
 /*
