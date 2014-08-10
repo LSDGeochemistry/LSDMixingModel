@@ -23,6 +23,7 @@ class CRUNCH_engine
 
 	// reading data from CRUNCH output
 	void parse_CRUNCH_files(int n_ts, int& n_conditions,
+	          int this_bin, int n_bins, int n_cells_in_bin,
 						vector<double>& pH_values, vector<double>& spacings,
 						vector<double>& top_depths, vector<double>& bottom_depths,
 						list< vector<double> >& concentrations, list< vector<double> >& mineral_vpercents,
