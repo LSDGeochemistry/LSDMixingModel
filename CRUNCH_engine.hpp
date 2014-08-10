@@ -53,10 +53,13 @@ class CRUNCH_engine
 
 	// get_mineral_properties: loads things like molar weight, etc;
 	void get_mineral_properties();
+	
+	// gets the names of the primary species
+	list<string> get_primary_species_names()   { return p_species_names; }
 
 
 	// this calls crunch. The infile must exist!
-	void call_CRUNCH();
+	void call_CRUNCH(int bin_number);
 	
 	// this little script copies the output of crunch to the run folder
 	// n_ts is the number of the timestep
