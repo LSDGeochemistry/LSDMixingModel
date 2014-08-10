@@ -34,8 +34,8 @@ class CRUNCH_engine
 	// this gets information about the parent material (mostly for getting the ssa)
 	void parse_parent_material_file();
 
-  void create_CRUNCH_in_file(int& n_conditions,
-						vector<double>& pH_values,
+  void create_CRUNCH_in_file(int& n_conditions, int n_bin,
+						int cells_in_bin, vector<double>& pH_values,
 						vector<double>& top_depths,vector<double>& bottom_depths,
 						list< vector<double> >& concentrations, list< vector<double> >& mineral_vpercents,
 						list< vector<double> >& mineral_ssa);

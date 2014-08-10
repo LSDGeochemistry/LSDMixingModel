@@ -343,6 +343,7 @@ void CRUNCH_engine::modify_CRUNCH_value(string value_name, double value)
 // zones of pdz and caz.
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
+            int this_bin, int n_bins, int n_cells_in_bin
 						vector<double>& pH_values, vector<double>& spacings,
 						vector<double>& top_depths, vector<double>& bottom_depths,
 						list< vector<double> >& concentrations, list< vector<double> >& mineral_vpercents,
@@ -352,6 +353,13 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	vector<double> depth;
 	vector<double> empty_vec;
 	list< vector<double> > empty_list_vec;
+	
+	// the mineral vecs are treated differently from concentration vecs since they
+	// are indexed by cell.
+	// This will need to change later since it is inefficient but no time for that
+	// now SMM 10/08/2014
+	int total_cells = n_bins*n_cells_in_bin;
+	vector<double> mineral_empty_vec(total_cells,0.0);
 
 	pH_values = empty_vec;
 	spacings = empty_vec;
@@ -371,8 +379,8 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	int n_minerals = mineral_names.size();
 	for(int i = 0; i<n_minerals; i++)
 	{
-		mineral_vpercents.push_back(empty_vec);
-		mineral_ssa.push_back(empty_vec);
+		mineral_vpercents.push_back(mineral_empty_vec);
+		mineral_ssa.push_back(mineral_empty_vec);
 	}
 
 	// first set up the files
@@ -476,9 +484,11 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		gcounter++;
 	}
 
-	//cout << "Line 352 did concetrations\n";
+	//cout << "Line 352 did concentrations\n";
 
 	// now get the mineral volume fractions
+	int starting_cell = this_bin*n_cells_in_bin;
+	
 	volume_in.getline(data_line,5000);
 	volume_in.getline(data_line,5000);
 	volume_in.getline(data_line,5000);
@@ -488,12 +498,14 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		temp_string = data_line;
 		split_string(temp_string, delim, line_words);
 
-		lv_iter = mineral_vpercents.begin();
+    // the iterator has to be advanced to the starting cell
+		lv_iter = mineral_vpercents.begin()+starting_cell;
+		
 		int counter = 1;
 		while(lv_iter!=mineral_vpercents.end() )
 		{
 			//cout << "pushing back: " << atof(line_words[counter].c_str() ) << endl;
-			(*lv_iter).push_back( atof(line_words[counter].c_str() ) );
+			(*lv_iter) = atof(line_words[counter].c_str() );
 			lv_iter++;
 			counter++;
 		}
@@ -511,11 +523,13 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		temp_string = data_line;
 		split_string(temp_string, delim, line_words);
 
-		lv_iter = mineral_ssa.begin();
+    // the iterator has to be advanced to the starting cell
+		lv_iter = mineral_ssa.begin()+starting_cell;
+		
 		int counter = 1;
 		while(lv_iter!=mineral_ssa.end() )
 		{
-			(*lv_iter).push_back( atof(line_words[counter].c_str() ) );
+			(*lv_iter) = atof(line_words[counter].c_str() );
 			lv_iter++;
 			counter++;
 		}
@@ -524,7 +538,6 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	//cout << "Line 392 did mineral bulk surface area\n";
 
 	// now get the rates
-	// now get the mineral surface areas
 	rate_in.getline(data_line,5000);
 	rate_in.getline(data_line,5000);
 	rate_in.getline(data_line,5000);
@@ -822,8 +835,8 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 // or a combination of a crunch run (to get solute concentrations) and a particle
 // run
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
-						vector<double>& pH_values,
+void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions, int n_bin,
+						int cells_in_bin, vector<double>& pH_values,
 						vector<double>& top_depths,vector<double>& bottom_depths,
 						list< vector<double> >& concentrations, list< vector<double> >& mineral_vpercents,
 						list< vector<double> >& mineral_ssa)
@@ -833,7 +846,9 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 	ofstream CRUNCH_write;
 	CRUNCH_write.precision(7);			// this precision is specifically chosen to
 										// match that of CRUNCH in and out files.
-	string cmodel_name = RUN_path+"column_model.in";									
+  string bin_name = itoa(n_bin);
+  bin_name = "_bin"+bin_name;
+	string cmodel_name = RUN_path+"column_model"+bin_name+".in";									
 	CRUNCH_write.open(cmodel_name.c_str());
 
 	// you need to sweep through the list of strings associated with the master
@@ -933,8 +948,13 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 	list< vector<double> >::iterator vssa_iter;
 	// now loop through the conditions, printing each one
 
+
+  int this_cell;
+  int starting_cell = n_bin*cells_in_bin;
 	for (int i = 0; i<n_conditions; i++)
 	{
+	
+	  this_cell = i+starting_cell;
 		CRUNCH_write << "Condition " << condition_names[i] << endl;
 		CRUNCH_write << temperature_line << endl;
 		CRUNCH_write << density_line << endl;
@@ -958,6 +978,9 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 		}
 
 		// now for the minerals
+		// NOTE mineral percents are done by cell, whereas concentrations (above) 
+		// are done by the number of the cell withing the column, with inices
+		// from 0 to n_cells_in_bin
 		l_iter = mineral_names.begin();
 		v_iter = mineral_vpercents.begin();
 		vssa_iter = mineral_ssa.begin();
@@ -966,7 +989,7 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions,
 		while( l_iter != mineral_names.end())
 		{
 			// note the volume needs to be divided by 100 because it is reported in %
-			CRUNCH_write << (*l_iter) << " " << ((*v_iter)[i])*0.01 << " ssa " << (*vssa_iter)[i] << endl;
+			CRUNCH_write << (*l_iter) << " " << ((*v_iter)[this_cell])*0.01 << " ssa " << (*vssa_iter)[this_cell] << endl;
 			l_iter++;
 			v_iter++;
 			vssa_iter++;
