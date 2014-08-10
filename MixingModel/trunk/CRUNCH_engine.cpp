@@ -55,10 +55,12 @@ void CRUNCH_engine::create(string crunch_path, string run_path, string master_fi
 
 	ifstream master_in;
 	string this_master = RUN_path+master_filename;
+	
+	cout << "This master filename with full path is: " <<this_master << endl;
 	master_in.open(this_master.c_str());
 	string stemp;
 	char temp[500];
-
+  
 	list<string> master_read;
 	while(master_in.getline(temp,500))
 	{
@@ -488,6 +490,7 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 
 	// now get the mineral volume fractions
 	int starting_cell = this_bin*n_cells_in_bin;
+	int cell = starting_cell;
 	
 	volume_in.getline(data_line,5000);
 	volume_in.getline(data_line,5000);
@@ -499,22 +502,25 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		split_string(temp_string, delim, line_words);
 
     // the iterator has to be advanced to the starting cell
-		lv_iter = mineral_vpercents.begin()+starting_cell;
+		lv_iter = mineral_vpercents.begin();
 		
 		int counter = 1;
 		while(lv_iter!=mineral_vpercents.end() )
 		{
 			//cout << "pushing back: " << atof(line_words[counter].c_str() ) << endl;
-			(*lv_iter) = atof(line_words[counter].c_str() );
+			(*lv_iter)[cell] = atof(line_words[counter].c_str() );
 			lv_iter++;
 			counter++;
 		}
 		line_words = empty_str_vec;
+		cell++;
 		//cout << endl << endl;
 	}
 	//cout << "Line 372 did volumes\n";
 
 	// now get the mineral surface areas
+	cell = starting_cell;
+		
 	area_in.getline(data_line,5000);
 	area_in.getline(data_line,5000);
 	area_in.getline(data_line,5000);
@@ -524,16 +530,17 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		split_string(temp_string, delim, line_words);
 
     // the iterator has to be advanced to the starting cell
-		lv_iter = mineral_ssa.begin()+starting_cell;
+		lv_iter = mineral_ssa.begin();
 		
 		int counter = 1;
 		while(lv_iter!=mineral_ssa.end() )
 		{
-			(*lv_iter) = atof(line_words[counter].c_str() );
+			(*lv_iter)[cell] = atof(line_words[counter].c_str() );
 			lv_iter++;
 			counter++;
 		}
 		line_words = empty_str_vec;
+		cell++;
 	}
 	//cout << "Line 392 did mineral bulk surface area\n";
 
@@ -1025,7 +1032,7 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions, int n_bin,
 
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-void CRUNCH_engine::call_CRUNCH()
+void CRUNCH_engine::call_CRUNCH(int bin_number)
 {
 	
   // this sets up the file for running crunch. NOTE: crunch has limited 
@@ -1033,7 +1040,8 @@ void CRUNCH_engine::call_CRUNCH()
   // in the same directory as the crunch executable. 
   ofstream pest_out;
 	string full_pest_name = "PestControl.ant";
-	string pest_name = RUN_path+ "column_model.in";
+	string bin_name = "_bin"+itoa(bin_number);
+	string pest_name = RUN_path+ "column_model"+bin_name+".in";
 	pest_out.open(full_pest_name.c_str());
 	pest_out << pest_name << endl;
 	pest_out.close();
@@ -1170,7 +1178,6 @@ void CRUNCH_engine::get_mineral_properties()
 		}
 		l_iter++;
 	}
-	cout << "database name is: " << dbase_fname << endl;
 	
 	// update the dbase so that it looks in the crunch folder
 	string dbase_fname_with_path = dbase_fname;
@@ -1178,19 +1185,26 @@ void CRUNCH_engine::get_mineral_properties()
 	// load the database into a list
 	list<string> dbase_list;
 	ifstream dbase_in;
+	cout << "LINE 1189 opening file: " << dbase_fname_with_path << endl;
 	dbase_in.open(dbase_fname_with_path.c_str());
+	//cout << "Line 1191, opened file" << endl;
 	char dbase_line[5000];
 	string linestr;
 	// then load in the database file into a list of strings
 	while(dbase_in.getline(dbase_line,5000))
 	{
+	  //cout << "Line 1195, dbase line is: " << dbase_line << endl;
 		linestr = dbase_line;
 		dbase_list.push_back(linestr);
 	}
 	dbase_in.close();
+	cout << "Line 1202, got dbase" << endl;
 
 	// first get the number of temperature points
 	l_iter = dbase_list.begin();
+	
+	cout << "LINE 1203, dbase first line is: " << *l_iter << endl;
+	
 	found = string::npos;
 	int n_temp_points;
 	string temp_p = "temperature";
@@ -1205,7 +1219,7 @@ void CRUNCH_engine::get_mineral_properties()
 		}
 		l_iter++;
 	}
-	//cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
+	cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
 
 	// now loop through mineral names getting the database information for each name in turn
 	int n_species;
@@ -1222,9 +1236,9 @@ void CRUNCH_engine::get_mineral_properties()
 				vector<string> line_words;
 				split_string((*l_iter), delim, line_words);
 
-				//cout << "LINE 892 data line is: " << (*l_iter) << endl;
+				cout << "LINE 892 data line is: " << (*l_iter) << endl;
 				n_species = atoi(line_words[2].c_str() );
-				//cout << "line 912; number of species is: " << n_species << endl;
+				cout << "line 912; number of species is: " << n_species << endl;
 				int mwgt = 3+2*n_species+n_temp_points;
 				molar_weight.push_back( atof(line_words[mwgt].c_str() ));
 				molar_volume.push_back( atof(line_words[1].c_str() ) );

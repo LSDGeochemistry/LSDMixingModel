@@ -49,7 +49,15 @@ class CRUNCH_bins
     /// @date 07/08/2014
     void populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
                                   CRN_tParticle_bins& CRN_tPb);
-        
+
+    /// @brief This loops through the bins generating a CrunchFlow .in
+    /// file for each bin
+    /// @author SMM
+    /// @date 10/08/2014
+    void generate_CRUNCH_in_files(CRUNCH_engine& Ceng, flowtube& ft, 
+                                   CRN_tParticle_bins& CRN_tPb);
+
+       
     /// @brief this function prints data members to vtk
     /// @author SMM
     /// @date 08/08/2014
@@ -75,16 +83,31 @@ class CRUNCH_bins
     /// into vectors so that it is easier to plot the data to cells
     /// it also places them in a map container so the key to the map
     /// is used to name the variable in the vtk files
-    /// @authors SMM
+    /// @author SMM
     /// @date 08/08/2014
     map< string,vector<double> > parse_vec_list_vec_to_vec_map(string master_name, 
                             list<string> element_list,
                             vector< list < vector<double> > >& vlv);
+
+    /// @brief This function gets data from a CRUNCH formatted list vec. 
+    /// This style of list vec only has data fro the cells in the bin. 
+    /// @author SMM
+    /// @date 10/08/2014
+    map< string, vector<double> > parse_CRUNCH_vec_list_vec_to_vec_map(string master_name, 
+                            list<string> element_list,
+                            vector< list < vector<double> > >& vlv);
                             
-    /// @brief this function takes a VolumeParticleInfo file and 
-    /// gets a list of the minerals as a list<string>. This is then used
+    /// @brief gets a list of the minerals as a list<string>. This is then used
     /// for printing the parameters to vtk files
-    list<string> get_names_of_minerals();                        
+    /// @author SMM
+    /// @date 08/08/2014
+    list<string> get_names_of_minerals();     
+    
+    /// @brief this function gets the names of the primary species in the 
+    /// CRUNCH simulation. These are taken from the CRUNCH_engine object
+    /// @author SMM
+    /// @date 10/08/2014
+    list<string> get_names_of_primary_species(CRUNCH_engine& cEng);                    
     
   protected:
   
@@ -121,7 +144,7 @@ class CRUNCH_bins
     map< string, vector<int> > cell_index_map; 
     
     // vec list vecs to hold mineral information
-	  vector< list< vector<double> > > vec_mineral_vfracs_old;
+	  vector< list< vector<double> > > vec_mineral_vpercents_old;
  	  vector< list< vector<double> > > vec_mineral_ssa_old;
  	  vector< list< vector<double> > > vec_mineral_mass_old;
  	  vector< list< vector<double> > > vec_mineral_surface_area_old;       
@@ -135,7 +158,7 @@ class CRUNCH_bins
 	  
 	  // these are vlvs to hold information from crunch
     vector< list< vector<double> > > vec_new_conc;
-	  vector< list< vector<double> > > vec_mineral_vfracs_new;
+	  vector< list< vector<double> > > vec_mineral_vpercents_new;
 	  vector< list< vector<double> > > vec_new_min_ssa;
 	  vector< list< vector<double> > > vec_new_rxn_rates;
 

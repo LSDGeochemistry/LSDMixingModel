@@ -549,7 +549,19 @@ int main ()
   // now test the vector mapper
   Geochem_bins.vtk_print_cell_mineral_solid_state(vtk_cell_out);
   
+  // test the crunch engine
+	string master_fname = "master_crunch.in";
+	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
+	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
+
+	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
+	
+	// now test the primary species
+	Geochem_bins.get_names_of_primary_species(Ceng);
   
+  Geochem_bins.generate_CRUNCH_in_files(Ceng, ft_test, CRN_tpb);
+  
+    
 /*
 	vector<double> d_top_locs;
 	vector<double> d_bottom_locs;
