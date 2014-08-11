@@ -395,6 +395,45 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
 }
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This function parses specific vec list vecs
+// for vtk printing
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out, 
+                     CRUNCH_engine& Ceng)
+{
+  // test if the geochem data has been derived
+  //int n_cells_in_bin = n_pdz_cells_in_bin+n_caz_cells_in_bin;
+  //list< vector<double> > this_lv = vec_mineral_vpercents_old[0];
+  //vector<double> = 
+  
+  // get the names of the minerals
+  list<string> mineral_names = get_names_of_minerals();
+  
+  // get the names of the primary species
+  list<string> pspecies_names = get_names_of_primary_species(Ceng);
+  
+  // get the maps
+  string scname = "Solute_Concentration"; 
+  map< string, vector<double> > solute_conc =  
+            parse_CRUNCH_vec_list_vec_to_vec_map(scname, 
+                            pspecies_names, vec_new_conc);
+  string rxnname = "Solute_Concentration"; 
+  map< string, vector<double> > rxn_rates =  
+            parse_CRUNCH_vec_list_vec_to_vec_map(rxnname, 
+                            mineral_names, vec_new_rxn_rates);                                                                                  
+
+  // now print the map data to the vtk file
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, solute_conc);
+  
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, rxn_rates);
+  
+  
+}
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //
