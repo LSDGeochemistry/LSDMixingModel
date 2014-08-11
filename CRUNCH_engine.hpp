@@ -67,9 +67,18 @@ class CRUNCH_engine
 	// this calls crunch. The infile must exist!
 	void call_CRUNCH(int bin_number);
 	
-	// this little script copies the output of crunch to the run folder
-	// n_ts is the number of the timestep
+	/// @brief this little script copies the output of crunch to the run folder
+	/// @param n_ts is the number of the timestep
+	/// @author SMM
+	/// @date 05/08/2014
   void move_CRUNCH_output_files(int n_ts);	
+
+  /// @brief this little script copies the output of crunch to the run folder
+  /// it also appends the bin number to the filename
+	/// @param n_ts is the number of the timestep
+	/// @author SMM
+	/// @date 05/08/2014
+  void move_CRUNCH_output_files_with_bin_number(int n_ts, int bn);
 
 	private:
 	void create();
