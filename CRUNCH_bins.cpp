@@ -431,7 +431,7 @@ void CRUNCH_bins::generate_CRUNCH_in_files(CRUNCH_engine& Ceng,
   {
     // get the top and bottom depths in this bin
     CRN_tPb.partition_bins_into_cells(bn, ft,n_pdz_cells_per_bin, 
-										n_pdz_cells_per_bin,bottom_depth,d_top_locs,d_bottom_locs);
+										n_caz_cells_per_bin,bottom_depth,d_top_locs,d_bottom_locs);
 
 	  // get the pH vector (note: this is a stand in: will get it from the 
     // parsed data files later. SMM 10/08/2014

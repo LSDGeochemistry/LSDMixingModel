@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <fstream>
 #include <cstdlib>
+#include <cctype>
 #include <math.h>
 #include "CRUNCH_engine.hpp"
 #include "mathutil.hpp"
@@ -75,14 +76,75 @@ void CRUNCH_engine::create(string crunch_path, string run_path, string master_fi
 	get_constant_conditions();
 	//parse_parent_material_file();
 	get_mineral_properties();
+	remove_control_characters_from_species_and_minerals();
   cout << "Finished constructing crunch engine object." << endl;
 }
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// 
+// This function removes control characters from the species and mineral lists
+//
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_engine::remove_control_characters_from_species_and_minerals()
+{
+
+  // loop through this list removing any control characters
+  list<string>::iterator liter;
+  liter = p_species_names.begin();
+  while(liter!=p_species_names.end())
+  {
+    string this_string = *liter;
+    
+    int len =  this_string.length();
+    if(len != 0)
+    {
+      if (iscntrl(this_string[len-1]))
+      {
+        //cout << "The last item in the species is a control character; removing!" << endl;
+        this_string.erase(len-1);
+      }
+    }
+    else
+    {
+      cout << "Warning, getting species from CRUNCH_bins, but species "
+           << "list contains and empty string." << endl;
+    } 
+    *liter = this_string;
+    liter++;           
+  }
+
+   // loop through this list removing any control characters
+  liter = mineral_names.begin();
+  while(liter!=mineral_names.end())
+  {
+    string this_string = *liter;
+    
+    int len =  this_string.length();
+    if(len != 0)
+    {
+      if (iscntrl(this_string[len-1]))
+      {
+        cout << "The last item in the species is a control character; removing!!" << endl;
+        this_string.erase(len-1);
+      }
+    }
+    else
+    {
+      cout << "Warning, getting species from CRUNCH_bins, but species "
+           << "list contains and empty string." << endl;
+    } 
+    *liter = this_string;
+    liter++;           
+  }
+
+}
+
+
+
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this gets a few constant parameters that will go into every condition statement
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_engine::get_constant_conditions()
 {
 	// first thing: get parameters from master file

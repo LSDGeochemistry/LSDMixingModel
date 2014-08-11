@@ -4889,6 +4889,12 @@ void CRN_tParticle_bins::partition_bins_into_cells(int bn, flowtube ft,
 	double us_soil_depthinterval = (us_zeta-us_eta)/double(n_PDZ_intervals);
 	double us_parent_depthinterval = (bottom_depth-(us_zeta-us_eta))/double(n_CAZ_intervals);
 
+  //cout << "LINE 4892, soil thick: " << (us_zeta-us_eta) << " and parent thick: " 
+  //    << (bottom_depth-(us_zeta-us_eta)) << " ncaz: " << n_CAZ_intervals << endl;
+
+  //cout << "LINE 4892, getting depth intervals, soil: " << us_soil_depthinterval
+  //     << " and parent: " << us_parent_depthinterval << endl;
+
 	// first get the soil nodes
 	d_top_locs.push_back(0);
 	for (int sdi = 1; sdi<n_PDZ_intervals; sdi++)
@@ -4897,6 +4903,8 @@ void CRN_tParticle_bins::partition_bins_into_cells(int bn, flowtube ft,
 		d_top_locs.push_back( (double(sdi))*us_soil_depthinterval);
 		d_bottom_locs.push_back( (double(sdi))*us_soil_depthinterval);
 	}
+	
+	
 
 	// now the parent material nodes
 	for (int pdi = 0; pdi<n_CAZ_intervals; pdi++)

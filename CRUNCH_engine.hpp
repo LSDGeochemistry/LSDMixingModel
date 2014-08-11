@@ -18,6 +18,12 @@ class CRUNCH_engine
 	CRUNCH_engine(string crunch_path, string run_path, string master_filename)	
                   { create(crunch_path, run_path, master_filename); }
 
+  /// @brief this removes control characters from the mineral and primary species
+  /// names
+  /// @author SMM
+  /// @date 10/08/2014
+  void remove_control_characters_from_species_and_minerals();
+
 	// printing functions
 	void print_master();
 
