@@ -78,7 +78,13 @@ class CRUNCH_bins
     /// @date 08/08/2014
     void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);                                  
     
-    
+    /// @brief This function prints the concentrations and reaction rates
+    /// to a vtk file after crunch has run
+    /// @author SMM
+    /// @date 11/08/2014
+    void vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out, 
+                     CRUNCH_engine& Ceng);
+
     /// @brief this function takes vectors of list vecs and reorganises them
     /// into vectors so that it is easier to plot the data to cells
     /// it also places them in a map container so the key to the map
