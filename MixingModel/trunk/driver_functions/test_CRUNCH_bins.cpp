@@ -518,7 +518,7 @@ int main ()
 
 
 	//int n_bins = CRN_tpb.get_n_bins();
-	int n_PDZ_intervals = 1;
+	int n_PDZ_intervals = 2;
 	int n_CAZ_intervals = 3;
 	double bottom_depth = 2.0; 
 	int tot_intervals = n_PDZ_intervals+n_CAZ_intervals;
@@ -557,7 +557,7 @@ int main ()
 	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
 	
 	// now test the primary species
-	Geochem_bins.get_names_of_primary_species(Ceng);
+	//Geochem_bins.get_names_of_primary_species(Ceng);
   
   Geochem_bins.generate_CRUNCH_in_files(Ceng, ft_test, CRN_tpb);
   
