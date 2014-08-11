@@ -453,7 +453,54 @@ void CRUNCH_bins::generate_CRUNCH_in_files(CRUNCH_engine& Ceng,
   }
 
 }
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// This function calls CRUNCH for each bin and gets the data from the resulting
+// files
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
+{
+
+  // some vectors that are replaced during the parsing process
+  vector<double> new_pH_vec;
+  vector<double> spacings;
+  vector<double> CRUNCH_tdepths;
+  vector<double> CRUNCH_bdepths;  
+  
+  // some listvecs that will be replaced
+  list< vector<double> > new_conc;
+  list< vector<double> > mineral_vperc_new;
+  list< vector<double> > new_min_ssa;
+  list< vector<double> > new_rxn_rates;
+
+  // call crunch for each bin
+  for(int bn = 0; bn<n_bins; bn++)
+  {
+    // call crunch
+    Ceng.call_CRUNCH(bn);
+        
+    // now read in the resulting data
+    int number_timestep = 1;
+    int n_cells = n_pdz_cells_per_bin+n_caz_cells_per_bin;
+    
+    // parse the resulting data. 
+    Ceng.parse_CRUNCH_files(number_timestep, n_cells, bn, n_bins, n_cells,
+						new_pH_vec, spacings, CRUNCH_tdepths, CRUNCH_bdepths,
+						new_conc, mineral_vperc_new, new_min_ssa, new_rxn_rates);
+						
+     // add the listvecs to the vlv
+     vec_new_conc[bn] = new_conc;
+     vec_mineral_vpercents_new[bn] = mineral_vperc_new;
+     vec_new_min_ssa[bn] = new_min_ssa;
+     vec_new_rxn_rates[bn] = new_rxn_rates;
+
+  }
+
+}
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This parses the crunch output. The organisation of this is stupid and needs a 

@@ -762,10 +762,9 @@ vector<double> CRUNCH_engine::set_up_pH_for_particle(
 }
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-
-
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// this function gets default concentrations
+// this function gets default concentrations from a previously run crunchflow code
+// it parses all the data but only takes the top concentrations
 //
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
