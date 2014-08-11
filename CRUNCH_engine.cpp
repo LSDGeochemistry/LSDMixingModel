@@ -761,9 +761,9 @@ vector<double> CRUNCH_engine::set_up_pH_for_particle(
 	return pH;
 }
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function gets default concentrations
 //
@@ -835,18 +835,20 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	       << "check that your primary species has CO2 listed second in the crunch infile" << endl;
 	}
 	
-	
+	// this reads in all the concentrations
 	while (conc_in.getline(data_line,5000))
 	{
 		temp_string = data_line;
-		split_string(temp_string, delim, line_words);
+		
 
-		//cout << data_line << endl;
+		line_words = empty_str_vec;
+		split_string(temp_string, delim, line_words);
 
 		lv_iter = concentrations.begin();
 		int counter = 1;
 		while(lv_iter!=concentrations.end() )
 		{
+		  
 			(*lv_iter).push_back( atof(line_words[counter].c_str()) );
 			lv_iter++;
 			counter++;
@@ -862,7 +864,7 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	while (gas_in.getline(data_line,5000))
 	{
 		temp_string = data_line;
-
+    line_words = empty_str_vec;
 		split_string(temp_string, delim, line_words);
 
 		lv_iter = concentrations.begin();
@@ -885,6 +887,7 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 		vector<double> temp_vec;
 		for (int i = 0; i<n_conditions; i++)
 		{
+		  //cout << endl << "Pushing back temp conc: " << temp_conc << " in cell " << i << endl;
 			temp_vec.push_back(temp_conc);
 		}
 		updated_concentrations.push_back(temp_vec);
@@ -895,9 +898,9 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 
 }
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function creates a CRUNCH infile using a number of different data elements
 // these data elements are obtained from either an existing crunch run
