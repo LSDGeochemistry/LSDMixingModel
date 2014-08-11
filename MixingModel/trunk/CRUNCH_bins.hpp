@@ -96,6 +96,12 @@ class CRUNCH_bins
     map< string, vector<double> > parse_CRUNCH_vec_list_vec_to_vec_map(string master_name, 
                             list<string> element_list,
                             vector< list < vector<double> > >& vlv);
+
+    /// @brief this function call CRUNCH and then parses the data. It goes into
+    /// vector list vectors, which can be read by the vtk routine
+    /// @author SMM
+    /// @date 11/08/2014
+    void call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng);
                             
     /// @brief gets a list of the minerals as a list<string>. This is then used
     /// for printing the parameters to vtk files
