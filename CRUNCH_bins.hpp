@@ -102,6 +102,14 @@ class CRUNCH_bins
     /// @author SMM
     /// @date 11/08/2014
     void call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng);
+ 
+    /// @brief this weathers the particles based on the elements in the 
+    /// vec list vecs that chave come from previous mineral properties
+    /// or from CRUNCHFLOW
+    /// @author SMM
+    /// @date 11/08/2014
+    void weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb, 
+                                   VolumeParticleInfo& vpi);
                             
     /// @brief gets a list of the minerals as a list<string>. This is then used
     /// for printing the parameters to vtk files

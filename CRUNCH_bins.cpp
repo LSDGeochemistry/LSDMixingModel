@@ -205,19 +205,11 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
     vec_mineral_mass_old[bn] = mineral_mass_old;
     vec_mineral_surface_area_old[bn] = mineral_surface_area_old;
                 
-    // each particle type has a vector, so we need to get each particle
-    // type out.
-                 
-								
-    // now you need to distribute data to the main vectors								
+						
   
   
   }
 
-    // first partition the bins into cells. This just gives the top and bottom
-    // depths in the centrepoint of each cell. 
-    //CRN_tPb.partition_bins_into_cells(bn, ft, n_PDZ_cells_per_bin, n_CAZ_cells_per_bin,
-		//								bottom_depth,bin_d_top_locs,bin_d_bottom_locs);
 										  
   
 }                                                
@@ -499,8 +491,31 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
      vec_new_rxn_rates[bn] = new_rxn_rates;
 
   }
+}
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This weathers particles in each bin
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb, 
+                                   VolumeParticleInfo& vpi)
+{
+  // loop through the bins
+  for (int bn = 0; bn<n_bins; bn++)
+  {
+	  CRN_tPb.weather_particles_from_CRUNCH(bn,n_pdz_cells_per_bin,
+                    n_caz_cells_per_bin,bottom_depth,
+										cell_data_map["verts_s"], cell_data_map["verts_z"], 
+                    cell_data_map["verts_d"], cell_index_map["cell_node1"],
+										cell_index_map["cell_node2"], cell_index_map["cell_node3"], 
+                    cell_index_map["cell_node4"], vpi, vec_mineral_vpercents_old[bn],
+										vec_mineral_vpercents_new[bn], vec_mineral_surface_area_old[bn],
+										vec_mineral_mass_old[bn]);    
+  }
 
 }
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This parses the crunch output. The organisation of this is stupid and needs a 
