@@ -198,13 +198,13 @@ void CRUNCH_engine::get_constant_conditions()
 		l_iter++;
 	}
 
-	cout << "temp line is: " << temperature_line << endl;
-	cout << "density line is: " << density_line << endl;
-	int n_exchange = exchange_lines.size();
-	for (int i = 0; i<n_exchange; i++)
-	{
-		cout << "exchange["<<i<<"]: " << exchange_lines[i] << endl;
-	}
+	//cout << "temp line is: " << temperature_line << endl;
+	//cout << "density line is: " << density_line << endl;
+	//int n_exchange = exchange_lines.size();
+	//for (int i = 0; i<n_exchange; i++)
+	//{
+	//	cout << "exchange["<<i<<"]: " << exchange_lines[i] << endl;
+	//}
 }
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -1207,6 +1207,71 @@ void CRUNCH_engine::move_CRUNCH_output_files(int n_ts)
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This moves the output files from crunch, which are dumped into the 
+// directory of the executable, into the run directory. 
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_engine::move_CRUNCH_output_files_with_bin_number(int n_ts, int bn)
+{
+  int default_ts = 1;
+  string num = itoa(default_ts);
+  string bn_num = itoa(n_ts);
+  string str_bn = itoa(bn);
+  
+  string num_bn = "_bn"+str_bn+"_ts"+bn_num;
+	string ext = ".out";
+	
+	// get the areas
+	string area_fname = "area";
+	string area_fname_src  = area_fname+num+ext;
+	string area_fname_dest  = RUN_path+area_fname+num_bn+ext;
+	ifstream src_area(area_fname_src.c_str());
+	ofstream dst_area(area_fname_dest.c_str());
+	dst_area << src_area.rdbuf();
+	
+	// get the concentrations
+	string conc_fname = "totcon";
+	string conc_fname_src  = conc_fname+num+ext;
+	string conc_fname_dest  = RUN_path+conc_fname+num_bn+ext;
+	ifstream src_conc(conc_fname_src.c_str());
+	ofstream dst_conc(conc_fname_dest.c_str());
+	dst_conc << src_conc.rdbuf();	
+
+	// get the pH
+	string pH_fname = "pH";
+	string pH_fname_src  = pH_fname+num+ext;
+	string pH_fname_dest  = RUN_path+pH_fname+num_bn+ext;
+	ifstream src_pH(pH_fname_src.c_str());
+	ofstream dst_pH(pH_fname_dest.c_str());
+	dst_pH << src_pH.rdbuf();	
+
+	// get the rate
+	string rate_fname = "rate";
+	string rate_fname_src  = rate_fname+num+ext;
+	string rate_fname_dest  = RUN_path+rate_fname+num_bn+ext;
+	ifstream src_rate(rate_fname_src.c_str());
+	ofstream dst_rate(rate_fname_dest.c_str());
+	dst_rate << src_rate.rdbuf();	
+
+	// get the volume
+	string volume_fname = "volume";
+	string volume_fname_src  = volume_fname+num+ext;
+	string volume_fname_dest  = RUN_path+volume_fname+num_bn+ext;
+	ifstream src_volume(volume_fname_src.c_str());
+	ofstream dst_volume(volume_fname_dest.c_str());
+	dst_volume << src_volume.rdbuf();	
+	
+	// get the gas
+	string gas_fname = "gas";
+	string gas_fname_src  = gas_fname+num+ext;
+	string gas_fname_dest  = RUN_path+gas_fname+num_bn+ext;
+	ifstream src_gas(gas_fname_src.c_str());
+	ofstream dst_gas(gas_fname_dest.c_str());
+	dst_gas << src_gas.rdbuf();	
+}
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+//=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function get the molar weight and molar volume from the database file
 void CRUNCH_engine::get_mineral_properties()
@@ -1267,7 +1332,7 @@ void CRUNCH_engine::get_mineral_properties()
 	// first get the number of temperature points
 	l_iter = dbase_list.begin();
 	
-	cout << "LINE 1203, dbase first line is: " << *l_iter << endl;
+	//cout << "LINE 1203, dbase first line is: " << *l_iter << endl;
 	
 	found = string::npos;
 	int n_temp_points;
@@ -1283,7 +1348,7 @@ void CRUNCH_engine::get_mineral_properties()
 		}
 		l_iter++;
 	}
-	cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
+	//cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
 
 	// now loop through mineral names getting the database information for each name in turn
 	int n_species;
@@ -1300,9 +1365,9 @@ void CRUNCH_engine::get_mineral_properties()
 				vector<string> line_words;
 				split_string((*l_iter), delim, line_words);
 
-				cout << "LINE 892 data line is: " << (*l_iter) << endl;
+				//cout << "LINE 892 data line is: " << (*l_iter) << endl;
 				n_species = atoi(line_words[2].c_str() );
-				cout << "line 912; number of species is: " << n_species << endl;
+				//cout << "line 912; number of species is: " << n_species << endl;
 				int mwgt = 3+2*n_species+n_temp_points;
 				molar_weight.push_back( atof(line_words[mwgt].c_str() ));
 				molar_volume.push_back( atof(line_words[1].c_str() ) );
@@ -1321,7 +1386,7 @@ void CRUNCH_engine::get_mineral_properties()
 	{
 		cout << (*l_min_name_iter)
 			//<< " ssa: " << ssa[counter]
-			<< " m_vol: " << molar_volume[counter]
+			   << " m_vol: " << molar_volume[counter]
 		     << " m_wght: " << molar_weight[counter] << endl;
 		l_min_name_iter++;
 		counter++;

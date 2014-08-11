@@ -564,6 +564,8 @@ int main ()
   
   Geochem_bins.generate_CRUNCH_in_files(Ceng, ft_test, CRN_tpb);
   
+  Geochem_bins.call_CRUNCH_and_parse_data(Ceng);
+  
     
 /*
 	vector<double> d_top_locs;

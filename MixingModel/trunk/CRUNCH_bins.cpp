@@ -101,13 +101,13 @@ void CRUNCH_bins::cell_location_to_screen(int bin, int cell)
       int ci3 = cell_index_map["cell_node3"][cell_index];
       int ci4 = cell_index_map["cell_node4"][cell_index];
     
-      cout << "bin: " << bin << " cell: " << cell << endl;
-      cout << "s:\t" << verts_s[ci1] << "\t" << verts_s[ci2] << "\t" 
-                     << verts_s[ci3] << "\t" << verts_s[ci4] << endl; 
-      cout << "z:\t" << verts_z[ci1] << "\t" << verts_z[ci2] << "\t" 
-                     << verts_z[ci3] << "\t" << verts_z[ci4] << endl;       
-      cout << "d:\t" << verts_d[ci1] << "\t" << verts_d[ci2] << "\t" 
-                     << verts_d[ci3] << "\t" << verts_d[ci4] << endl;                                       
+      //cout << "bin: " << bin << " cell: " << cell << endl;
+      //cout << "s:\t" << verts_s[ci1] << "\t" << verts_s[ci2] << "\t" 
+      //               << verts_s[ci3] << "\t" << verts_s[ci4] << endl; 
+      //cout << "z:\t" << verts_z[ci1] << "\t" << verts_z[ci2] << "\t" 
+      //               << verts_z[ci3] << "\t" << verts_z[ci4] << endl;       
+      //cout << "d:\t" << verts_d[ci1] << "\t" << verts_d[ci2] << "\t" 
+      //               << verts_d[ci3] << "\t" << verts_d[ci4] << endl;                                       
     }
     else
     {
@@ -204,13 +204,8 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
     vec_mineral_ssa_old[bn] = mineral_ssa_old;
     vec_mineral_mass_old[bn] = mineral_mass_old;
     vec_mineral_surface_area_old[bn] = mineral_surface_area_old;
-                
-						
-  
-  
+                  
   }
-
-										  
   
 }                                                
 
@@ -457,6 +452,13 @@ void CRUNCH_bins::generate_CRUNCH_in_files(CRUNCH_engine& Ceng,
 void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
 {
 
+  vector< list< vector<double> > > reset_vlv(n_bins);
+  vec_new_conc = reset_vlv;
+  vec_mineral_vpercents_new = reset_vlv;
+  vec_new_min_ssa = reset_vlv;
+  vec_new_rxn_rates = reset_vlv;
+
+
   // some vectors that are replaced during the parsing process
   vector<double> new_pH_vec;
   vector<double> spacings;
@@ -474,16 +476,24 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   {
     // call crunch
     Ceng.call_CRUNCH(bn);
+    cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
+    
+    // for bug checking, move the crunch files with bin number names
+    int n_ts = 2;
+    Ceng.move_CRUNCH_output_files_with_bin_number(n_ts,bn);
+    cout << "LINE 477, moved output files " << bn << endl;
         
     // now read in the resulting data
     int number_timestep = 1;
     int n_cells = n_pdz_cells_per_bin+n_caz_cells_per_bin;
     
+    cout << "LINE 483 Parsing the crunch data" << endl;
     // parse the resulting data. 
     Ceng.parse_CRUNCH_files(number_timestep, n_cells, bn, n_bins, n_cells,
 						new_pH_vec, spacings, CRUNCH_tdepths, CRUNCH_bdepths,
 						new_conc, mineral_vperc_new, new_min_ssa, new_rxn_rates);
-						
+		 cout << "LINE 488 Parsed the crunch data, moving on to updating the vlvs" << endl;
+    				
      // add the listvecs to the vlv
      vec_new_conc[bn] = new_conc;
      vec_mineral_vpercents_new[bn] = mineral_vperc_new;
@@ -583,7 +593,7 @@ map< string, vector<double> > CRUNCH_bins::parse_CRUNCH_vec_list_vec_to_vec_map(
     str_iter = element_list.begin();
     while(str_iter != element_list.end())
     {
-      cout << "CRUNCH_bins, adding key: " << *str_iter << endl;
+      //cout << "CRUNCH_bins, adding key: " << *str_iter << endl;
       data_map[ *str_iter ] =  empty_vec;
       str_iter++;
     }
@@ -612,8 +622,8 @@ map< string, vector<double> > CRUNCH_bins::parse_CRUNCH_vec_list_vec_to_vec_map(
         element_iter_end = this_vec.end();
         vector<double> vec_with_correct_cells;
         vec_with_correct_cells.assign(element_iter_start,element_iter_end);              
-        cout << "bn: " << bn << " mineral: " <<  *str_iter << " vector size: " 
-             << vec_with_correct_cells.size() << endl;
+        //cout << "bn: " << bn << " mineral: " <<  *str_iter << " vector size: " 
+        //     << vec_with_correct_cells.size() << endl;
         vector<double> map_vec = data_map[ *str_iter ];
         map_vec.insert(map_vec.end(), vec_with_correct_cells.begin(), 
                               vec_with_correct_cells.end());
@@ -633,9 +643,9 @@ map< string, vector<double> > CRUNCH_bins::parse_CRUNCH_vec_list_vec_to_vec_map(
   while(map_iter != data_map.end())
   {
     vector<double> thisvec = map_iter->second;
-    cout << "key is: " << map_iter->first 
-         << " and size is " <<  int(thisvec.size())  
-         << " and n total cells are: " << total_cells << endl;  
+    //cout << "key is: " << map_iter->first 
+    //     << " and size is " <<  int(thisvec.size())  
+    //     << " and n total cells are: " << total_cells << endl;  
     map_iter++;
   }
 
@@ -709,7 +719,7 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
     str_iter = element_list.begin();
     while(str_iter != element_list.end())
     {
-      cout << "CRUNCH_bins, adding key: " << *str_iter << endl;
+      //cout << "CRUNCH_bins, adding key: " << *str_iter << endl;
       data_map[ *str_iter ] =  empty_vec;
       str_iter++;
     }
@@ -739,8 +749,8 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
         vector<double> vec_with_correct_cells;
         vec_with_correct_cells.assign (element_iter_start,element_iter_end);
                
-        cout << "bn: " << bn << " mineral: " <<  *str_iter << " vector size: " 
-             << vec_with_correct_cells.size() << endl;
+        //cout << "bn: " << bn << " mineral: " <<  *str_iter << " vector size: " 
+        //     << vec_with_correct_cells.size() << endl;
         vector<double> map_vec = data_map[ *str_iter ];
         map_vec.insert(map_vec.end(), vec_with_correct_cells.begin(), 
                               vec_with_correct_cells.end());
@@ -760,9 +770,9 @@ map< string, vector<double> > CRUNCH_bins::parse_vec_list_vec_to_vec_map(string 
   while(map_iter != data_map.end())
   {
     vector<double> thisvec = map_iter->second;
-    cout << "key is: " << map_iter->first 
-         << " and size is " <<  int(thisvec.size())  
-         << " and n total cells are: " << total_cells << endl;  
+    //cout << "key is: " << map_iter->first 
+    //     << " and size is " <<  int(thisvec.size())  
+    //     << " and n total cells are: " << total_cells << endl;  
     map_iter++;
   }
 
@@ -844,13 +854,13 @@ list<string> CRUNCH_bins::get_names_of_primary_species(CRUNCH_engine& cEng)
   // parameter of CRUNCHflow
   names_of_pspecies.pop_front();
   
-  // now print the primart species
-  liter = names_of_pspecies.begin();
-  while (liter != names_of_pspecies.end())
-  {
-    cout << "Line 713, species name is: " <<  *liter << endl;
-    liter++;
-  }
+  // now print the primary species for bug checking
+  //liter = names_of_pspecies.begin();
+  //while (liter != names_of_pspecies.end())
+  //{
+  //  cout << "Line 713, species name is: " <<  *liter << endl;
+  //  liter++;
+  //}
   return names_of_pspecies;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
