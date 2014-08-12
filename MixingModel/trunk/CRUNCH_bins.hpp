@@ -114,8 +114,16 @@ class CRUNCH_bins
     /// or from CRUNCHFLOW
     /// @author SMM
     /// @date 11/08/2014
-    void weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb, 
-                                   VolumeParticleInfo& vpi);
+    void weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb);
+ 
+    /// @brief This bundles several CRUNCH_bins functions into one
+    /// function that does a timestep of CRUNCH weathering
+    /// @details IMPORTANT: the timestep is set my the MasterCrunch file
+    /// you can change this with the CRUNCH_engine interface
+    /// @author SMM
+    /// @date 12/08/2014
+    void run_CRUNCH_timestep(CRN_tParticle_bins& CRN_tPb, 
+                  flowtube& ft, CRUNCH_engine& Ceng); 
                             
     /// @brief gets a list of the minerals as a list<string>. This is then used
     /// for printing the parameters to vtk files
