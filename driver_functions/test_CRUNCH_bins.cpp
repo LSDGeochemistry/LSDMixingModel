@@ -14,14 +14,14 @@ using namespace std;
 int main ()
 {
 	//long seed = time(NULL);               // seed for random number generator
-	//string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
-	string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
+	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
+	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
 	
-	string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
-	string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
-	//string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
-	//string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
+	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
+	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
+	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
+	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
 
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -481,183 +481,25 @@ int main ()
 	double bottom_depth = 2.0; 
 	int tot_intervals = n_PDZ_intervals+n_CAZ_intervals;
 
-  cout << "Making CRUNCH bins " << endl;
   CRUNCH_bins Geochem_bins(n_PDZ_intervals , n_CAZ_intervals, bottom_depth, vpi);
-  cout << "Made CRUNCH bins " << endl;
+
+  // create the crunch engine
+	string master_fname = "master_crunch.in";
+	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
    
-  Geochem_bins.populate_cells_with_geochemical_data_from_CRNtPb(ft_test, CRN_tpb);
-   
-  cout << "N_bins: "<< n_bins << endl;
-   
-  for(int i = 0; i<tot_intervals; i++)
-  {
-    int bin = 3;
-    Geochem_bins.cell_location_to_screen(bin, i);
-  }
+  // run a crunch timestep
+  Geochem_bins.run_CRUNCH_timestep(CRN_tpb, ft_test, Ceng);
   
   // now test the vtk initialisation
   ofstream vtk_cell_out;
   vtk_cell_out.open("Test_vtk_cell.vtk");
   int reference_frame_switch = 1;
   Geochem_bins.vtk_print_cell_header(reference_frame_switch, vtk_cell_out);
-  
-  // test parsing of mineral names
-  //list<string> mineral_names = Geochem_bins.get_names_of_minerals(); 
-  
-  // now test the vector mapper
+
+  // print the outfiles
   Geochem_bins.vtk_print_cell_mineral_solid_state(vtk_cell_out);
-  
-  // test the crunch engine
-	string master_fname = "master_crunch.in";
-
-
-	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
-	
-	// now test the primary species
-	//Geochem_bins.get_names_of_primary_species(Ceng);
-  
-  Geochem_bins.generate_CRUNCH_in_files(Ceng, ft_test, CRN_tpb);
-  
-  Geochem_bins.call_CRUNCH_and_parse_data(Ceng);
-  
   Geochem_bins.vtk_print_cell_CRUNCH_data(vtk_cell_out, Ceng);  
-/*
-	vector<double> d_top_locs;
-	vector<double> d_bottom_locs;
-	CRN_tpb.partition_bins_into_cells(bn, ft_test,n_PDZ_intervals, n_CAZ_intervals,
-										bottom_depth,d_top_locs,d_bottom_locs);
 
-	//int sz_dbot = d_bottom_locs.size();
-	//int sz_dtop = d_top_locs.size();
-	//cout << "sz_dbot: " << sz_dbot << " and sz dtop: " << sz_dtop << endl;
-	//for (int i = 0; i<sz_dbot; i++)
-	//{
-	//	cout << "dtop["<<i<<"]: " << d_top_locs[i] << " and d bottom: " << d_bottom_locs[i] << endl;
-	//}
-
-
-	vector<double> verts_s;
-	vector<double> verts_z;
-	vector<double> verts_d;
-	vector<int> cell_node1, cell_node2, cell_node3, cell_node4;
-	CRN_tpb.update_particles_cell_index(ft_test,
-								n_PDZ_intervals, n_CAZ_intervals,
-								bottom_depth,
-								verts_s, verts_z, verts_d,
-							  cell_node1, cell_node2, cell_node3, cell_node4);
-
-
-	//CRN_tpb.get_data_by_cell(bn,n_PDZ_intervals, n_CAZ_intervals,bottom_depth,
-	//							verts_s, verts_z, verts_d,
-	//							cell_node1, cell_node2, cell_node3, cell_node4);
-
-	// this collects data from each cell
-	list< vector<double> > mineral_vfracs_old;
- 	list< vector<double> > mineral_ssa_old;
- 	list< vector<double> > mineral_mass_old;
- 	list< vector<double> > mineral_surface_area_old;
-	CRN_tpb.get_data_by_cell_volumetric_for_CRUNCH(bn,n_PDZ_intervals, 
-                n_CAZ_intervals,bottom_depth,
-								verts_s, verts_z, verts_d,
-								cell_node1, cell_node2, cell_node3, cell_node4, vpi,
-								mineral_vfracs_old,mineral_ssa_old,
-								mineral_surface_area_old,mineral_mass_old);
-
-	cout << "exited get data bay cell LINE 556" << endl;
-
-	string master_fname = "master_crunch.in";
-	string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
-	string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
-
-	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);
-
-	// get the pH vector
-	vector<double> pH_vec;
-	double A = 0.2083;			// fitted from kate's data
-	double B = 6.2221;			//
-	pH_vec = Ceng.set_up_pH_for_particle(d_top_locs,d_bottom_locs, A, B);
-
-	int n_cells = d_top_locs.size();
-	for (int i = 0; i<n_cells; i++)
-	{
-		cout << "pH["<<i<<"]: " << pH_vec[i] << endl;
-	}
-
-	int n_ts = 1;
-	list < vector<double> > default_concentrations 
-            = Ceng.get_default_concentrations(n_ts,d_top_locs,d_bottom_locs);
-	list < vector<double> >::iterator lv_iter;
-
-	//int n_cells = d_top_locs.size();
-	cout << "concentrations: " << endl;
-	for (int i = 0; i<n_cells; i++)
-	{
-		lv_iter = default_concentrations.begin();
-		while (lv_iter != default_concentrations.end())
-		{
-			cout << " " << (*lv_iter)[i];
-			lv_iter ++;
-		}
-
-		cout << endl;
-
-	}
-
-
-	// create CRUNCH infile
-	Ceng.create_CRUNCH_in_file(n_cells, pH_vec,
-							d_top_locs,d_bottom_locs,
-						    default_concentrations, mineral_vfracs_old,
-							mineral_ssa_old);
-
-	// call CRUNCH
-	Ceng.call_CRUNCH();
-
-	// now read the CRUNCH files to get the volume change
-	// reading data from CRUNCH output
-	vector<double> spacings;
-	vector<double> CRUNCH_tdepths;
-	vector<double> CRUNCH_bdepths;
-	vector<double> new_pH_vec;
-	list< vector<double> > new_conc;
-	list< vector<double> > mineral_vfracs_new;
-	list< vector<double> > new_min_ssa;
-	list< vector<double> > new_rxn_rates;
-	int number_timestep = 1;
-	Ceng.parse_CRUNCH_files(number_timestep, n_cells,
-						new_pH_vec, spacings,
-						CRUNCH_tdepths, CRUNCH_bdepths,
-						new_conc, mineral_vfracs_new,
-						new_min_ssa, new_rxn_rates);
-
-
-	CRN_tpb.weather_particles_from_CRUNCH(bn,n_PDZ_intervals, n_CAZ_intervals,bottom_depth,
-										verts_s, verts_z, verts_d,
-										cell_node1, cell_node2, cell_node3, cell_node4, vpi,
-										mineral_vfracs_old,mineral_vfracs_new,
-										mineral_surface_area_old,mineral_mass_old);
-
-*/
-
-
-/*
-  // print the data to a vtk file
-  //double t_ime = 0;
-  vtk_particle_fname = "parts_test";
-  vtk_cell_fname = "cells_test";
-  bottom_depth = 2;
-  int n_depthintervals_soil = 5;
-  int n_depthintervals_parent = 3;
-  int reference_frame_switch = 1;
-  
-	// get the particle types
-	Particle_info pi(particle_types_fname.c_str());
-
-  CRN_tpb.cell_and_particle_chemistry_printing_vtk(t_ime, ft_test,
-								pi,vtk_particle_fname, vtk_cell_fname,
-								n_depthintervals_soil, n_depthintervals_parent,
-								bottom_depth, reference_frame_switch);
-*/
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+

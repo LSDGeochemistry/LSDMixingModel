@@ -445,6 +445,7 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	{
 		mineral_vpercents.push_back(mineral_empty_vec);
 		mineral_ssa.push_back(mineral_empty_vec);
+		reaction_rates.push_back(empty_vec);
 	}
 
 	// first set up the files
@@ -607,25 +608,29 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 	//cout << "Line 392 did mineral bulk surface area\n";
 
 	// now get the rates
+	
 	rate_in.getline(data_line,5000);
+	//cout << "dataline rate: " << data_line << endl;
 	rate_in.getline(data_line,5000);
 	rate_in.getline(data_line,5000);
 	while (rate_in.getline(data_line,5000))
 	{
 		temp_string = data_line;
+		//cout << "data line is: " << data_line << endl;  
 		split_string(temp_string, delim, line_words);
 
 		lv_iter = reaction_rates.begin();
-		int counter = 2;
+		int counter = 1;
 		while(lv_iter!=reaction_rates.end() )
 		{
+		  //cout << "This rxn rate is: " << atof(line_words[counter].c_str() ) << endl; 
 			(*lv_iter).push_back( atof(line_words[counter].c_str() ) );
 			lv_iter++;
 			counter++;
 		}
 		line_words = empty_str_vec;
 	}
-	//cout << "Line 392 did mineral reaction rates\n";
+	// << "Line 392 did mineral reaction rates\n";
 
 	//int sz_pH = pH_values.size();
 	//for (int i = 0; i< sz_pH; i++)

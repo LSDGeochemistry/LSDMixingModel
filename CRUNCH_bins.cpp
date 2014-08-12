@@ -390,6 +390,9 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
 
   // now print the map data to the vtk file
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mvpercents);
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mssafracs);
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mmfracs);
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, msafracs);
   
   
 }
@@ -414,16 +417,47 @@ void CRUNCH_bins::vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out,
   // get the names of the primary species
   list<string> pspecies_names = get_names_of_primary_species(Ceng);
   
+  //list<string>::iterator siter;
+  
+  //siter = mineral_names.begin();
+  //while(siter!=mineral_names.end())
+  //{
+  //  cout << "Mineral is: " << (*siter) << endl;
+  //  siter++;
+  //}
+  
+  //siter = pspecies_names.begin();
+  //while(siter!=pspecies_names.end())
+  //{
+  //  cout << "Species is: " << (*siter) << endl;
+  //  siter++;  
+  //}
+  
+  
   // get the maps
   string scname = "Solute_Concentration"; 
   map< string, vector<double> > solute_conc =  
             parse_CRUNCH_vec_list_vec_to_vec_map(scname, 
                             pspecies_names, vec_new_conc);
-  string rxnname = "Reaction_rates_MolperLporusmediumpersecond"; 
+  
+  
+  //cout << "getting reaction rates " << endl;
+  string rxnname = "Reaction_rates_Moles_per_L_porusmedium_per_second"; 
   map< string, vector<double> > rxn_rates =  
             parse_CRUNCH_vec_list_vec_to_vec_map(rxnname, 
-                            mineral_names, vec_new_rxn_rates);                                                                                  
-
+                            mineral_names, vec_new_rxn_rates); 
+  
+  //list< vector<double> > this_rxn = vec_new_rxn_rates[0];                          
+  //list< vector<double> >::iterator l_iter;
+  //l_iter = this_rxn.begin();
+  //vector<double> these_rates = (*l_iter);
+  //for(int i = 0; i< int(these_rates.size()); i++)
+  //{
+  //  cout << "reaction["<<i<<"]: "<< these_rates[i] << endl;
+  //}
+                             
+                                                                                                             
+  //cout << "got reaction rates " << endl;
   // now print the map data to the vtk file
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, solute_conc);
   
@@ -514,7 +548,7 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   for(int bn = 0; bn<n_bins; bn++)
   {
     // call crunch
-    //Ceng.call_CRUNCH(bn);
+    Ceng.call_CRUNCH(bn);
     cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
     
     // for bug checking, move the crunch files with bin number names
@@ -546,8 +580,7 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This weathers particles in each bin
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-void CRUNCH_bins::weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb, 
-                                   VolumeParticleInfo& vpi)
+void CRUNCH_bins::weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb)
 {
   // loop through the bins
   for (int bn = 0; bn<n_bins; bn++)
@@ -566,6 +599,30 @@ void CRUNCH_bins::weather_particles_based_on_CRUNCH(CRN_tParticle_bins& CRN_tPb,
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// This function bundles all functions related to running CRUNCHflow 
+//
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::run_CRUNCH_timestep(CRN_tParticle_bins& CRN_tPb, 
+                  flowtube& ft, CRUNCH_engine& Ceng)
+{
+  // get the geochemical data from the particles
+  populate_cells_with_geochemical_data_from_CRNtPb(ft, CRN_tPb);
+
+  // generate the .in files for CRUNCH
+  generate_CRUNCH_in_files(Ceng, ft, CRN_tPb);
+  
+  // call and parse CRUNCH output
+  call_CRUNCH_and_parse_data(Ceng);
+
+  // weather the particles
+  weather_particles_based_on_CRUNCH(CRN_tPb);
+}
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+                  
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This parses the crunch output. The organisation of this is stupid and needs a 
 // rewrite, but at the moment this isn't possible. 
@@ -891,7 +948,7 @@ list<string> CRUNCH_bins::get_names_of_primary_species(CRUNCH_engine& cEng)
   
   // now we get rid of the H+ name since the H+ is reported in the pH 
   // parameter of CRUNCHflow
-  names_of_pspecies.pop_front();
+  //names_of_pspecies.pop_front();
   
   // now print the primary species for bug checking
   //liter = names_of_pspecies.begin();
