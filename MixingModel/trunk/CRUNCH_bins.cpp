@@ -419,7 +419,7 @@ void CRUNCH_bins::vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out,
   map< string, vector<double> > solute_conc =  
             parse_CRUNCH_vec_list_vec_to_vec_map(scname, 
                             pspecies_names, vec_new_conc);
-  string rxnname = "Solute_Concentration"; 
+  string rxnname = "Reaction_rates_MolperLporusmediumpersecond"; 
   map< string, vector<double> > rxn_rates =  
             parse_CRUNCH_vec_list_vec_to_vec_map(rxnname, 
                             mineral_names, vec_new_rxn_rates);                                                                                  
@@ -514,7 +514,7 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   for(int bn = 0; bn<n_bins; bn++)
   {
     // call crunch
-    Ceng.call_CRUNCH(bn);
+    //Ceng.call_CRUNCH(bn);
     cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
     
     // for bug checking, move the crunch files with bin number names
