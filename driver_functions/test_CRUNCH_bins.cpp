@@ -14,14 +14,14 @@ using namespace std;
 int main ()
 {
 	//long seed = time(NULL);               // seed for random number generator
-	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
-	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
+	//string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
+	string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
 	
-	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
-	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
-	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
-	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
+	string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
+	string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
+	//string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
+	//string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
 
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -166,55 +166,6 @@ int main ()
 	double max_age;
 	int n_spacings;
 
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	//=-=-=-=-=-=-=-=
-	// load files
-	//=-=-=-=-=-=-=-=
-	// load the profile of in situ 10Be
-	/*
-	ifstream InSitu_10Be_in;
-	InSitu_10Be_in.open(profile_10Be_fname.c_str());
-	int n_10Be_samples;
-	InSitu_10Be_in >> n_10Be_samples;
-	vector<double> InSitu_d_top;
-	vector<double> InSitu_d_bottom;
-	vector<double> InSitu_C10Be;
-	vector<double> InSitu_1sigma;
-	double temp_top,temp_bottom,temp_C10Be,temp_1sigma;
-	for (int i = 0; i< n_10Be_samples; i++)
-	{
-		InSitu_10Be_in >> temp_top >> temp_bottom >> temp_C10Be >> temp_1sigma;
-		InSitu_d_top.push_back(temp_top);
-		InSitu_d_bottom.push_back(temp_bottom);
-		InSitu_C10Be.push_back(temp_C10Be);
-		InSitu_1sigma.push_back(temp_1sigma);
-	}
-	InSitu_10Be_in.close();
-	*/
-/*
-	// load the profile of meteoric 10Be
-	ifstream Meteor_10Be_in;
-	Meteor_10Be_in.open(profile_f10Be_fname.c_str());
-	int n_f10Be_samples;
-	Meteor_10Be_in >> n_f10Be_samples;
-	cout << "LINE 1288 number_of meteoric samples; " << n_f10Be_samples << endl;
-	vector<double> Meteor_d_top;
-	vector<double> Meteor_d_bottom;
-	vector<double> Meteor_C10Be;
-	vector<double> Meteor_1sigma;
-	double temp_fC10Be;
-	for (int i = 0; i< n_f10Be_samples; i++)
-	{
-		Meteor_10Be_in >> temp_top >> temp_bottom >> temp_fC10Be >> temp_1sigma;
-		Meteor_d_top.push_back(temp_top);
-		Meteor_d_bottom.push_back(temp_bottom);
-		Meteor_C10Be.push_back(temp_fC10Be);
-		Meteor_1sigma.push_back(temp_1sigma);
-		//cout << "d top: " << temp_top << " d bot: " << temp_bottom
-		//       << " conc: " << temp_fC10Be << " temp unc: " << temp_1sigma << endl;
-	}
-	Meteor_10Be_in.close();
-*/
 	// get the model parameters
 	string temp;
 	ifstream model_run_params_in;
@@ -569,7 +520,7 @@ int main ()
   
   Geochem_bins.call_CRUNCH_and_parse_data(Ceng);
   
-    
+  Geochem_bins.vtk_print_cell_CRUNCH_data(vtk_cell_out, Ceng);  
 /*
 	vector<double> d_top_locs;
 	vector<double> d_bottom_locs;
