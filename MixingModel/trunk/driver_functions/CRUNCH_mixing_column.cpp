@@ -14,13 +14,13 @@ using namespace std;
 int main ()
 {
 	//long seed = time(NULL);               // seed for random number generator
-	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
+	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run3/run3";
 	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
 	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
 	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
 	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
-	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
+	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run3/"; 
 	
 	string vtk_particle_fname = run_pname+"/basic_particles";
 	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
