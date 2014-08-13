@@ -1132,7 +1132,7 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
 	cout << "Executing CRUNCH...\n";
 	
 	
-	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007";
+	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007 > crunch_screen.txt";
 	cout << "command_line_str is: " << command_line_str << endl;
 
 	// this system call is buggy. It works on old laptop (probably an old version of cygwin)

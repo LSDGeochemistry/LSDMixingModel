@@ -69,6 +69,14 @@ class CRUNCH_bins
     /// @date 08/08/2014
     void vtk_print_cell_from_map_of_vectors(ofstream& vtk_cell_out, 
                                        map<string, vector<double> >& data_map);
+ 
+    /// @brief this takes raw data and calcualtes the fraction from each mineral
+    /// for example if the cell data has mass in kg in each cell, this will 
+    /// print the mass fraction in each cell
+    /// @author SMM
+    /// @date 13/08/2014
+    void vtk_print_cell_mineral_fractions(ofstream& vtk_cell_out, 
+                    map< string, vector<double> >& raw_data);
                                        
     /// @brief This function prints the vtk files for the solid state
     /// properties of the minerals. Before you run this you need to 
