@@ -135,6 +135,13 @@ class CRN_tParticle_bins
 	void print_particle_stats_vtk(double t_ime, flowtube ft,
 								string vtk_fname);
 
+  /// @brief This function is a basic vtk printing routine for volume 
+  /// particles
+  /// @author SMM
+  /// @date 13/08/2014
+  void vtk_print_basic_volume_particles(double t_ime, 
+								 string vtk_particle_fname, int reference_frame_switch);
+
 
 	void print_age_cdfpdf_bulk(double t_ime, double max_age, int n_spacings,
 							double K_times_D, double D, double sigma,

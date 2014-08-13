@@ -759,7 +759,7 @@ vector<double> CRUNCH_engine::set_up_pH_for_particle(
 	{
 		d_midpoint = top_depths[i]+0.5*(bottom_depths[i]-top_depths[i]);
 		pH.push_back(A*log(d_midpoint)+B);
-		cout << "depth: " << d_midpoint <<" and pH: " << pH[i] << endl;
+		//cout << "depth: " << d_midpoint <<" and pH: " << pH[i] << endl;
 
 	}
 
@@ -1126,14 +1126,19 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
 	c_in.close();
 
 	int i;
-	cout << "Checking if processor is available..." << endl;
-	if (system(NULL)) puts ("Ok");
-	else exit (1);
-	cout << "Executing CRUNCH...\n";
+	//cout << "Checking if processor is available..." << endl;
+	//if (system(NULL)) puts ("Ok");
+	//else exit (1);
+	//cout << "Executing CRUNCH...\n";
+	if (not system(NULL))
+	{
+    cout << "Processor not available" << endl;
+    exit(1);
+  }
 	
 	
 	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007 > crunch_screen.txt";
-	cout << "command_line_str is: " << command_line_str << endl;
+	//cout << "command_line_str is: " << command_line_str << endl;
 
 	// this system call is buggy. It works on old laptop (probably an old version of cygwin)
 	// with the latest version of cygwin it only works if CrunchFlow2007 is sitting in the

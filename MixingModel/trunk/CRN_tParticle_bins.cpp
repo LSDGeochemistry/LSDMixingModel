@@ -468,14 +468,15 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 		cell_volume = A_bins[bn]*Delta_lowered[bn/2];
 		cell_mass = cell_volume*rho_r;					// mass calucalted based on rock density
 
-		//cout << "particle bins line 469 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
-
 		eta_node = bn/2;
 		insert_zone_top = old_bottom_depth[eta_node];
 		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
 		new_bottom_depth[eta_node] = insert_zone_bottom;
 
-    cout << "Line 478, bel: " << bin_edge_loc[bn] << " and ds bel: "  << bin_edge_loc[bn+1] << endl;
+		cout << "particle bins line 479 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
+		cout << "zone top: " << insert_zone_top << " and bottom: " << insert_zone_bottom << endl;
+
+    //cout << "Line 478, bel: " << bin_edge_loc[bn] << " and ds bel: "  << bin_edge_loc[bn+1] << endl;
 
 		// loop through each particle type and each size class
 		for (int type = 0; type<n_types; type++)
@@ -493,6 +494,8 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 
 					// now get the integer version of this:
 					n_parts_inserted = int(n_parts_double);
+					
+					cout << "type: " << type << " size " << sizet << " and inserted: " << n_parts_inserted << endl;
 
 					// a bit of logic in case one of the particles has too little mass
 					// to make up an individual particle near the target mass
@@ -585,11 +588,11 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 
 	old_bottom_depth = new_bottom_depth;
 
-	for (int i = 0; i< n_bins; i++)
-	{
-		cout << "LINE 588 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " 
-           << particle_bins[i].size() << endl;
-	}
+	//for (int i = 0; i< n_bins; i++)
+	//{
+	//	cout << "LINE 588 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " 
+  //         << particle_bins[i].size() << endl;
+	//}
 	return 1;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1080,6 +1083,9 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 	list<CRN_tParticle>::iterator remove_iter;	// iterator that points to removed
 												// particles
 
+
+  int n_eroded = 0;
+  
 	// loop through all the bins
 	for (int bn = 0; bn< n_bins; bn++)
 	{
@@ -1540,6 +1546,7 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 					remove_iter = part_iter;
 					part_iter++;
 					particle_bins[bn].erase( remove_iter );
+					n_eroded++;
 				}
 				else if (post_move_bn != bn)
 				{
@@ -1596,6 +1603,8 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 		}
 	}
 
+
+  cout << "Number of particles eroded: " << n_eroded << endl;
 	return eroded_bins;
 }
 
@@ -3149,6 +3158,105 @@ void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube f
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// 
+// This function prints a simple version of the particles that just gives location, 
+// type and the mass remaining
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRN_tParticle_bins::vtk_print_basic_volume_particles(double t_ime, 
+								 string vtk_particle_fname, int reference_frame_switch)
+{
+
+ 	// get the file printed
+	string time_bit = itoa( int(t_ime+0.5) );
+	string vtk_cell_ext = ".vtk";
+
+	vector<double> s_loc;				// distance downslope of the particle
+	vector<double> z_loc;				// elevation of the particle
+	vector<double> d_loc;				// depth of the particle
+	vector<int> pType;					// the particle identification number
+	vector<double> Mass_remain;
+	double Mass,StartingMass;
+
+  // get the iterator and print the filename
+	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	string vtk_particle_ext = ".vtk";
+	string fname = vtk_particle_fname+time_bit+vtk_particle_ext;
+	cout << "LINE 3177 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
+	ofstream vtk_particle_out;
+	vtk_particle_out.open(fname.c_str());
+
+	// loop through all the bins
+	for (int bn = 0; bn< n_bins-1; bn++)
+	{
+		//cout << "CRN_tparticle.cpp, LINE 2671 bin number is: " << bn << endl;
+
+		// now loop through each particle in the bin
+		part_iter = particle_bins[bn].begin();
+		int counter = 0;
+		while (part_iter != particle_bins[bn].end())
+		{
+			// get the data from each particle
+			s_loc.push_back( (*part_iter).getxLoc() );
+			z_loc.push_back( (*part_iter).get_zetaLoc() );
+			d_loc.push_back( (*part_iter).getdLoc() );
+      pType.push_back( (*part_iter).getType() );
+      Mass = (*part_iter).getMass();
+      StartingMass = (*part_iter).getStartingMass();
+      Mass_remain.push_back(Mass/StartingMass);
+
+			part_iter++;
+		}
+	}
+
+	// find the number of particles
+	int n_parts = d_loc.size();
+	//cout << "d_loc size: " << n_parts << endl;
+
+	vtk_particle_out << "# vtk DataFile Version 2.0" << endl << "Unstructured Grid Ptrack"
+	        << endl << "ASCII" << endl << endl << "DATASET UNSTRUCTURED_GRID" << endl
+	        << "POINTS " << n_parts << " float" << endl;
+
+	if (reference_frame_switch == 1)
+	{
+		for (int i = 0; i< n_parts; i++)
+		{
+			vtk_particle_out << s_loc[i] << " " << -d_loc[i] << " 0.0" <<endl;
+		}
+	}
+	else
+	{
+		for (int i = 0; i< n_parts; i++)
+		{
+			vtk_particle_out << s_loc[i] << " " << z_loc[i] << " 0.0" <<endl;
+		}
+	}
+
+	vtk_particle_out << endl << "POINT_DATA "<<n_parts << endl 
+                   << "SCALARS Particle_type int 1"
+	        << endl << "LOOKUP_TABLE default" << endl;
+	for (int i = 0; i< n_parts; i++)
+	{
+		vtk_particle_out << pType[i] <<endl;
+	}
+
+	vtk_particle_out << "SCALARS Fraction_of_mass_remaining float 1"
+	        << endl << "LOOKUP_TABLE default" << endl;
+	for (int i = 0; i< n_parts; i++)
+	{
+			vtk_particle_out << Mass_remain[i] <<endl;
+	}
+
+
+	// close the files
+	vtk_particle_out.close();
+
+}
+								
+								
+
+
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // this function caluclates values within cells
 //
@@ -4204,9 +4312,9 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	// loop through bins collecting particles in different cells
 	part_iter = particle_bins[bn].begin();
 	int n_particles_in_bin = particle_bins[bn].size();
-	cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
-	cout << "LINE 4202 First part, zl: " << (*part_iter).get_zetaLoc() << " sl: " << (*part_iter).getxLoc()
-	     << " dL: " << (*part_iter).getdLoc() << endl;
+	//cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
+	//cout << "LINE 4202 First part, zl: " << (*part_iter).get_zetaLoc() << " sl: " << (*part_iter).getxLoc()
+	//     << " dL: " << (*part_iter).getdLoc() << endl;
 	while (part_iter != particle_bins[bn].end())
 	{
 		cell_index = (*part_iter).getCellIndex();
@@ -4252,9 +4360,9 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		part_iter++;
 	}
 
-	cout << "starting cell: " << starting_cell << " ending cell: " << ending_cell << endl;
-	cout << "cell_node size: " << cell_node1.size() << " " << cell_node2.size() << " "
-	     << cell_node3.size() << " " << cell_node4.size() << endl;
+	//cout << "starting cell: " << starting_cell << " ending cell: " << ending_cell << endl;
+	//cout << "cell_node size: " << cell_node1.size() << " " << cell_node2.size() << " "
+	//     << cell_node3.size() << " " << cell_node4.size() << endl;
 
 	for(int ci = starting_cell; ci< ending_cell; ci++)
 	{
@@ -4280,33 +4388,34 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		porosity_in_cell[ci] = volume_of_particles_in_cell[ci]/cell_volume;
 
 
-		cout << endl << "cell number: " << ci << endl;
+		//cout << endl << "cell number: " << ci << endl;
 		//cout << "thick upslope: " << thick_upslope << " thick_downslope: "
          // << thick_downslope << " area: " << A_bins[bn] << endl;
-		cout << "n parts in cell: " << particles_in_cells[ci] << " " 
-         << "volume of cell: " << cell_volume << endl;
-		cout << "volume of parts: " << volume_of_particles_in_cell[ci] 
-         << " mass of particles: " << mass_in_cell[ci] << endl;
-		cout << "porosity: " << porosity_in_cell[ci] << " and bulk density: " 
-        << mass_in_cell[ci]/cell_volume << endl;
-		cout << "s1: " << verts_s[ cell_node1[ci] ]
-		     << " z1: " << verts_z[ cell_node1[ci] ]
-		     << " d1: " << verts_d[ cell_node1[ci] ] << endl;
-		cout << "s2: " << verts_s[ cell_node2[ci] ]
-		     << " z2: " << verts_z[ cell_node2[ci] ]
-		     << " d2: " << verts_d[ cell_node2[ci] ] << endl;
-		cout << "s3: " << verts_s[ cell_node3[ci] ]
-		     << " z3: " << verts_z[ cell_node3[ci] ]
-		     << " d3: " << verts_d[ cell_node3[ci] ] << endl;
-		cout << "s4: " << verts_s[ cell_node4[ci] ]
-		     << " z4: " << verts_z[ cell_node4[ci] ]
-		     << " d4: " << verts_d[ cell_node4[ci] ] << endl;
+		//cout << "n parts in cell: " << particles_in_cells[ci] << " " 
+    //     << "volume of cell: " << cell_volume << endl;
+		//cout << "volume of parts: " << volume_of_particles_in_cell[ci] 
+    //     << " mass of particles: " << mass_in_cell[ci] << endl;
+		//cout << "porosity: " << porosity_in_cell[ci] << " and bulk density: " 
+    //    << mass_in_cell[ci]/cell_volume << endl;
+		//cout << "s1: " << verts_s[ cell_node1[ci] ]
+		//     << " z1: " << verts_z[ cell_node1[ci] ]
+		//     << " d1: " << verts_d[ cell_node1[ci] ] << endl;
+		//cout << "s2: " << verts_s[ cell_node2[ci] ]
+		//     << " z2: " << verts_z[ cell_node2[ci] ]
+		//     << " d2: " << verts_d[ cell_node2[ci] ] << endl;
+		//cout << "s3: " << verts_s[ cell_node3[ci] ]
+		//     << " z3: " << verts_z[ cell_node3[ci] ]
+		//     << " d3: " << verts_d[ cell_node3[ci] ] << endl;
+		//cout << "s4: " << verts_s[ cell_node4[ci] ]
+		//     << " z4: " << verts_z[ cell_node4[ci] ]
+		//     << " d4: " << verts_d[ cell_node4[ci] ] << endl;
 
 
 		surf_area_iter = surface_areas_of_types_in_cells.begin();
 		volume_iter = volumes_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
-		cout << "mass fractions: " << endl;
+		/*
+    cout << "mass fractions: " << endl;
 		for (int i = 0; i<n_types; i++)
 		{
 			cout << " " << (*mass_iter)[ci]/mass_in_cell[ci];
@@ -4329,23 +4438,24 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 			surf_area_iter++;
 		}
 		cout << endl;
-
+    */
+    
 		ssa_iter = ssa_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
 		surf_area_iter = surface_areas_of_types_in_cells.begin();
-		cout << "ssa: " << endl;
+		//cout << "ssa: " << endl;
 		for (int i = 0; i<n_types; i++)
 		{
 			if ( (*mass_iter)[ci] == 0)
 			{
-				cout << " 0";
+				//cout << " 0";
 				(*ssa_iter)[ci] = 0;
 			}
 			else
 			{
 				// the factor of 0.001 is because crunch takes ssa in m^2/g but
 				// mass is stored in kg
-				cout << " " << 0.001*(*surf_area_iter)[ci]/(*mass_iter)[ci];
+				//cout << " " << 0.001*(*surf_area_iter)[ci]/(*mass_iter)[ci];
 				(*ssa_iter)[ci] = 0.001*(*surf_area_iter)[ci]/(*mass_iter)[ci];
 			}
 			mass_iter++;
@@ -4373,7 +4483,7 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	mineral_ssa = ssa_of_types_in_cells;
 	mineral_surface_area = surface_areas_of_types_in_cells;
 	mineral_mass = mass_of_types_in_cells;
-	cout << "LINE 4138 finished getting particle data" << endl;
+	//cout << "LINE 4138 finished getting particle data" << endl;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -4484,11 +4594,11 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 		surface_area_old_iter = surface_area_in_cell_old.begin();
 		loss_per_surface_area_iter = loss_per_surface_area.begin();
 		cout.precision(12);
-		cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
-		cout << "volume in cell: " << cell_volume << endl;
+		//cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
+		//cout << "volume in cell: " << cell_volume << endl;
 		for (int i = 0; i<n_types; i++)
 		{
-			cout << "density: " << vpi.get_type_density(i) << endl;
+			//cout << "density: " << vpi.get_type_density(i) << endl;
 
 			// the mass in a cell may be calculated quite exactly, 
       // but CRUNCHflow only takes a volume fraction data element
@@ -4546,9 +4656,9 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			vf_change_in_CRUNCH_precision = vf_in_CRUNCH_precision_new-vf_in_CRUNCH_precision_old;
 			mass_change = vf_change_in_CRUNCH_precision*cell_volume*vpi.get_type_density(i);
 
-			cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: " 
-           << vf_in_CRUNCH_precision_new
-			     << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
+			//cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: " 
+      //     << vf_in_CRUNCH_precision_new
+			//     << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
 
 			if ( (*surface_area_old_iter)[ci] <=0)
 			{
@@ -4559,9 +4669,9 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 				(*loss_per_surface_area_iter)[ci] = mass_change/(*surface_area_old_iter)[ci];
 			}
 
-			cout << "mass loss: " << mass_change
-			     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci] 
-           << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
+			// << "mass loss: " << mass_change
+			//     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci] 
+      //     << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
 
 			//cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision - 
       // (*mass_old_iter)[ci] <<endl;
@@ -4572,14 +4682,14 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			loss_per_surface_area_iter++;
 
 		}
-		cout << endl;
+		//cout << endl;
 	}
 
 	// now loop through all the particles, removing mass based on their surface areas
 	double massLoss;
 	part_iter = particle_bins[bn].begin();
 	int n_particles_in_bin = particle_bins[bn].size();
-	cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
+	//cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
 	while (part_iter != particle_bins[bn].end())
 	{
 		massLoss = (*part_iter).weather_particle(vpi,loss_per_surface_area);

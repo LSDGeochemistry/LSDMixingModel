@@ -17,11 +17,13 @@ int main ()
 	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run1/run1";
 	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
 
-	
 	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
 	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
 	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
 	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run1/"; 
+	
+	string vtk_particle_fname = run_pname+"/basic_particles";
+	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
 
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -36,16 +38,12 @@ int main ()
 	string ft_parameter_fname = run_name+ft_parameter_ext;
 	string profile_in_ext = ".profile.sm";
 	string profile_in_fname = run_name+profile_in_ext;
-	string particle_types_ext = ".four_comp.clist";
-	string particle_types_fname = run_name+particle_types_ext;
-	string part_mfracs_ext = ".mfrac.mfrac";
-	string part_mfracs_fname = run_name+part_mfracs_ext;
 	string VolumeParticleInfo_ext = ".VolumeParticleData.in";
 	string VolumeParticleInfo_fname = run_name+VolumeParticleInfo_ext;
-	string profile_10Be_ext = ".profile_10Be.data";
-	string profile_10Be_fname = run_name+profile_10Be_ext;
-	string profile_f10Be_ext = ".profile_f10Be.data";
-	string profile_f10Be_fname = run_name+profile_f10Be_ext;
+	//string profile_10Be_ext = ".profile_10Be.data";
+	//string profile_10Be_fname = run_name+profile_10Be_ext;
+	//string profile_f10Be_ext = ".profile_f10Be.data";
+	//string profile_f10Be_fname = run_name+profile_f10Be_ext;
 
 	// set up the outfiles
 	string profile_out_ext = ".column_out.sm";
@@ -60,20 +58,23 @@ int main ()
 	string h_out_fname = run_name+h_out_ext;
 	string eta_out_ext = ".eta_trans.edat";
 	string eta_out_fname = run_name+eta_out_ext;
-	string age_cdf_out_ext = ".age_cdf.acdf";
-	string age_cdf_out_fname = run_name+age_cdf_out_ext;
-	string age_pdf_out_ext = ".age_pdf.apdf";
-	string age_pdf_out_fname = run_name+age_pdf_out_ext;
-	string vtk_cell_ext = ".Cell_data";
-	string vtk_cell_fname = run_name+vtk_cell_ext;
-	string vtk_particle_ext = ".Particle_data";
-	string vtk_particle_fname = run_name+vtk_particle_ext;
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
+
+  ofstream zeta_out,h_out,eta_out;
+	zeta_out.open(zeta_out_fname.c_str());
+	h_out.open(h_out_fname.c_str());
+	eta_out.open(eta_out_fname.c_str());
 
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// Initialize the variables
+	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+	
+	// the number of partitions in the mixed and unmixed zone
+	int n_PDZ_intervals;
+	int n_CAZ_intervals;	
+	
 	double SS_flux;										// flux
 	double constant_surface_change_rate;
 	vector<double> surf_erate;							// erosion from the surface
@@ -125,7 +126,16 @@ int main ()
 	VolumeParticleInfo vpi(VolumeParticleInfo_fname.c_str());
 	cout << "LINE 115 loaded particle info" << endl;
 	cout << "LINE 117, density type 0: " << vpi.get_type_density(0) << endl;
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+	
 
+
+
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  //
+  // SET UP COSMO
+  // 
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	// initial in situ concentrations in atoms per gram
 	double C_10Be,C_26Al,C_36Cl,C_14C,C_21Ne,C_3He;
 
@@ -156,10 +166,19 @@ int main ()
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
 								// to cm in tParticle.cpp)
-
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  
+  
+  
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  // 
+  // IMPORT PARAMETERS
+  //
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	// parameters for dealing with time
 	double end_time;
-	double insert_interval;
+	double insert_interval;	
+	double weathering_time_interval;
 	double particle_printing_interval;
 	double zhe_printing_interval;
 	double eroded_catch_window;
@@ -175,7 +194,8 @@ int main ()
 					>> temp >> flux_us >> temp >> dt >> temp >> CRN_switch >> temp >> end_time
 					>> temp >> constant_surface_change_rate >> temp >> particle_printing_interval
 					>> temp >> eroded_catch_window >> temp >> max_age
-					>> temp >> n_spacings;
+					>> temp >> n_spacings >> temp >> insert_interval 
+          >> temp >> weathering_time_interval;
 	model_run_params_in.close();
 	cout << "LINE 209, got model_parameters" << endl;
 
@@ -183,7 +203,9 @@ int main ()
 	//	 << " Flux_us: " << flux_us << " CRN switch: " << CRN_switch << endl
 	//     << "dt: " << dt << " end_time: " << end_time << " surface erate: " << constant_surface_change_rate << endl
 	//     << "particle print interval: " << particle_printing_interval
-	//     << " ecatch: " << eroded_catch_window << " max age: " << max_age << " n_space: " << n_spacings << endl;
+	//     << " catch: " << eroded_catch_window << " max age: " << max_age << " n_space: " << n_spacings 
+  //     << " particle insert interval: " << insert_interval 
+  //     << " weathering time interval: " << weathering_time_interval << endl;
 
 	// get the parameters for the CRN particles
 	ifstream CRN_parameter_in;
@@ -194,7 +216,8 @@ int main ()
 				     >> temp >> single_scaling >> temp >> C_10Be >> temp >> C_26Al
 				     >> temp >> C_36Cl >> temp >> C_14C >> temp >> C_21Ne >> temp
 				     >> C_3He >> temp >> M_supply_surface >> temp >> k_f10Be >> temp
-				     >> deltad >> temp >> k2_f10Be >> temp >> chi_f10Be;
+				     >> deltad >> temp >> k2_f10Be >> temp >> chi_f10Be
+             >> temp >> n_PDZ_intervals >> temp >> n_CAZ_intervals;
 	CRN_parameter_in.close();
 	cout << "LINE 228, got CRN_parameters" << endl;
 
@@ -205,48 +228,43 @@ int main ()
 	//     << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
 	//     << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
 
-
-  // load the particle mass fractions
-	ifstream pmfrac_in;
-	int n_ptypes = vpi.get_n_types();
-	pmfrac_in.open(part_mfracs_fname.c_str());
-	vector<double> starting_p_mfrac(n_ptypes);
-	for (int i = 0; i<n_ptypes; i++)
-	{
-		pmfrac_in >> starting_p_mfrac[i];
-	}
-	pmfrac_in.close();
-	cout << "LINE 250 got mfrac" << endl;
-
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	// work with the outfiles
-	// now open the zeta, eta, and h outfiles
-	/*
-	ofstream zeta_out,h_out,eta_out;
-	zeta_out.open(zeta_out_fname.c_str());
-	h_out.open(h_out_fname.c_str());
-	eta_out.open(eta_out_fname.c_str());
-
-	// open some file for printing
-	ofstream age_cdf_out,age_pdf_out;
-	age_cdf_out.open(age_cdf_out_fname.c_str());
-	age_pdf_out.open(age_pdf_out_fname.c_str());
-
+	
 	// an integer used for printing
 	const int part_p_i = int (double(particle_printing_interval/dt+0.5) );
-	double next_catch = insert_interval;
+	cout << "printing interval is: " <<  particle_printing_interval 
+       << " and part pi is: " << part_p_i << endl;
+	double next_catch = insert_interval;	
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-	// open the datafile for the particle information
-	ofstream particle_out;
-	particle_out.open(particle_out_fname.c_str());
-	ofstream eroded_particle_out;
-	eroded_particle_out.open(eroded_pout_fname.c_str());
-	*/
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+  if(	weathering_time_interval > particle_printing_interval)
+  {
+    cout << "Fatal error, the weathering time interval must be <= particle_print interval!" << endl;
+    exit(0);
+  }
 
 
+
+
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  // 
+  // CRUNCH INITIATION
+  //
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+	int tot_intervals = n_PDZ_intervals+n_CAZ_intervals;
+
+  CRUNCH_bins Geochem_bins(n_PDZ_intervals , n_CAZ_intervals, start_depth, vpi);
+  //cout << "Now getting "
+  
+  // create the crunch engine
+	string master_fname = "master_crunch.in";
+	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
+	
+	string value_name = "spatial_profile";
+	Ceng.modify_CRUNCH_value(value_name, double(weathering_time_interval));
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+  
+  
+  
 	// initialize the CRN parameters
 	if (CRN_muon_param_switch == 1)
 	{
@@ -297,56 +315,45 @@ int main ()
 	t_ime = 0;
 	start_time = 0;
 	tt = 0;
-
+  double weathering_time_clock = 0;
+  
 	// insert initial particles
 	// to insert particles throughout the domain we need to set old botom depth as the
 	// zeta elevations.
 	for (int i = 0; i<eta_sz; i++)
 	{
-
 			old_bottom_depth[i] = old_zeta[i];
 			Delta_eta[i] = start_depth;
-			cout << "LINE 350 h["<<i<<"]: " << old_h[i] << " and zeta: " << old_zeta[i] << endl
-			     << " and start depth: " << start_depth << " and Delta_eta: " << Delta_eta[i] << endl;
+			//cout << "LINE 350 h["<<i<<"]: " << old_h[i] << " and zeta: " << old_zeta[i] << endl
+			//     << " and start depth: " << start_depth << " and Delta_eta: " << Delta_eta[i] << endl;
 	}
-	//part_ID_start =CRN_tpb.insert_particles(ft_test, Delta_eta, old_bottom_depth,
-	//							 part_conc, starting_pID, starting_p_mfrac,
-	//							 C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He);
 
-   part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_eta, old_bottom_depth,
+  part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_eta, old_bottom_depth,
 										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
 										vpi);
 
+	//cout << "LINE 379, n_nodes: " << ft_test.get_n_nodes() << endl;
 
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	// print initial conditions
-	//CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
-	/*
-	ft_test.print_h_s(zeta_out);
-	ft_test.print_h_s(eta_out);
-	ft_test.print_h_s(h_out);
-	ft_test.print_zeta(t_ime, zeta_out);
-	ft_test.print_eta(t_ime, eta_out);
-	ft_test.print_h(t_ime, h_out);
-	*/
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-
-	cout << "LINE 379, n_nodes: " << ft_test.get_n_nodes() << endl;
-/*
+	
 	// now loop through time
 	int particle_trigger = 1;
 	while(t_ime < end_time)
 	{
 		tt++;
 		t_ime += dt;		// increment the time
+		
+		cout << "Time is: " << t_ime << endl; 
+		
 		insert_time_clock+=dt;	// increment the insert time clock
 								// particles are not inserted every timestep
 								// rather they are inserted at intervals.
 								// when the insert time clock exceeds the insert
 								// interval particles are inserted
 								// and the insert time clock is reset
+    weathering_time_clock+=dt;  // similar to the insert clock, but this determines
+                // weathering. Paricles move about without weathering, then
+                // once a weathering interval has elapsed all particles are weatherd
+                // for that interval and the mass updated. 
 
 		//ds_elev -= dt*SS_erate;
 
@@ -397,7 +404,6 @@ int main ()
 		}
 		//cout << "...ran motion" << endl;
 
-
 		//cout << "running insertion";
 		// if the time elapsed sinse the last insertion of particles is gereater
 		// than or equal to the insertion interval, then get the amount of
@@ -418,35 +424,47 @@ int main ()
 			for(int ii = 0; ii< eta_sz; ii++)
 			{
 				Delta_eta[ii] = old_eta[ii]-new_eta[ii];
-				//cout << "i = " << ii << " Delta_eta: " << Delta_eta[ii] << endl;
+				cout << "i = " << ii << " Delta_eta: " << Delta_eta[ii] << endl;
 			}
-
-			// insert particles into the insertion zone
-			part_ID_start =CRN_tpb.insert_particles(ft_test, Delta_eta, old_bottom_depth,
-								 part_conc, starting_pID, starting_p_mfrac);
-
+			
+			// insert the particles
+      part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_eta, old_bottom_depth,
+										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
+										vpi);
+      					 
 			old_eta = new_eta;				// reset old eta
 			insert_time_clock = 0;			// reset the insert time clock
-
-		}
+		}               // !end particle insertion
 		//cout << "...ran insertion" << endl;
+
+    // now checking weathering clock
+    if (weathering_time_clock >= weathering_time_interval - dt/2)
+    {
+      cout << "Time is: " << t_ime << " and weathering now" << endl;
+    
+      // run a crunch timestep
+      Geochem_bins.run_CRUNCH_timestep(CRN_tpb, ft_test, Ceng);
+      
+      weathering_time_clock = 0;
+    }
 
 		//cout << "running printing" << endl;
 		// print the particle data to file
-		int n_depthintervals_soil = 2;
-		int n_depthintervals_parent = 3;
-		double bottom_depth = 2.0;
 		if (particle_trigger == 1 && tt%part_p_i== 0)
 		{
-			cout << "LINE 289, printing particles, time: " << t_ime << endl;
+			cout << "LINE 440, printing particles, time: " << t_ime << endl;
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
 			int ref_frame_switch = 0;
-			CRN_tpb.cell_and_particle_chemistry_printing_vtk(t_ime, ft_test,
-											 pi, vtk_particle_fname, vtk_cell_fname,
-											 n_depthintervals_soil, n_depthintervals_parent,
-											 bottom_depth, ref_frame_switch);
+			
+			// print basic particle information
+			CRN_tpb.vtk_print_basic_volume_particles(t_ime, vtk_particle_fname, 
+                                               ref_frame_switch);
+
+      // print cell data
+      Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
+                                    vtk_cell_fname, Ceng);
 
 		}
 		//cout << "...ran printing" << endl;
@@ -456,54 +474,10 @@ int main ()
 			cout << "time is: " << t_ime << endl;
 
 		}
-	}
-
-	// now print the result to a profile file
-	ofstream profile_out;
-	profile_out.open(profile_out_fname.c_str());
-	ft_test.export_input_profile(profile_out);
-
-	// close files
-	profile_out.close();
-	particle_out.close();
-	eroded_particle_out.close();
-	zeta_out.close();
-	eta_out.close();
-	h_out.close();
-	age_cdf_out.close();
-	age_pdf_out.close();
-
-*/
-
-
-	//int n_bins = CRN_tpb.get_n_bins();
-	int n_PDZ_intervals = 2;
-	int n_CAZ_intervals = 3;
-	double bottom_depth = 2.0; 
-	int tot_intervals = n_PDZ_intervals+n_CAZ_intervals;
-
-  CRUNCH_bins Geochem_bins(n_PDZ_intervals , n_CAZ_intervals, bottom_depth, vpi);
-
-  // create the crunch engine
-	string master_fname = "master_crunch.in";
-	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
+  }
    
-  // run a crunch timestep
-  Geochem_bins.run_CRUNCH_timestep(CRN_tpb, ft_test, Ceng);
-  
-  // now test the vtk initialisation
-  ofstream vtk_cell_out;
-  vtk_cell_out.open("Test_vtk_cell.vtk");
-  int reference_frame_switch = 1;
-  Geochem_bins.vtk_print_cell_header(reference_frame_switch, vtk_cell_out);
-
-  // print the outfiles
-  Geochem_bins.vtk_print_cell_mineral_solid_state(vtk_cell_out);
-  Geochem_bins.vtk_print_cell_CRUNCH_data(vtk_cell_out, Ceng);  
-
-
-  zeta_out.close();
   eta_out.close();
+  zeta_out.close();
   h_out.close();
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
