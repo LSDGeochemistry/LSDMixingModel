@@ -473,8 +473,8 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
 		new_bottom_depth[eta_node] = insert_zone_bottom;
 
-		cout << "particle bins line 479 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
-		cout << "zone top: " << insert_zone_top << " and bottom: " << insert_zone_bottom << endl;
+		//cout << "particle bins line 479 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
+		//cout << "zone top: " << insert_zone_top << " and bottom: " << insert_zone_bottom << endl;
 
     //cout << "Line 478, bel: " << bin_edge_loc[bn] << " and ds bel: "  << bin_edge_loc[bn+1] << endl;
 
@@ -495,7 +495,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 					// now get the integer version of this:
 					n_parts_inserted = int(n_parts_double);
 					
-					cout << "type: " << type << " size " << sizet << " and inserted: " << n_parts_inserted << endl;
+					//cout << "type: " << type << " size " << sizet << " and inserted: " << n_parts_inserted << endl;
 
 					// a bit of logic in case one of the particles has too little mass
 					// to make up an individual particle near the target mass
@@ -1604,7 +1604,7 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 	}
 
 
-  cout << "Number of particles eroded: " << n_eroded << endl;
+  //cout << "Number of particles eroded: " << n_eroded << endl;
 	return eroded_bins;
 }
 
@@ -3188,7 +3188,7 @@ void CRN_tParticle_bins::vtk_print_basic_volume_particles(double t_ime,
 	vtk_particle_out.open(fname.c_str());
 
 	// loop through all the bins
-	for (int bn = 0; bn< n_bins-1; bn++)
+	for (int bn = 0; bn< n_bins; bn++)
 	{
 		//cout << "CRN_tparticle.cpp, LINE 2671 bin number is: " << bn << endl;
 
@@ -3892,6 +3892,11 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 	vector<double> eta = ft.get_eta();
 	vector<double> zeta = ft.get_zeta();
 	vector<double> s = ft.get_s_h();
+	
+	//for(int i = 0; i<s.size();i++)
+	//{
+  //  cout << "s[" << i << "]: " << s[i] << endl;
+  //}
 
 	// loop through the bins collecting data
 	int n_bins = particle_bins.size();
@@ -3952,6 +3957,8 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 		{
 			// get the s-coordinate vertex
 			verts_s.push_back(bin_edge_loc[bn]);
+
+      //cout << "The bin edge location: " <<  bin_edge_loc[bn] << "for bin: " << bn << endl;
 
 			// get the vertical index
 			verts_z.push_back( us_zeta - (double(sdi))*us_soil_depthinterval);

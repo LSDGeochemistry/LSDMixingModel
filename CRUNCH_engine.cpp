@@ -1136,7 +1136,7 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
     exit(1);
   }
 	
-	
+	//string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007";
 	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007 > crunch_screen.txt";
 	//cout << "command_line_str is: " << command_line_str << endl;
 
