@@ -382,7 +382,7 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
   map< string, vector<double> > mssafracs =  parse_vec_list_vec_to_vec_map(mssaname, 
                             mineral_names, vec_mineral_ssa_old);
   string mmname = "Mineral_mass_kg"; 
-  map< string, vector<double> > mmfracs =  parse_vec_list_vec_to_vec_map(mmname, 
+  map< string, vector<double> > mmass =  parse_vec_list_vec_to_vec_map(mmname, 
                             mineral_names, vec_mineral_mass_old);
   string msaname = "Mineral_surface_area_m2"; 
   map< string, vector<double> > msafracs =  parse_vec_list_vec_to_vec_map(msaname, 
@@ -391,12 +391,85 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
   // now print the map data to the vtk file
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mvpercents);
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mssafracs);
-  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mmfracs);
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mmass);
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, msafracs);
   
+  // now get the mass fractions for printing
+  vtk_print_cell_mineral_fractions(vtk_cell_out, mmass);
   
 }
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This function prints the mass fractions to a vtk file
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_print_cell_mineral_fractions(ofstream& vtk_cell_out, 
+                    map< string, vector<double> >& raw_data)
+{
+  int n_cells_in_bin = n_pdz_cells_per_bin+n_caz_cells_per_bin;
+  
+  map<string, vector<double> >::iterator map_iter;  // the iterator for the map object
+  
+  map_iter = raw_data.begin();
+  vector<double> this_data = map_iter->second;
+  int n_nodes = int(this_data.size());
+  vector<double> total_data(n_nodes,0.0);
+  
+  // first loop through the data collecting the total
+  while(map_iter != raw_data.end())
+  {
+    string this_key = map_iter->first;
+    vector<double> this_data = map_iter->second;
+    
+    if(total_cells != int(this_data.size()))
+    {
+      cout << "LINE 426 trying to print map data but the data is not the same "
+          << "size as the number of cells" << endl;
+    }
+    else
+    {
+      for(int cell = 0; cell<total_cells; cell++)
+      {
+        total_data[cell]+=this_data[cell];
+      }                         
+    }
+    map_iter++;
+  }   
+
+  map_iter = raw_data.begin();
+  while(map_iter != raw_data.end())
+  {
+    string this_key = map_iter->first;
+    vector<double> this_data = map_iter->second;
+    this_key = this_key+"_dimensionless_fraction";
+    
+    if(total_cells != int(this_data.size()))
+    {
+      cout << "LINE 350 trying to print map data but the data is not the same "
+          << "size as the number of cells" << endl;
+    }
+    else
+    {
+      vtk_cell_out << "SCALARS " << this_key << " float 1" << endl 
+                   << "LOOKUP_TABLE default" << endl;
+       for(int cn = 0; cn<total_cells; cn++)
+       {
+         if (total_data[cn] == 0)
+         {
+           vtk_cell_out << 0 << endl;  
+         }
+         else
+         {
+           vtk_cell_out << this_data[cn]/total_data[cn] << endl;
+         }
+       }                                
+    }
+    map_iter++;
+  }   
+
+}                   
+
+
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This function parses specific vec list vecs
