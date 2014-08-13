@@ -541,6 +541,32 @@ void CRUNCH_bins::vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out,
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// This function bundles several of the vtk printing functions so
+// you get the correct header, an appropriate filename, and both solute and
+// mineral data
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_cell_bundler(double t_ime, int reference_switch, 
+                                   string vtk_cell_fname, CRUNCH_engine& Ceng)
+{
+  
+  // set up the filename
+  string time_bit = itoa( int(t_ime+0.5) );
+	string vtk_ext = ".vtk";
+	string fname = vtk_cell_fname+time_bit+vtk_ext;
+	ofstream vtk_cell_out;
+	vtk_cell_out.open(fname.c_str());
+  
+  // print to file
+  vtk_print_cell_header(reference_switch, vtk_cell_out);
+  vtk_print_cell_mineral_solid_state(vtk_cell_out);
+  vtk_print_cell_CRUNCH_data(vtk_cell_out, Ceng); 
+  
+  vtk_cell_out.close(); 
+
+}
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //
@@ -622,23 +648,23 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   {
     // call crunch
     Ceng.call_CRUNCH(bn);
-    cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
+    //cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
     
     // for bug checking, move the crunch files with bin number names
     int n_ts = 2;
     Ceng.move_CRUNCH_output_files_with_bin_number(n_ts,bn);
-    cout << "LINE 477, moved output files " << bn << endl;
+    //cout << "LINE 477, moved output files " << bn << endl;
         
     // now read in the resulting data
     int number_timestep = 1;
     int n_cells = n_pdz_cells_per_bin+n_caz_cells_per_bin;
     
-    cout << "LINE 483 Parsing the crunch data" << endl;
+    //cout << "LINE 483 Parsing the crunch data" << endl;
     // parse the resulting data. 
     Ceng.parse_CRUNCH_files(number_timestep, n_cells, bn, n_bins, n_cells,
 						new_pH_vec, spacings, CRUNCH_tdepths, CRUNCH_bdepths,
 						new_conc, mineral_vperc_new, new_min_ssa, new_rxn_rates);
-		 cout << "LINE 488 Parsed the crunch data, moving on to updating the vlvs" << endl;
+		 //cout << "LINE 488 Parsed the crunch data, moving on to updating the vlvs" << endl;
     				
      // add the listvecs to the vlv
      vec_new_conc[bn] = new_conc;

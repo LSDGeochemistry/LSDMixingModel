@@ -87,10 +87,10 @@ void VolumeParticleInfo::create( const char* fname )
 	}
 
 	// set the private data
-    n_types = t_ntypes;
-    n_sizes = t_nsizes;
-    type_index = t_type_index;
-    type_name = t_type_name;
+  n_types = t_ntypes;
+  n_sizes = t_nsizes;
+  type_index = t_type_index;
+  type_name = t_type_name;
 	size_index = t_size_index;
 	type_mfracs = t_type_mfrac;
 	size_mfracs = t_size_mfrac;

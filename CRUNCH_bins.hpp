@@ -93,6 +93,16 @@ class CRUNCH_bins
     void vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out, 
                      CRUNCH_engine& Ceng);
 
+
+    /// @brief This function bundles several of the vtk printing functions so
+    /// you get the correct header, an appropriate filename, and both solute and
+    /// mineral data
+    /// @author SMM
+    /// @date 13/08/2014
+    void vtk_cell_bundler(double t_ime, int reference_switch, 
+                                   string vtk_cell_fname, CRUNCH_engine& Ceng); 
+    
+    
     /// @brief this function takes vectors of list vecs and reorganises them
     /// into vectors so that it is easier to plot the data to cells
     /// it also places them in a map container so the key to the map
