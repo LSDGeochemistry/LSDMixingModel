@@ -1,0 +1,13 @@
+flux_switch: 1
+prod_switch: 2
+flux_us: 0.0
+dt: 10
+CRN_switch: 0
+end_time: 10000
+surf_erate: -0.0000025
+particle_printing_interval: 1000
+eroded_catch_window: 2000
+max_age: 5000
+n_spacings: 500
+particle_insert_interval: 2000
+weathering_time_interval: 100

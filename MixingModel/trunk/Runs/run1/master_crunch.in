@@ -1,0 +1,144 @@
+TITLE
+Dec--new code adjustments--using new Kaolinite
+END
+ 
+RUNTIME
+time_units        years
+timestep_max      10.0
+timestep_init     1.0E-14
+time_tolerance    0.005
+correction_max    2.0
+debye-huckel      true
+speciate_only     false
+database_sweep    false
+database          M:/papers/mixing_model_2014/source/runs/run1/datacomSC08.dbs
+screen_output 500
+END
+ 
+POROSITY
+porosity_update true
+END
+ 
+OUTPUT
+spatial_profile 10
+END
+ 
+MINERALS
+K-Feldspar4           -label default  -rate  -15.00   -threshold  0.5  !!-14.60
+KaoliniteCIS          -label default  -rate  -19.60                     !!-16.0
+Albite                -label default  -rate  -15.05    -threshold  0.5  !!-14.35
+Smectite-high-Fe-Mg   -label default  -rate  -15.9    -threshold  0.5  !!-14.35
+Quartz                -label default  -rate  -50.00    -threshold  0.5
+END
+ 
+AQUEOUS_KINETICS
+!HA_decay
+END
+ 
+GASES
+CO2(g)
+END
+ 
+TEMPERATURE
+set_temperature 13.5
+END
+ 
+DISCRETIZATION
+xzones 10 0.500
+END
+ 
+BOUNDARY_CONDITIONS
+X_begin   SoluteWater    flux
+X_end     Profile        flux
+END
+ 
+INITIAL_CONDITIONS
+Profile 1-120
+END
+ 
+TRANSPORT
+distance_units       centimeters
+time_units           seconds
+fix_diffusion        0.919E-05
+formation_factor      1.0
+cementation_exponent  1.0
+!dispersivity         0.001
+gas_diffusion        1.E-02
+END
+ 
+ 
+FLOW
+time_units      years
+distance_units  meters
+constant_flow   0.088
+END
+
+ 
+PRIMARY_SPECIES
+H+
+CO2(aq)
+Mg++
+Ca++
+K+
+SiO2(aq)
+Na+
+Al+++
+Cl-
+Sr++
+NO3-
+SO4--
+Fe++
+Fe+++
+END
+
+SECONDARY_SPECIES
+Al(OH)2+
+AlO2-
+AlOH++
+CaCl+
+CaCl2(aq)
+CaOH+
+HCO3-
+H2SiO4--
+HAlO2(aq)
+HCl(aq)
+HSiO3-
+KCl(aq)
+MgCl+
+NaAlO2(aq)
+NaCl(aq)
+NaHSiO3(aq)
+NaOH(aq)
+OH-
+CO3--
+CaCO3(aq)
+CaHCO3+
+MgCO3(aq)
+MgHCO3+
+NaCO3-
+NaHCO3(aq)
+SrCO3(aq)
+END
+ 
+Condition SoluteWater !Precipitation with correction for evaporation (85% evap)
+temperature      13.5
+set_porosity     0.99
+pH              5.13
+CO2(aq)         CO2(g)  0.01
+Na+                                4.25E-04
+Mg++                               6.8800e-05
+K+                                 1.62E-05
+Ca++                               9.07E-05
+Sr++                               5.07E-07
+Al+++                              2.03E-07
+SiO2(aq)                           9.01E-07
+Cl-                                4.65E-04
+NO3-                               1.00E-04
+Fe++                               1.00E-10
+Fe+++                              1.00E-19
+SO4--                              1.61E-04
+Quartz                 1E-10
+KaoliniteCIS           1E-20 0.000002 
+Smectite-high-Fe-Mg    1E-10 ssa 50.0
+SolidDensity           2650
+END
