@@ -50,6 +50,12 @@ class CRUNCH_bins
     void populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
                                   CRN_tParticle_bins& CRN_tPb);
 
+    /// @brief this gets the mass fractions and the depletions and collects 
+    /// the data into cells
+    /// @author SMM
+    /// @date 14/08/2014
+    void populate_cells_with_mfracs_and_depletion(CRN_tParticle_bins& CRN_tPb);
+
     /// @brief This loops through the bins generating a CrunchFlow .in
     /// file for each bin
     /// @author SMM
@@ -85,6 +91,13 @@ class CRUNCH_bins
     /// @author SMM
     /// @date 08/08/2014
     void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);                                  
+
+    /// @brief this function prints the mass fractions and the mineral
+    /// depletion ratios to vtk
+    /// @author SMM
+    /// @date 14/08/2014
+    void vtk_print_cell_mineral_mfracs_and_depletion(ofstream& vtk_cell_out);
+
     
     /// @brief This function prints the concentrations and reaction rates
     /// to a vtk file after crunch has run
@@ -100,7 +113,8 @@ class CRUNCH_bins
     /// @author SMM
     /// @date 13/08/2014
     void vtk_cell_bundler(double t_ime, int reference_switch, 
-                                   string vtk_cell_fname, CRUNCH_engine& Ceng); 
+                                   string vtk_cell_fname, CRUNCH_engine& Ceng, 
+                                   CRN_tParticle_bins& CRN_tPb); 
     
     
     /// @brief this function takes vectors of list vecs and reorganises them
@@ -193,7 +207,10 @@ class CRUNCH_bins
 	  vector< list< vector<double> > > vec_mineral_vpercents_old;
  	  vector< list< vector<double> > > vec_mineral_ssa_old;
  	  vector< list< vector<double> > > vec_mineral_mass_old;
- 	  vector< list< vector<double> > > vec_mineral_surface_area_old;       
+ 	  vector< list< vector<double> > > vec_mineral_surface_area_old;  
+    vector< list< vector<double> > > vec_mineral_mfracs_old;  
+    vector< list< vector<double> > > vec_mineral_depletion_old;        
+          
 
     // vecvec to hold details about columns (that is, these are not mineral
     // or species specific)

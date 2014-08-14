@@ -73,6 +73,20 @@ class CRN_tParticle_bins
 									vector<double>& verts_d,
 									vector<int>& cell_node1, vector<int>& cell_node2,
 									vector<int>& cell_node3, vector<int>& cell_node4);
+	
+  /// @brief This function assumes the cells have already been identified for the
+  /// particles. It then calcualted the mass fractions in each cell of the
+  /// particle types, as well as the mass depletion, as measured by the
+  /// total mass of a type in a cell divided by the total starting type of 
+  /// mass in a cell
+  /// @author SMM
+  /// @date 14/08/2014								
+	void get_mineral_mass_loss_and_mfracs_volumetric(int bn, int n_PDZ_intervals, 
+                  int n_CAZ_intervals,
+									VolumeParticleInfo& vpi,
+									list< vector<double> >& mineral_mfracs,
+									list< vector<double> >& mineral_depletion);								
+									
 	void get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PDZ_intervals, int n_CAZ_intervals,
 									double bottom_depth, vector<double> verts_s, vector<double> verts_z,
 									vector<double>& verts_d,
