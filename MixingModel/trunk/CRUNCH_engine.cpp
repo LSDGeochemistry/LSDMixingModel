@@ -1320,6 +1320,26 @@ void CRUNCH_engine::get_mineral_properties()
 	
 	// update the dbase so that it looks in the crunch folder
 	string dbase_fname_with_path = dbase_fname;
+	
+	// get rid of control characters at the end of this file
+	// stupid windows file systems add these on    
+  int len =  dbase_fname_with_path.length();
+  if(len != 0)
+  {
+    if (iscntrl(dbase_fname_with_path[len-1]))
+    {
+      cout << "The last item in the database path is a control character!" <<endl;
+      cout << "Why does stupid windows do this?! Removing!" << endl;
+      dbase_fname_with_path.erase(len-1);
+    }
+  }
+  else
+  {
+    cout << "Warning, getting database, "
+         << "but database name contains an empty string." << endl;
+  } 
+
+
 
 	// load the database into a list
 	list<string> dbase_list;

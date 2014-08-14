@@ -4235,6 +4235,131 @@ void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ
 
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+//
+// This function loops through the bin getting mass fractions and depletions
+// It assumes the cell indices and verts have been calcualted already
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRN_tParticle_bins::get_mineral_mass_loss_and_mfracs_volumetric(int bn, int n_PDZ_intervals, 
+                  int n_CAZ_intervals,
+									VolumeParticleInfo& vpi,
+									list< vector<double> >& mineral_mfracs,
+									list< vector<double> >& mineral_depletion)
+{
+	// reset the list vectors
+	list< vector<double> > empty_list_vec;
+	mineral_mfracs = empty_list_vec;
+	mineral_depletion = empty_list_vec;
+
+	// get some cell information
+	int n_cells = (n_PDZ_intervals+n_CAZ_intervals)*n_bins;
+	int starting_cell = bn*(n_PDZ_intervals+n_CAZ_intervals);
+	int ending_cell = (bn+1)*(n_PDZ_intervals+n_CAZ_intervals);
+
+	// initiate data storage
+	vector<double> mass_in_cell(n_cells,0.0);
+	vector<double> empty_vec(n_cells,0.0);
+	list< vector<double> > mass_of_types_in_cells;
+	list< vector<double> > starting_mass_of_types_in_cells;
+
+	// set up empty list vecs
+	int n_types = vpi.get_n_types();
+	for (int type = 0; type<n_types; type++)
+	{
+		mass_of_types_in_cells.push_back(empty_vec);
+		starting_mass_of_types_in_cells.push_back(empty_vec);
+		mineral_depletion.push_back(empty_vec);
+		mineral_mfracs.push_back(empty_vec);
+	}
+
+	// now to do the particles
+	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list< vector<double> >::iterator mass_iter;
+	list< vector<double> >::iterator starting_mass_iter;
+	list< vector<double> >::iterator mfrac_iter;
+	list< vector<double> >::iterator depletion_iter;	
+
+	// parameters from the cells
+	int cell_index;
+	int particleType;
+	double particleMass;
+	double particleStartingMass;
+	double thick_upslope,thick_downslope;
+	double cell_volume;
+
+	// loop through bins collecting particles in different cells
+	part_iter = particle_bins[bn].begin();
+	int n_particles_in_bin = particle_bins[bn].size();
+	while (part_iter != particle_bins[bn].end())
+	{
+	  // get the properties of this particle
+		cell_index = (*part_iter).getCellIndex();
+		particleType = (*part_iter).getType();
+		particleMass = (*part_iter).getMass();
+		particleStartingMass = (*part_iter).getStartingMass();
+
+		// collect data elements based on individual particles
+		if (cell_index >= 0)
+		{
+			mass_in_cell[cell_index]+=particleMass;
+
+			mass_iter = mass_of_types_in_cells.begin();
+			starting_mass_iter = starting_mass_of_types_in_cells.begin();
+
+			for (int count = 0; count < particleType; count++)
+			{
+				starting_mass_iter++;
+				mass_iter++;
+			}
+
+			// add to running total of starting mass and
+      // mass for different particle types.
+			(*mass_iter)[cell_index]+=particleMass;
+			(*starting_mass_iter)[cell_index]+=particleStartingMass;
+		}
+
+		part_iter++;
+	}
+
+  // now loop through the cells, aggregating the information
+	for(int ci = starting_cell; ci< ending_cell; ci++)
+	{
+	  // get the iterators. These refer to the element on the list
+	  // corresponding to the type of interest. 
+		mass_iter = mass_of_types_in_cells.begin();
+    starting_mass_iter = starting_mass_of_types_in_cells.begin();
+    mfrac_iter = mineral_mfracs.begin();
+    depletion_iter = mineral_depletion.begin();
+    
+    // loop through the types. After collecting cell information
+    // of all the cells it moves on to the next type by incrementing
+    // the iterators
+		for (int i = 0; i<n_types; i++)
+		{
+			if ( (*mass_iter)[ci] == 0)
+			{
+				(*mfrac_iter)[ci] = 0;
+				(*depletion_iter)[ci] = 1;
+			}
+			else
+			{
+				(*mfrac_iter)[ci] = (*mass_iter)[ci]/mass_in_cell[ci];
+				(*depletion_iter)[ci] = ((*mass_iter)[ci]/( (*starting_mass_iter)[ci] ))-1;
+			}
+			mass_iter++;
+			starting_mass_iter++;
+			mfrac_iter++;
+			depletion_iter++;
+		}
+	}
+	
+  // note: at this stage we do not need to update the listvecs that were
+  // passed to the function since they have already been updated in 
+  // the loops above
+}
+									
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function is used to collect data about the volume fractions and 
 // specific surface areas in
 // cells that are then fed into CRUNCHflow

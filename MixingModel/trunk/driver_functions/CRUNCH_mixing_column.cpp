@@ -270,7 +270,8 @@ int main(int argc, char *argv[])
 	//     << "Muon switch: " << CRN_muon_param_switch << " scaling: " << single_scaling << endl
 	//     << "Init conc, 10Be: " << C_10Be << " 26Al: " << C_26Al << " C_36Cl: " << C_36Cl << " C_14C: " << C_14C << endl
 	//     << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
-	//     << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
+	//    << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
+	     
 
 
   
@@ -302,6 +303,8 @@ int main(int argc, char *argv[])
   // create the crunch engine
 	string master_fname = "master_crunch.in";
 	CRUNCH_engine Ceng(crunch_pname, run_pname, master_fname);  
+	cout << "LINE 306 Got crunch enginge" << endl;
+	
 	
 	string value_name = "spatial_profile";
 	Ceng.modify_CRUNCH_value(value_name, double(weathering_time_interval));
@@ -516,7 +519,7 @@ int main(int argc, char *argv[])
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
-			int ref_frame_switch = 0;
+			int ref_frame_switch = 1;
 			
 			// print basic particle information
 			CRN_tpb.vtk_print_basic_volume_particles(t_ime, vtk_particle_fname, 
@@ -524,7 +527,7 @@ int main(int argc, char *argv[])
 
       // print cell data
       Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
-                                    vtk_cell_fname, Ceng);
+                                    vtk_cell_fname, Ceng, CRN_tpb);
 
 		}
 		//cout << "...ran printing" << endl;

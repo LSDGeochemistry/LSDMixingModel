@@ -120,12 +120,45 @@ void CRUNCH_bins::cell_location_to_screen(int bin, int cell)
 } 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// This function assumes cells have been assigned to particles
+// it then gets the mass fractions of the minerals as well as the 
+// depletion fractions
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+void CRUNCH_bins::populate_cells_with_mfracs_and_depletion(CRN_tParticle_bins& CRN_tPb)
+{
+  // get the number of bins from the CRN_tParticle_bin_object
+  n_bins = CRN_tPb.get_n_bins();
+
+  // calculate the total number of cells 
+  total_cells = (n_caz_cells_per_bin+n_pdz_cells_per_bin)*n_bins;  
+  
+  vector<double> empty_vec;
+  vector< list< vector<double> > > empty_vlv(n_bins);
+	vec_mineral_mfracs_old = empty_vlv;
+ 	vec_mineral_depletion_old = empty_vlv;
+   
+  // get the locations of the cells and the cell indices. 
+  // this function also updates the cell indices of the particles
+  for (int bn = 0; bn<n_bins; bn++)
+  {
+    //cout << "size vmvo: " << vec_mineral_vpercents_old.size() << " and bn: " << bn << endl;
+    // now collect the data from from the particles
+    // this collects data from each cell in this bin
+	  list< vector<double> > mineral_mfracs_old;
+ 	  list< vector<double> > mineral_depletion_old;
+	  CRN_tPb.get_mineral_mass_loss_and_mfracs_volumetric(bn, n_pdz_cells_per_bin, 
+                           n_caz_cells_per_bin, vpi, mineral_mfracs_old, 
+                           mineral_depletion_old);   
+    vec_mineral_mfracs_old[bn] = mineral_mfracs_old;
+    vec_mineral_depletion_old[bn] = mineral_depletion_old;                 
+  }    
+}
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-// The create function:
-// this just has some information about the cell locations
-// the data is stored in vectors, you need to get the index into
-// the vector of from the bin and cell number
+// This function both assigns cells to the particles and
+// calculates several cell based metrics, mainly used in crunch simulations
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
                                                 CRN_tParticle_bins& CRN_tPb)
@@ -167,21 +200,21 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
 								verts_s, verts_z, verts_d,
 							  cell_node1, cell_node2, cell_node3, cell_node4); 			
 
-   cell_data_map["verts_s"] = verts_s;
-   cell_data_map["verts_z"] = verts_z;
-   cell_data_map["verts_d"] = verts_d;
+  cell_data_map["verts_s"] = verts_s;
+  cell_data_map["verts_z"] = verts_z;
+  cell_data_map["verts_d"] = verts_d;
    
-   cell_index_map["cell_node1"] = cell_node1;
-   cell_index_map["cell_node2"] = cell_node2;
-   cell_index_map["cell_node3"] = cell_node3;
-   cell_index_map["cell_node4"] = cell_node4;
+  cell_index_map["cell_node1"] = cell_node1;
+  cell_index_map["cell_node2"] = cell_node2;
+  cell_index_map["cell_node3"] = cell_node3;
+  cell_index_map["cell_node4"] = cell_node4;
 
-   vector<double> empty_vec;
-   vector< list< vector<double> > > empty_vlv(n_bins);
-	 vec_mineral_vpercents_old = empty_vlv;
- 	 vec_mineral_ssa_old = empty_vlv;
- 	 vec_mineral_mass_old = empty_vlv;
- 	 vec_mineral_surface_area_old = empty_vlv;
+  vector<double> empty_vec;
+  vector< list< vector<double> > > empty_vlv(n_bins);
+	vec_mineral_vpercents_old = empty_vlv;
+ 	vec_mineral_ssa_old = empty_vlv;
+ 	vec_mineral_mass_old = empty_vlv;
+ 	vec_mineral_surface_area_old = empty_vlv;
    
   // get the locations of the cells and the cell indices. 
   // this function also updates the cell indices of the particles
@@ -393,12 +426,37 @@ void CRUNCH_bins::vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out)
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mssafracs);
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, mmass);
   vtk_print_cell_from_map_of_vectors(vtk_cell_out, msafracs);
-  
-  // now get the mass fractions for printing
-  vtk_print_cell_mineral_fractions(vtk_cell_out, mmass);
-  
 }
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// This function parses specific vec list vecs
+// for vtk printing
+//
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void CRUNCH_bins::vtk_print_cell_mineral_mfracs_and_depletion(ofstream& vtk_cell_out)
+{
+ 
+  // get the names of the minerals
+  list<string> mineral_names = get_names_of_minerals();
+  
+  // get the maps
+  string mfracsname = "Mineral_mass_fraction"; 
+  map< string, vector<double> > mfracs =  parse_vec_list_vec_to_vec_map(mfracsname, 
+                            mineral_names, vec_mineral_mfracs_old );
+  string mdepletionname = "Mineral_depletion_ratio"; 
+  map< string, vector<double> > mdepletion =  parse_vec_list_vec_to_vec_map(mdepletionname, 
+                            mineral_names, vec_mineral_depletion_old);
+                                                                                   
+  // now print the map data to the vtk file
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mfracs);
+  vtk_print_cell_from_map_of_vectors(vtk_cell_out, mdepletion);
+ 
+}
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // This function prints the mass fractions to a vtk file
@@ -466,9 +524,8 @@ void CRUNCH_bins::vtk_print_cell_mineral_fractions(ofstream& vtk_cell_out,
     }
     map_iter++;
   }   
-
 }                   
-
+//==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -549,23 +606,27 @@ void CRUNCH_bins::vtk_print_cell_CRUNCH_data(ofstream& vtk_cell_out,
 //
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRUNCH_bins::vtk_cell_bundler(double t_ime, int reference_switch, 
-                                   string vtk_cell_fname, CRUNCH_engine& Ceng)
-{
-  
+                                   string vtk_cell_fname, CRUNCH_engine& Ceng, 
+                                   CRN_tParticle_bins& CRN_tPb)
+{ 
   // set up the filename
   string time_bit = itoa( int(t_ime+0.5) );
 	string vtk_ext = ".vtk";
 	string fname = vtk_cell_fname+time_bit+vtk_ext;
 	ofstream vtk_cell_out;
 	vtk_cell_out.open(fname.c_str());
+	
+	// get the mass fractions: we do this here since it is only used for printing 
+	// so this saves computational expense. 
+	populate_cells_with_mfracs_and_depletion(CRN_tPb);
   
   // print to file
   vtk_print_cell_header(reference_switch, vtk_cell_out);
   vtk_print_cell_mineral_solid_state(vtk_cell_out);
   vtk_print_cell_CRUNCH_data(vtk_cell_out, Ceng); 
+  vtk_print_cell_mineral_mfracs_and_depletion(vtk_cell_out);
   
   vtk_cell_out.close(); 
-
 }
 
 //==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
