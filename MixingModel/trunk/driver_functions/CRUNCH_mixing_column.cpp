@@ -11,16 +11,42 @@
 #include "../CRUNCH_bins.hpp"
 using namespace std;
 
-int main ()
+int main(int argc, char *argv[])
 {
-	//long seed = time(NULL);               // seed for random number generator
-	string run_name = "c:/code/devel_projects/MixingModel/Runs/Run3/run3";
-	//string run_name = "M:/papers/mixing_model_2014/source/runs/run1/run1";
+
+  if (argc != 2)
+  {
+    cout << "ERROR: you need to enter a path to the input files" << endl;
+    cout << "Runs are generally stored in the folder ../Runs/run1/" << endl
+         << "or ../Runs/run2/ and so on" << endl;
+    cout << "Also, do you have all the driver files? You need: " << endl
+         << "a sedimenent transport parameter file" << endl
+         << "a model run paramters file (mostly for printing, end time, etc" << endl
+         << "a particle parameter file" << endl
+         << "a flowtube details file (for spacing of nodes" << endl
+         << "a profile file (for measured soil thickness and elevation)" << endl
+         << "a volume particle info file for mineral and size type information" << endl
+         << "and a master_crunch file for default CrunchFlow parameters" << endl;         
+    exit(0);
+  }
+
+  string run_pname = argv[1];
+  string lchar = run_pname.substr(run_pname.length()-2,1);
+  string slash = "/";
+  cout << "lchar is " << lchar << " and slash is " << slash << endl;
+      
+  if (lchar != slash)
+  {
+    cout << "You forgot the frontslash at the end of the path. Appending." << endl;  
+    run_pname = run_pname+slash;
+  } 
+  cout << "The pathname is: " << run_pname << endl;
+
 
 	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
 	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
 	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
-	string run_pname = "c:/code/devel_projects/MixingModel/Runs/Run3/"; 
+	//string run_pname = "../Runs/Run2/"; 
 	
 	string vtk_particle_fname = run_pname+"/basic_particles";
 	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
@@ -28,36 +54,54 @@ int main ()
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// set up the infiles
-	string sed_trans_param_ext = ".sed_trans_param.stparam";
-	string sed_trans_param_fname = run_name+sed_trans_param_ext;
-	string model_run_params_ext = ".model_run.param";
-	string model_run_params_fname = run_name+model_run_params_ext;
-	string CRN_parameter_ext = ".CRN_trans_param.CRNparam";
-	string CRN_parameter_fname = run_name+CRN_parameter_ext;
-	string ft_parameter_ext =  ".ft_details.param";
-	string ft_parameter_fname = run_name+ft_parameter_ext;
-	string profile_in_ext = ".profile.sm";
-	string profile_in_fname = run_name+profile_in_ext;
-	string VolumeParticleInfo_ext = ".VolumeParticleData.in";
-	string VolumeParticleInfo_fname = run_name+VolumeParticleInfo_ext;
+	string sed_trans_param_ext = "sed_trans_param.stparam";
+	string sed_trans_param_fname = run_pname+sed_trans_param_ext;
+	string model_run_params_ext = "model_run.param";
+	string model_run_params_fname = run_pname+model_run_params_ext;
+	string CRN_parameter_ext = "CRN_trans_param.CRNparam";
+	string CRN_parameter_fname = run_pname+CRN_parameter_ext;
+	string ft_parameter_ext =  "ft_details.param";
+	string ft_parameter_fname = run_pname+ft_parameter_ext;
+	string profile_in_ext = "profile.sm";
+	string profile_in_fname = run_pname+profile_in_ext;
+	string VolumeParticleInfo_ext = "VolumeParticleData.in";
+	string VolumeParticleInfo_fname = run_pname+VolumeParticleInfo_ext;
+	
+	// test to see if the first file exists
+	ifstream test_in(model_run_params_fname.c_str());
+	if (not test_in)
+	{
+    cout << "Can't find the model run params. Did you make sure to direct" << endl
+         << "the code to the correct directory and do you have all the" << endl
+         << "driver files? You need: " << endl
+         << "a sedimenent transport parameter file" << endl
+         << "a model run paramters file (mostly for printing, end time, etc" << endl
+         << "a particle parameter file" << endl
+         << "a flowtube details file (for spacing of nodes" << endl
+         << "a profile file (for measured soil thickness and elevation)" << endl
+         << "a volume particle info file for mineral and size type information" << endl
+         << "and a master_crunch file for default CrunchFlow parameters" << endl;
+         exit(0);
+  }
+	
 	//string profile_10Be_ext = ".profile_10Be.data";
 	//string profile_10Be_fname = run_name+profile_10Be_ext;
 	//string profile_f10Be_ext = ".profile_f10Be.data";
 	//string profile_f10Be_fname = run_name+profile_f10Be_ext;
 
 	// set up the outfiles
-	string profile_out_ext = ".column_out.sm";
-	string profile_out_fname = run_name+profile_out_ext;
-	string particle_out_ext = ".p_trans_out.pout";
-	string particle_out_fname = run_name+particle_out_ext;
-	string eroded_pout_ext = ".ep_trans_out.pout";
-	string eroded_pout_fname = run_name+eroded_pout_ext;
-	string zeta_out_ext = ".zeta_trans.zdat";
-	string zeta_out_fname = run_name+zeta_out_ext;
-	string h_out_ext = ".h_trans.hdat";
-	string h_out_fname = run_name+h_out_ext;
-	string eta_out_ext = ".eta_trans.edat";
-	string eta_out_fname = run_name+eta_out_ext;
+	string profile_out_ext = "column_out.sm";
+	string profile_out_fname = run_pname+profile_out_ext;
+	string particle_out_ext = "p_trans_out.pout";
+	string particle_out_fname = run_pname+particle_out_ext;
+	string eroded_pout_ext = "ep_trans_out.pout";
+	string eroded_pout_fname = run_pname+eroded_pout_ext;
+	string zeta_out_ext = "zeta_trans.zdat";
+	string zeta_out_fname = run_pname+zeta_out_ext;
+	string h_out_ext = "h_trans.hdat";
+	string h_out_fname = run_pname+h_out_ext;
+	string eta_out_ext = "eta_trans.edat";
+	string eta_out_fname = run_pname+eta_out_ext;
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
@@ -81,7 +125,7 @@ int main ()
 														// in m/yr: this is negative for
 														// erosion
 
-	int CRN_switch;				// sets the cosmogenics key:
+	int CRN_switch;		// sets the cosmogenics key:
 										// 0 == no CRN
 										// 1 == all CRN
 										// 2 == all, neutron only
@@ -228,6 +272,8 @@ int main ()
 	//     << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
 	//     << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
 
+
+  
 	
 	// an integer used for printing
 	const int part_p_i = int (double(particle_printing_interval/dt+0.5) );
@@ -241,8 +287,6 @@ int main ()
     cout << "Fatal error, the weathering time interval must be <= particle_print interval!" << endl;
     exit(0);
   }
-
-
 
 
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -304,11 +348,13 @@ int main ()
 
 	double insert_time_clock = 0;
 	old_eta = ft_test.get_eta();
-	vector<double> Delta_eta = old_eta;
-	vector<double> old_bottom_depth = old_eta;
 	vector<double> old_zeta = ft_test.get_zeta();
+	vector<double> Delta_zeta = old_zeta;
+	vector<double> old_bottom_depth = old_zeta;	
 	vector<double> old_h = ft_test.get_h();
-	int eta_sz = Delta_eta.size();
+	vector<double> last_insertion_zeta = ft_test.get_zeta(); 
+	vector<double> this_insertion_zeta = ft_test.get_zeta();
+	int zeta_sz = Delta_zeta.size();
 	int part_ID_start = 1;
 
 	// reset the time
@@ -317,20 +363,34 @@ int main ()
 	tt = 0;
   double weathering_time_clock = 0;
   
+  
+  // for the insertion of particles, we need to ensure that the insertion occurs 
+  // BELOW the zone in which CrunchFlow is evaluated. This means particles should
+  // not be inserted within the bottom few crunch cells. We can calculate this
+  // by compring the particle insert interval with the erosion rate.
+  double depth_between_insertion = insert_interval*(-constant_surface_change_rate);
+  
+  // add a little fudge factor (10%) to this just in case the eta lowering
+  // is faster than surface lowering with transient soil thickness
+  depth_between_insertion= depth_between_insertion*1.1;
+  cout << "Added depth below start depth: " << depth_between_insertion << endl;
+  
 	// insert initial particles
 	// to insert particles throughout the domain we need to set old botom depth as the
 	// zeta elevations.
-	for (int i = 0; i<eta_sz; i++)
+	for (int i = 0; i<zeta_sz; i++)
 	{
 			old_bottom_depth[i] = old_zeta[i];
-			Delta_eta[i] = start_depth;
+			last_insertion_zeta[i] = old_zeta[i];
+			Delta_zeta[i] = start_depth+depth_between_insertion;
 			//cout << "LINE 350 h["<<i<<"]: " << old_h[i] << " and zeta: " << old_zeta[i] << endl
 			//     << " and start depth: " << start_depth << " and Delta_eta: " << Delta_eta[i] << endl;
 	}
 
-  part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_eta, old_bottom_depth,
+  part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
 										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
 										vpi);
+
 
 	//cout << "LINE 379, n_nodes: " << ft_test.get_n_nodes() << endl;
 
@@ -417,22 +477,22 @@ int main ()
 			{
 				particle_trigger = 1;
 			}
-			new_eta = ft_test.get_eta(); 	// get the updated eta
+			this_insertion_zeta = ft_test.get_zeta(); 	// get the updated eta
 
 			//cout << "Time: " << t_ime << " Delta eta: " << endl;
 			// calculate delta eta
-			for(int ii = 0; ii< eta_sz; ii++)
+			for(int ii = 0; ii< zeta_sz; ii++)
 			{
-				Delta_eta[ii] = old_eta[ii]-new_eta[ii];
-				cout << "i = " << ii << " Delta_eta: " << Delta_eta[ii] << endl;
+				Delta_zeta[ii] = last_insertion_zeta[ii]-this_insertion_zeta[ii];
+				cout << "i = " << ii << " Delta_zeta: " << Delta_zeta[ii] << endl;
 			}
 			
 			// insert the particles
-      part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_eta, old_bottom_depth,
+      part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
 										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
 										vpi);
       					 
-			old_eta = new_eta;				// reset old eta
+			last_insertion_zeta = this_insertion_zeta;				// reset old eta
 			insert_time_clock = 0;			// reset the insert time clock
 		}               // !end particle insertion
 		//cout << "...ran insertion" << endl;

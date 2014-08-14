@@ -473,8 +473,8 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
 		new_bottom_depth[eta_node] = insert_zone_bottom;
 
-		//cout << "particle bins line 479 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
-		//cout << "zone top: " << insert_zone_top << " and bottom: " << insert_zone_bottom << endl;
+		cout << "particle bins line 479 cell volume = " << cell_volume << " and mass: " << cell_mass << endl;
+		cout << "zone top: " << insert_zone_top << " and bottom: " << insert_zone_bottom << endl;
 
     //cout << "Line 478, bel: " << bin_edge_loc[bn] << " and ds bel: "  << bin_edge_loc[bn+1] << endl;
 
