@@ -959,6 +959,10 @@ double CRN_tParticle::weather_particle(VolumeParticleInfo vpi,
 	}
 	mass_loss = (*loss_per_surface_area_iter)[CellIndex] * SurfaceArea;
 	Mass = Mass - mass_loss;
+	if(Mass < 0)
+	{
+    Mass = 0;
+  }
 
 	double new_surface_area;
 	new_surface_area = vpi.return_surface_area(Type, GSDType, Mass);
@@ -966,6 +970,11 @@ double CRN_tParticle::weather_particle(VolumeParticleInfo vpi,
 
 	double Volume = Mass/vpi.get_type_density(Type);
 	return mass_loss;
+	
+	if (Mass == 0)
+	{ 
+    mass_loss = -99;
+  }
 }
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

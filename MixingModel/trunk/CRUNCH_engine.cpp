@@ -1064,8 +1064,18 @@ void CRUNCH_engine::create_CRUNCH_in_file(int& n_conditions, int n_bin,
 		int counter = 0;
 		while( l_iter != mineral_names.end())
 		{
-			// note the volume needs to be divided by 100 because it is reported in %
-			CRUNCH_write << (*l_iter) << " " << ((*v_iter)[this_cell])*0.01 << " ssa " << (*vssa_iter)[this_cell] << endl;
+		  // first we need to check if there is mass in the mineral
+		  if((*v_iter)[this_cell] <= 0 || (*vssa_iter)[this_cell] <=0)
+		  {
+        cout << "Warning!! No mass found!!" << endl;
+        cout << "Not entering this mineral in the conditions" << endl;
+      }
+		  else
+		  {
+			  // note the volume needs to be divided by 100 because it is reported in %
+			  CRUNCH_write << (*l_iter) << " " << ((*v_iter)[this_cell])*0.01 
+                     << " ssa " << (*vssa_iter)[this_cell] << endl;
+      }
 			l_iter++;
 			v_iter++;
 			vssa_iter++;
