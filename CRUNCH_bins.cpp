@@ -708,8 +708,9 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   for(int bn = 0; bn<n_bins; bn++)
   {
     // call crunch
+    
+    cout << "LINE 472, calling CrunchFlow in bin " << bn << endl;
     Ceng.call_CRUNCH(bn);
-    //cout << "LINE 472, called CrunchFlow in bin " << bn << endl;
     
     // for bug checking, move the crunch files with bin number names
     int n_ts = 2;

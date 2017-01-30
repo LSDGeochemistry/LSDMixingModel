@@ -233,8 +233,8 @@ class CRN_tParticle: public tParticle
 	double update_surface_area_and_get_volume(VolumeParticleInfo vpi);
 	double weather_particle(VolumeParticleInfo vpi, list< vector<double> >& loss_per_surface_area);
 
-    protected:
-    double effective_dLoc;		// the effective depth: in g/cm^2
+  protected:
+  double effective_dLoc;		// the effective depth: in g/cm^2
 	double zetaLoc;				// the elevation relative to arbitrary
 								// datum (m)
 	double Conc_10Be;			// concnetration of 10Be in atoms/g
