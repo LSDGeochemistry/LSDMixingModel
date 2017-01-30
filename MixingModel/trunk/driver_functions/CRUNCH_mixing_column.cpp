@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
 	// the number of partitions in the mixed and unmixed zone
 	int n_PDZ_intervals;
 	int n_CAZ_intervals;	
+	int ref_frame_switch;
 	
 	double SS_flux;										// flux
 	double constant_surface_change_rate;
@@ -239,9 +240,12 @@ int main(int argc, char *argv[])
 					>> temp >> constant_surface_change_rate >> temp >> particle_printing_interval
 					>> temp >> eroded_catch_window >> temp >> max_age
 					>> temp >> n_spacings >> temp >> insert_interval 
-          >> temp >> weathering_time_interval;
+          >> temp >> weathering_time_interval >> temp >> ref_frame_switch
+          >> temp >> SS_flux;
 	model_run_params_in.close();
 	cout << "LINE 209, got model_parameters" << endl;
+	cout << "WTI: " << weathering_time_interval << " RFS: " << ref_frame_switch 
+	     << " SS_f: " << SS_flux << endl;
 
 	//cout << "Flux switch: " << flux_switch << " prod_switch: " << prod_switch
 	//	 << " Flux_us: " << flux_us << " CRN switch: " << CRN_switch << endl
@@ -249,7 +253,8 @@ int main(int argc, char *argv[])
 	//     << "particle print interval: " << particle_printing_interval
 	//     << " catch: " << eroded_catch_window << " max age: " << max_age << " n_space: " << n_spacings 
   //     << " particle insert interval: " << insert_interval 
-  //     << " weathering time interval: " << weathering_time_interval << endl;
+  //     << " weathering time interval: " << weathering_time_interval << endl
+  //     << "Refernce time switch" << ref_frame_switch << endl;
 
 	// get the parameters for the CRN particles
 	ifstream CRN_parameter_in;
@@ -385,7 +390,7 @@ int main(int argc, char *argv[])
 	{
 			old_bottom_depth[i] = old_zeta[i];
 			last_insertion_zeta[i] = old_zeta[i];
-			Delta_zeta[i] = start_depth+depth_between_insertion;
+			Delta_zeta[i] = start_depth*1.25;
 			//cout << "LINE 350 h["<<i<<"]: " << old_h[i] << " and zeta: " << old_zeta[i] << endl
 			//     << " and start depth: " << start_depth << " and Delta_eta: " << Delta_eta[i] << endl;
 	}
@@ -422,6 +427,7 @@ int main(int argc, char *argv[])
 
 		// run flux
 		//cout << "running flux ";
+		cout << "SS_flux is: " << SS_flux << endl;
 		ft_test.flux_timestep_flux_bc(dt, flux_us, SS_flux,flux_switch, prod_switch,
 							surf_erate);
 		//cout << "...ran flux" << endl;
@@ -519,7 +525,7 @@ int main(int argc, char *argv[])
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
-			int ref_frame_switch = 1;
+			//int ref_frame_switch = 1;
 			
 			// print basic particle information
 			CRN_tpb.vtk_print_basic_volume_particles(t_ime, vtk_particle_fname, 

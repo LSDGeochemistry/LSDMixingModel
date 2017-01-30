@@ -4594,7 +4594,7 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 			surf_area_iter++;
 			ssa_iter++;
 		}
-		cout << endl;
+		//cout << endl;
 
 		volume_percents_iter = volume_percents_of_types_in_cells.begin();
 		volume_iter = volumes_of_types_in_cells.begin();
