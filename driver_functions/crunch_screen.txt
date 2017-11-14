@@ -1,0 +1,64 @@
+
+ Title of simulation: 
+Dec--new code adjustments--using new Kaolinite                          
+
+
+ --> Running in GIMRT mode (global implicit reaction and transport) 
+
+ Extended Debye-Huckel activity model
+ Sweeping database to find additional species, gases, and minerals
+
+  ---> Using database: L:/github/CRUNCH_binary/datacomSC08.dbs                                                             
+
+ Number of components:                         14
+
+ Number of kinetic minerals:                    0
+
+ No surface complexation block found
+
+    --> Calling database subroutine
+
+
+ Adding a gas from the EQ3 database
+
+CO2(g)*                                                                        
+                                                     
+ Number of gases =            1
+
+
+ Adding a gas from the EQ3 database
+
+H2O(g)                                                                         
+                                                     
+ Number of gases =            2
+
+
+ Adding a gas from the EQ3 database
+
+HCl(g)                                                                         
+                                                     
+ Number of gases =            3
+
+
+ Finished first sweep of EQ3 database
+ Now carrying out a second sweep to add additional species
+
+
+ Adding a gas from the EQ3 database
+
+CO2(g)                                                                         
+                                                     
+ Number of gases =            4
+
+
+ Finished second sweep of EQ3 database
+ Now repeating sweep to add additional species
+
+
+ Finished second sweep of EQ3 database
+ Now repeating sweep to add additional species
+
+ Only one logK in database at T(C):    25.0000000000000     
+ Temperature of condition:             13.5000000000000     
+ Species missing log Ks: Al(SO4)2-
+

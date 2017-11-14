@@ -252,7 +252,7 @@ int main ()
 	{
 		CRNp.set_Schaller_parameters();
 	}
-	CRNp.scale_F_values(single_scaling);
+	CRNp.scale_F_values(vector<bool> nuclides_for_scaling);
 	cout << "scaled to schaller" << endl;
 
 	// initialize a flowtube
