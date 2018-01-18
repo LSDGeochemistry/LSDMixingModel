@@ -203,7 +203,7 @@ class CRN_tParticle_bins
 	vector<int>    get_h_node_ds()
 								{ return h_node_ds; }
 	vector<double> get_s_us_h()	{ return s_us_h; }
-
+    void create(flowtube ft);
 	protected:
 	int n_bins;				// number of bins
 	vector<double> bin_edge_loc;
@@ -229,7 +229,7 @@ class CRN_tParticle_bins
 	void create(vector<double> bel,vector<double> s_h,
 						vector<double> s_b, vector<double> b,
 						vector<double> A_bin_temp);
-	void create(flowtube ft);
+	//void create(flowtube ft);
 
 
 };

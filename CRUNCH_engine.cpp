@@ -10,7 +10,7 @@
 #include <cctype>
 #include <math.h>
 #include "CRUNCH_engine.hpp"
-#include "mathutil.hpp"
+#include "LSDStatsTools.hpp"
 using namespace std;
 
 //=-=-=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -1372,7 +1372,7 @@ void CRUNCH_engine::get_mineral_properties()
 	// first get the number of temperature points
 	l_iter = dbase_list.begin();
 	
-	//cout << "LINE 1203, dbase first line is: " << *l_iter << endl;
+	cout << "LINE 1203, dbase first line is: " << *l_iter << endl;
 	
 	found = string::npos;
 	int n_temp_points;
@@ -1388,7 +1388,7 @@ void CRUNCH_engine::get_mineral_properties()
 		}
 		l_iter++;
 	}
-	//cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
+	cout << "Line 893, number of temperature points is: " << n_temp_points << endl;
 
 	// now loop through mineral names getting the database information for each name in turn
 	int n_species;

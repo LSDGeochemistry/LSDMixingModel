@@ -658,9 +658,9 @@ void part_ft_steady_flux(double SS_flux, double end_time,
 		if (particle_trigger == 1 && tt%part_p_i== 0)
 		{
 			cout << "LINE 289, printing particles, time: " << t_ime << endl;
-			//CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
-			//CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
-			//CRN_tpb.print_particle_stats_vtk(t_ime, ft_test, vtk_fname);
+			CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
+			CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
+			CRN_tpb.print_particle_stats_vtk(t_ime, ft_test, vtk_fname);
 			//CRN_tpb.cell_printing_vtk(t_ime, ft_test, vtk_cell_fname,
 			//							n_depthintervals_soil, n_depthintervals_parent,
 			//							bottom_depth);
@@ -1013,7 +1013,7 @@ void part_ft_erate_from_erh(string run_name, vector<double>& sample_s_locs, vect
 	{
 		CRNp.set_Schaller_parameters();
 	}
-	CRNp.scale_F_values(single_scaling);
+	CRNp.scale_F_values(vector<bool> nuclides_for_scaling);
 
 	// initialize a flowtube
 	flowtube ft_test = flowtube_initializer(sed_trans_param_fname,
@@ -1581,7 +1581,7 @@ vector<double> part_ft_moraine_fit(string run_name, vector<double>& d_top_insitu
 	{
 		CRNp.set_Schaller_parameters();
 	}
-	CRNp.scale_F_values(single_scaling);
+	CRNp.scale_F_values(vector<bool> nuclides_for_scaling);
 
 	// initialize a flowtube
 	flowtube ft_test = flowtube_initializer(sed_trans_param_fname,

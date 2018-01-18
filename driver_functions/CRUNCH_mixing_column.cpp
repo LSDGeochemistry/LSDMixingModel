@@ -1,14 +1,18 @@
-#include <iostream>
+
 #include <fstream>
+#include <math.h>
+#include <iostream>
 #include <vector>
+#include <map>
 #include "../tParticle.hpp"
 #include "../CRN_tParticle_bins.hpp"
-#include "../mathutil.hpp"
 #include "../CRUNCH_engine.hpp"
 #include "../flowtube.hpp"
 #include "../FT_util.hpp"
 #include "../VolumeParticleInfo.hpp"
 #include "../CRUNCH_bins.hpp"
+#include "../TNT/tnt.h"
+#include "../LSDStatsTools.hpp"
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -45,12 +49,13 @@ int main(int argc, char *argv[])
 
 	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
 	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
-	string crunch_pname = "c:/code/devel_projects/MixingModel/CRUNCH_binary/";
+	string crunch_pname = "L:/github/CRUNCH_binary/";
 	//string run_pname = "../Runs/Run2/"; 
 	
 	string vtk_particle_fname = run_pname+"/basic_particles";
 	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
-
+    string vtk_fname = run_pname+"/CRN";
+    string path_to_data = "/";
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// set up the infiles
@@ -105,11 +110,13 @@ int main(int argc, char *argv[])
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
-  ofstream zeta_out,h_out,eta_out;
+  ofstream zeta_out,h_out,eta_out,particle_out;
+	zeta_out.open(zeta_out_fname.c_str());
 	zeta_out.open(zeta_out_fname.c_str());
 	h_out.open(h_out_fname.c_str());
 	eta_out.open(eta_out_fname.c_str());
-
+    particle_out.open(particle_out_fname.c_str());
+    
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// Initialize the variables
@@ -147,8 +154,8 @@ int main(int argc, char *argv[])
 									// this is roughly 3x the e-folding
 									// depth of the deepest muonogenic
 									// production mechanism at rock density
-	double vert_mix_vel;
-	double horiz_mix_vel;
+	double vert_mix_vel;            // the vertical mixing velocity, where used in code is called vert_vel_fluctuating 
+	double horiz_mix_vel;           // horizontal mixing does not seem to be used anywhere
 	double Omega;					// the activity of particles (that is the
 									// proportion of particles that are moving
 									// at any given time)
@@ -211,6 +218,12 @@ int main(int argc, char *argv[])
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
 								// to cm in tParticle.cpp)
+    double lon;
+    double lat;
+    double site_elev;
+    double Fsp;
+    
+    
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   
   
@@ -230,6 +243,7 @@ int main(int argc, char *argv[])
 	double age_printing_interval;
 	double max_age;
 	int n_spacings;
+    //ofstream particle_out;
 
 	// get the model parameters
 	string temp;
@@ -266,7 +280,7 @@ int main(int argc, char *argv[])
 				     >> temp >> C_36Cl >> temp >> C_14C >> temp >> C_21Ne >> temp
 				     >> C_3He >> temp >> M_supply_surface >> temp >> k_f10Be >> temp
 				     >> deltad >> temp >> k2_f10Be >> temp >> chi_f10Be
-             >> temp >> n_PDZ_intervals >> temp >> n_CAZ_intervals;
+             >> temp >> n_PDZ_intervals >> temp >> n_CAZ_intervals >> temp >> lat >> temp >> lon >> temp >> site_elev >> temp >> Fsp;
 	CRN_parameter_in.close();
 	cout << "LINE 228, got CRN_parameters" << endl;
 
@@ -322,7 +336,8 @@ int main(int argc, char *argv[])
 	{
 		CRNp.set_Schaller_parameters();
 	}
-	CRNp.scale_F_values(single_scaling);
+    vector<bool> nuclides_for_scaling;
+	CRNp.scale_F_values(nuclides_for_scaling);
 	cout << "scaled to schaller" << endl;
 
 	// initialize a flowtube
@@ -525,14 +540,22 @@ int main(int argc, char *argv[])
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
-			//int ref_frame_switch = 1;
+			
+            CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
+            //int ref_frame_switch = 1;
 			
 			// print basic particle information
 			CRN_tpb.vtk_print_basic_volume_particles(t_ime, vtk_particle_fname, 
                                                ref_frame_switch);
 
-      // print cell data
-      Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
+            // print cosmo data 
+            CRN_tpb.print_particle_stats_vtk(t_ime, ft_test,
+								vtk_fname);
+            
+            
+            
+            // print cell data
+            Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
                                     vtk_cell_fname, Ceng, CRN_tpb);
 
 		}
@@ -548,6 +571,7 @@ int main(int argc, char *argv[])
   eta_out.close();
   zeta_out.close();
   h_out.close();
+  particle_out.close();
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 

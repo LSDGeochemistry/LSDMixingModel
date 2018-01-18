@@ -7,6 +7,7 @@
 #include <list>
 #include <string>
 #include <vector>
+#include "LSDStatsTools.hpp"
 using namespace std;
 
 
