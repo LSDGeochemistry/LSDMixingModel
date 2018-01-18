@@ -1902,7 +1902,7 @@ void CRN_tParticle_bins::print_particle_stats_vtk(double t_ime, flowtube ft,
 	string time_bit = itoa( int(t_ime+0.5) );
 	string vtk_ext = ".vtk";
 	string fname = vtk_fname+time_bit+vtk_ext;
-	//cout << "LINE 1149 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
+	cout << "LINE 1149 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
 	ofstream vtk_out;
 	vtk_out.open(fname.c_str());
 

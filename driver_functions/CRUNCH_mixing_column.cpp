@@ -54,6 +54,7 @@ int main(int argc, char *argv[])
 	
 	string vtk_particle_fname = run_pname+"/basic_particles";
 	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
+    string vtk_fname = run_pname+"/CRN";
     string path_to_data = "/";
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -109,11 +110,13 @@ int main(int argc, char *argv[])
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
-  ofstream zeta_out,h_out,eta_out;
+  ofstream zeta_out,h_out,eta_out,particle_out;
+	zeta_out.open(zeta_out_fname.c_str());
 	zeta_out.open(zeta_out_fname.c_str());
 	h_out.open(h_out_fname.c_str());
 	eta_out.open(eta_out_fname.c_str());
-
+    particle_out.open(particle_out_fname.c_str());
+    
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 	// Initialize the variables
@@ -219,6 +222,8 @@ int main(int argc, char *argv[])
     double lat;
     double site_elev;
     double Fsp;
+    
+    
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
   
   
@@ -238,6 +243,7 @@ int main(int argc, char *argv[])
 	double age_printing_interval;
 	double max_age;
 	int n_spacings;
+    //ofstream particle_out;
 
 	// get the model parameters
 	string temp;
@@ -534,14 +540,22 @@ int main(int argc, char *argv[])
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
-			//int ref_frame_switch = 1;
+			
+            CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
+            //int ref_frame_switch = 1;
 			
 			// print basic particle information
 			CRN_tpb.vtk_print_basic_volume_particles(t_ime, vtk_particle_fname, 
                                                ref_frame_switch);
 
-      // print cell data
-      Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
+            // print cosmo data 
+            CRN_tpb.print_particle_stats_vtk(t_ime, ft_test,
+								vtk_fname);
+            
+            
+            
+            // print cell data
+            Geochem_bins.vtk_cell_bundler(t_ime, ref_frame_switch, 
                                     vtk_cell_fname, Ceng, CRN_tpb);
 
 		}
@@ -557,6 +571,7 @@ int main(int argc, char *argv[])
   eta_out.close();
   zeta_out.close();
   h_out.close();
+  particle_out.close();
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
