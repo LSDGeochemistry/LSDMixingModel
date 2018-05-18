@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-c -O3 -pg
 OFLAGS = -O3 -pg
 LDFLAGS=l
-SOURCES=CRUNCH_mixing_column.cpp \
+SOURCES=mixing_column.cpp \
 	../VolumeParticleInfo.cpp \
 	../CRN_parameters.cpp \
 	../tParticle.cpp \
