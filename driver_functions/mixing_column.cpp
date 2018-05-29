@@ -107,15 +107,18 @@ int main(int argc, char *argv[])
 	string h_out_fname = run_pname+h_out_ext;
 	string eta_out_ext = "eta_trans.edat";
 	string eta_out_fname = run_pname+eta_out_ext;
+	string hillslope_out_ext = "hillslope_out.pout";
+	string hillslope_out_fname = run_pname+hillslope_out_ext;
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
-  ofstream zeta_out,h_out,eta_out,particle_out;
+  ofstream zeta_out,h_out,eta_out,particle_out,hillslope_out;
 	zeta_out.open(zeta_out_fname.c_str());
 	zeta_out.open(zeta_out_fname.c_str());
 	h_out.open(h_out_fname.c_str());
 	eta_out.open(eta_out_fname.c_str());
     particle_out.open(particle_out_fname.c_str());
+    hillslope_out.open(hillslope_out_fname.c_str());
     
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -199,7 +202,8 @@ int main(int argc, char *argv[])
 	// the parameters for the in situ cosmogenics
 	CRN_parameters CRNp;
 
-	// note: scaling determined using cosmocalc:
+	////////////////////////This part is superseded following the update to the cosmo code?
+    // note: scaling determined using cosmocalc:
 	// Schaller reports pinedale at 42 53 26 N
 	// this converts to an inclination of 61.7 degrees
 	// Schaller reports elevation of 2298 masl
@@ -208,8 +212,8 @@ int main(int argc, char *argv[])
 	// multiply this by schaller's snow shielding (for nucleonic production
 	// of 0.925 one gets a scaling of 5.54
 	double single_scaling;
-
-	// paramters for meteoric 10Be
+    //////////////////////////
+    // paramters for meteoric 10Be
 	double M_supply_surface;	// in atoms/(cm^2*yr)
 	double k_f10Be;				// in cm^2/g this is
 									// an efolding depth of 20 g/cm^2
@@ -218,10 +222,14 @@ int main(int argc, char *argv[])
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
 								// to cm in tParticle.cpp)
-    double lon;
-    double lat;
-    double site_elev;
-    double Fsp;
+    //Added in to update the cosmo code to calculate specific site scaling factors
+    double lon;                 // longitude
+    double lat;                 // latitude
+    double site_elev;           // site elevation
+    double Fsp;                 // fsp is the fraction (between 0 and 1) of production at sea level
+                                // and high latitude due to spallation (as opposed to muons).
+                                // This argument is optional and defaults to 0.978, which is the value
+                                // used by Stone (2000) for Be-10. 
     
     
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -540,6 +548,7 @@ int main(int argc, char *argv[])
 			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
+            ft_test.export_input_profile(hillslope_out);
 			
             CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
             //int ref_frame_switch = 1;
@@ -572,6 +581,7 @@ int main(int argc, char *argv[])
   zeta_out.close();
   h_out.close();
   particle_out.close();
+  hillslope_out.close();
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
