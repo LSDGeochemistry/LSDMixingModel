@@ -9,10 +9,33 @@ using namespace std;
 class VolumeParticleInfo
 {
  public:
+    
+    /// @brief Default create function
+    /// @author SMM
+    /// @date 01/01/11
     VolumeParticleInfo()				{ create(); }
+    
+    /// @brief Create function that starts the particle from a particle file
+    /// @param The name of the parameter file (with extension) 
+    /// @author SMM
+    /// @date 01/01/11    
     VolumeParticleInfo( const char* fname)           { create(fname); }
-
+    
+    /// @brief Returns the mass fraction of the particle
+    /// @param Type_index the particle type (an integer. Could be, for example an integrer for a mineral type) 
+    /// @param GSDindex The index for the grain size (instead of solving for an double grain size)
+    /// @returns The mass fraction (as a double)
+    /// @author SMM
+    /// @date 01/01/11   
     double return_mass_fraction(int Type_index, int GSDindex);
+    
+    /// @brief Returns the surface area of the particle
+    /// @param Type_index the particle type (an integer. Could be, for example an integrer for a mineral type) 
+    /// @param GSDindex The index for the grain size (instead of solving for an double grain size)
+    /// @param mass The mass of the particle
+    /// @returns The surface area (as a double)
+    /// @author SMM
+    /// @date 01/01/11      
     double return_surface_area(int Type_index, int GSDindex, double mass);
 
     int get_n_types()					{ return n_types; }
