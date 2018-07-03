@@ -2,7 +2,8 @@
 //
 // mixing_column
 //
-// This initiates a mixing column. It just mixes vertically. 
+// This initiates a mixing column. It can mix vertically or downslope depending on the 
+// parameter files
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 //
 // Copyright (C) 2018 Simon M. Mudd 2018
@@ -85,31 +86,34 @@ int main(int argc, char *argv[])
   } 
   cout << "The pathname is: " << run_pname << endl;
 
-
-	//string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
-	//string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
-	string crunch_pname = "C:/Workspace/github/CRUNCH_binary/";
-	//string run_pname = "../Runs/Run2/"; 
+  // This sets the path to the crunch files. 
+  //string crunch_pname = "M:/papers/mixing_model_2014/source/CRUNCH_binary/";
+  //string run_pname = "M:/papers/mixing_model_2014/source/runs/run1/"; 
+  string crunch_pname = "C:/Workspace/github/CRUNCH_binary/";
+  //string run_pname = "../Runs/Run2/"; 
 	
-	string vtk_particle_fname = run_pname+"/basic_particles";
-	string vtk_cell_fname = run_pname+"/CRUNCH_cells";
-    string vtk_fname = run_pname+"/CRN";
-    string path_to_data = "/";
+  // This sets up the patsh for vtk files, which are used for visualisation    
+  string vtk_particle_fname = run_pname+"/basic_particles";
+  string vtk_cell_fname = run_pname+"/CRUNCH_cells";
+  string vtk_fname = run_pname+"/CRN";
+  string path_to_data = "/";
 
-	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
-	// set up the infiles
-	string sed_trans_param_ext = "sed_trans_param.stparam";
-	string sed_trans_param_fname = run_pname+sed_trans_param_ext;
-	string model_run_params_ext = "model_run.param";
-	string model_run_params_fname = run_pname+model_run_params_ext;
-	string CRN_parameter_ext = "CRN_trans_param.CRNparam";
-	string CRN_parameter_fname = run_pname+CRN_parameter_ext;
-	string ft_parameter_ext =  "ft_details.param";
-	string ft_parameter_fname = run_pname+ft_parameter_ext;
-	string profile_in_ext = "profile.sm";
-	string profile_in_fname = run_pname+profile_in_ext;
-	string VolumeParticleInfo_ext = "VolumeParticleData.in";
-	string VolumeParticleInfo_fname = run_pname+VolumeParticleInfo_ext;
+  //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
+  // set up the infiles
+  // SMM July 2018: This is a bit of a stupid way of doing it: probably better
+  // for these paths to be in an object, but no time to fix that now. 
+  string sed_trans_param_ext = "sed_trans_param.stparam";
+  string sed_trans_param_fname = run_pname+sed_trans_param_ext;
+  string model_run_params_ext = "model_run.param";
+  string model_run_params_fname = run_pname+model_run_params_ext;
+  string CRN_parameter_ext = "CRN_trans_param.CRNparam";
+  string CRN_parameter_fname = run_pname+CRN_parameter_ext;
+  string ft_parameter_ext =  "ft_details.param";
+  string ft_parameter_fname = run_pname+ft_parameter_ext;
+  string profile_in_ext = "profile.sm";
+  string profile_in_fname = run_pname+profile_in_ext;
+  string VolumeParticleInfo_ext = "VolumeParticleData.in";
+  string VolumeParticleInfo_fname = run_pname+VolumeParticleInfo_ext;
 	
 	// test to see if the first file exists
 	ifstream test_in(model_run_params_fname.c_str());
@@ -165,6 +169,7 @@ int main(int argc, char *argv[])
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	
 	// the number of partitions in the mixed and unmixed zone
+    // This sets the template for how many finite volumes you will have throughout
 	int n_PDZ_intervals;
 	int n_CAZ_intervals;	
 	int ref_frame_switch;
@@ -209,7 +214,10 @@ int main(int argc, char *argv[])
 									// last timestep
 	vector<double> new_eta;			// the elevation of the soil-saprolite boundary from this
 									// timestep
-	vector< list<CRN_tParticle> > eroded_bins;
+	
+    // These a "bins" that contain particles. The plotting functions aggregate these bins and also they are
+    // used to create average values. 
+    vector< list<CRN_tParticle> > eroded_bins;
 	vector< list<CRN_tParticle> > temp_part_bins;
 	vector< list<CRN_tParticle> > particle_bins;
 									// a vector of lists of particles eroded from each hillslope
@@ -292,7 +300,9 @@ int main(int argc, char *argv[])
 	int n_spacings;
     //ofstream particle_out;
 
-	// get the model parameters
+	// get the model parameters from a file. 
+    // The parameter file includes the names of the parameters, these are read as
+    // "temp" and then ignored after
 	string temp;
 	ifstream model_run_params_in;
 	model_run_params_in.open(model_run_params_fname.c_str());
