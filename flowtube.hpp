@@ -11,6 +11,9 @@ using namespace std;
 #ifndef flowtube_H
 #define flowtube_H
 
+/// This object controls sediment flux along a "flowtube". This is a pseudo 1-D
+/// hillslope profile where the width of the profile changes in order
+/// to account for divergence or convergence of the terrain
 class flowtube
 {
 	public:
@@ -50,21 +53,75 @@ class flowtube
 	vector<double> interpolated_modeled_zeta(vector<int> ds_interp_node_num,
 							vector<int> us_interp_node_num,
 						vector<double> interpolated_fractional_distance );
+    
+    /// @brief This loads a profile. The file has five columns but only the last two
+    ///   are read. These are the zeta (elevation of surface) and eta (elevation of saprolite surface)
+    ///   The soil thickness is calculated from these data. The data are reported at the nodes and 
+    ///   not the node boundaries 
+    /// @author SMM
+    /// @date 01/01/2011
 	void load_profile(ifstream& infile);
+    
+    /// @brief Exports a profile. It has data at centre nodes but not boundaries
+    ///  It has 5 columns: 
+    ///   distance, elevation, soil thickness, elevation, and soil thickness
+    ///  yes the elevation and soil thicknesses are repeated. I can't remember
+    ///  why I did that. I think maybe before there were old and new thicknesses
+    ///  and elevations. 
+    /// @author SMM
+    /// @date 01/01/2011    
 	void export_input_profile(ofstream& outfile);
+    
+    /// @brief This raises all elevation points relative to the downslope boundary
+    /// @param ds_elev The elevation at the downslope boundary (in m)
+    /// @author SMM
+    /// @date 01/01/2011
 	void raise_zeta_eta_ds_bound(double ds_elev);
+    
+    /// @brief This raises all elevation points relative to the mean elevation
+    /// @param mean_elev The mean elevation of the hillslope (in m)
+    /// @author SMM
+    /// @date 01/01/2011    
 	void raise_zeta_eta_mean(double mean_elev);
+    
+    /// @brief This creates a flat surface with constant soil thickness
+    /// @param zeta_flat The elevation of the surface (in m)
+    /// @param h_flat The constant soil thickness (in m)
+    /// @author SMM
+    /// @date 01/01/2011   
 	void set_const_zeta_eta_h(double zeta_flat, double h_flat);
 
+	/// @brief Runs a timestep with the boundary condition to be a set flux
+    /// @paramater dt The timestep (in years)
+    /// @parameter flux_us The flux from upslope in kg/yr
+    /// @parameter flux_ds The flux at the downslope boundary in kg/yr
+    /// @parameter flux_switch A switch for the type of flux (need to look up)
+    /// @parameter prod_switch A switch for the trpe of production function
+    /// @parameter surface_change_rate A vector holding the change in surface elevation
+    ///      in m/yr to simulate, for exampe erosion from overland flow
+    /// @author SMM
+    /// @date 01/01/2011    
 	void flux_timestep_flux_bc(double dt,
 							double flux_us, double flux_ds,
 							int flux_switch, int prod_switch,
 							vector<double> surface_change_rate);
-	void flux_timestep_elev_bc(double dt,
+    
+	/// @brief Runs a timestep with the boundary condition to be a set elevation
+    /// @paramater dt The timestep (in years)
+    /// @parameter flux_us The flux from upslope in kg/yr
+    /// @parameter ds_elevation the elevation of the downslope boundary (in m)
+    /// @parameter flux_switch A switch for the type of flux (need to look up)
+    /// @parameter prod_switch A switch for the trpe of production function
+    /// @parameter surface_change_rate A vector holding the change in surface elevation
+    ///      in m/yr to simulate, for exampe erosion from overland flow
+    /// @author SMM
+    /// @date 01/01/2011
+    void flux_timestep_elev_bc(double dt,
 							double flux_us, double ds_elevation,
 							int flux_switch, int prod_switch,
 							vector<double> surface_change_rate);
 
+    // Getter functions
 	int get_n_nodes() 			{ return n_nodes; }
 	double get_S_c()			{ return S_c; }
 	double get_K_h()			{ return K_h; }
@@ -94,6 +151,7 @@ class flowtube
 								{ return bin_edge_loc; }
 
 
+    // Getter functions, these get old data members
 	vector<double> get_old_h()	{ return old_h; }
 
 	vector<double> get_old_zeta()
@@ -113,9 +171,20 @@ class flowtube
 	vector<double> get_fluff()	{ return fluff; }
 
 	double get_zeta_ds()		{ return zeta[n_nodes-1]; }
-	void set_transport_params(double temp_S_c, double temp_K_h,
+	
+    /// @brief This sets the transport parameters for the soil transport 
+    /// @param temp_S_c Critical slope (dimensionless)
+    /// @param temp_K_h The sediment transport coefficient (units depend on flux law)
+    /// @param temp_W_0 Soil production at zero thickness in m/yr
+    /// @paarm temp_gamma E folding distance of soil production (m)
+    /// @param temp_rho_s Soil density (kg/m^3)
+    /// @param temp_rho_r Rock density (kg/m^3)
+    /// @author SMM
+    /// @date 01/01/2011
+    void set_transport_params(double temp_S_c, double temp_K_h,
 								double temp_W_0, double temp_gamma,
 							  	double temp_rho_s, double temp_rho_r);
+    
 	void set_transport_params(double temp_S_c, double temp_K_h,
 								double W_0, double temp_gamma,
 							  	double temp_rho_s, double temp_rho_r,

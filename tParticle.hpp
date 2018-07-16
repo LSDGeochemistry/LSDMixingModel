@@ -16,6 +16,8 @@ using namespace std;
 // empty class definition so that we can use friend functions
 class CRN_parameters;
 
+/// The particle object. It has CRN and other properties attached to each particle
+/// These can be moved between locations during hillslope simulations
 class tParticle
 {
  public:
