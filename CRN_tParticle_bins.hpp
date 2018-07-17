@@ -1,5 +1,47 @@
-// CRN_tParticle_bins.h
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //
+// CRN_tParticle_bins
+// Cosmogenic nuclide particle bins object
+//
+// An object within the University
+//  of Edinburgh Land Surface Dynamics group mixing model
+//  for exploring hillslope mixing and particle weathering
+//
+// Developed by:
+//  Simon M. Mudd
+//
+// Copyright (C) 2018 Simon M. Mudd 2018
+//
+// Developer can be contacted by simon.m.mudd _at_ ed.ac.uk
+//
+//    Simon Mudd
+//    University of Edinburgh
+//    School of GeoSciences
+//    Drummond Street
+//    Edinburgh, EH8 9XP
+//    Scotland
+//    United Kingdom
+//
+// This program is free software;
+// you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY;
+// without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// You should have received a copy of the
+// GNU General Public License along with this program;
+// if not, write to:
+// Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor,
+// Boston, MA 02110-1301
+// USA
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #ifndef CRN_tParticle_bins_H
 #define CRN_tParticle_bins_H
@@ -19,16 +61,32 @@ using namespace std;
 
 class CRN_tParticle_bins
 {
-	public:
-	CRN_tParticle_bins()				{ create(); }
-	CRN_tParticle_bins(flowtube ft)		{ create(ft); }
-	CRN_tParticle_bins(vector<double> bin_edge_locations,vector<double> s_h,
-						vector<double> s_b, vector<double> b, vector<double> A_bins)
-								{ create(bin_edge_locations,s_h,s_b,b,A_bins); }
+  public:
+    
+    /// @brief the default constructor which doens't do anything
+    CRN_tParticle_bins()				{ create(); }
+    
+    /// @brief Construct a particle bins object from a flowtube
+    /// @param ft A flowtube oject
+    /// @author SMM
+    /// @date 01/01/2011
+    CRN_tParticle_bins(flowtube ft)		{ create(ft); }
+    
+    /// @brief Construct a particle bins object from raw data of a flowtube
+    /// @param bin_edge_locations Vector with downslope locations of bin edges (in metres)
+    /// @param s_h vector of downslope locations of bin centrepoints
+    /// @param s_b vector of downslope locations of bin edges
+    /// @param b vector of widths of each bin
+    /// @param A_bins vector of basal area of each bin
+    /// @author SMM
+    /// @date 01/01/2011
+    CRN_tParticle_bins(vector<double> bin_edge_locations,vector<double> s_h,
+                       vector<double> s_b, vector<double> b, vector<double> A_bins)
+                  { create(bin_edge_locations,s_h,s_b,b,A_bins); }
 
-	// insert functions
-	int insert_particles(flowtube ft,vector<double> Delta_lowered, vector<double>& old_bottom_depth,
-									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac);
+    // insert functions
+    int insert_particles(flowtube ft,vector<double> Delta_lowered, vector<double>& old_bottom_depth,
+                         double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac);
 
 	int insert_particles(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
