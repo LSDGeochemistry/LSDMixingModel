@@ -65,7 +65,7 @@ class tParticle
  public:
     /// @brief default constructor. Has defualt type and age (0) of a particle
     /// @author SMM
-    /// @date 01/01/2011
+    /// @date 01/01/2007
     tParticle()           { create(); }
                 
     /// @brief Constructor that simply assigns a type to the particle
@@ -187,14 +187,18 @@ class tParticle
     void create(int, double, double);
 };
 
-// the CRN tracer particle object
-// this object tracks the CRN concnentration in a number
-// of particles
+/// the CRN tracer particle object
+/// this object tracks the CRN concenentration in a number
+/// of particles
 class CRN_tParticle: public tParticle
 {
-	public:
-	CRN_tParticle()			{ create(); }
-	CRN_tParticle(int startType, double startxLoc,double startdLoc,
+  public:
+  
+    /// @brief default constructor. Has defualt type and age (0) of a particle
+    /// @author SMM
+    /// @date 01/01/2007
+    CRN_tParticle()			{ create(); }
+    CRN_tParticle(int startType, double startxLoc,double startdLoc,
 					double start_effdloc, double startzloc)
 							{ create(startType,startxLoc,startdLoc,
 							  start_effdloc,startzloc); }
