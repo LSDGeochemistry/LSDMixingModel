@@ -1,7 +1,49 @@
-//tParticle.h
-// header file for the discrete particle object
-// this version of the dicrete particle keeps track
-// of two integers, the time and the position
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// tParticle
+// A particle object that is used for tracking particle properties
+//
+// An object within the University
+//  of Edinburgh Land Surface Dynamics group mixing model
+//  for exploring hillslope mixing and particle weathering
+//
+// Developed by:
+//  Simon M. Mudd
+//
+// Copyright (C) 2018 Simon M. Mudd 2018
+//
+// Developer can be contacted by simon.m.mudd _at_ ed.ac.uk
+//
+//    Simon Mudd
+//    University of Edinburgh
+//    School of GeoSciences
+//    Drummond Street
+//    Edinburgh, EH8 9XP
+//    Scotland
+//    United Kingdom
+//
+// This program is free software;
+// you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY;
+// without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// You should have received a copy of the
+// GNU General Public License along with this program;
+// if not, write to:
+// Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor,
+// Boston, MA 02110-1301
+// USA
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
 
 #include <iostream>
 #include <vector>
@@ -21,47 +63,121 @@ class CRN_parameters;
 class tParticle
 {
  public:
-    tParticle()					{ create(); }
-    tParticle( int StartType)			{ create(StartType); }
-    tParticle( int StartType, double StartAge)	{ create(StartType, StartAge); }
-    tParticle( int StartType, int StartCI, double StartAge, double StartOSLage, double StartxLoc, double StartdLoc)
-    						{ create(StartType, StartCI, StartAge, StartOSLage, StartxLoc, StartdLoc); }
-    tParticle( int StartType, double StartxLoc, double StartdLoc)
-    						{ create(StartType, StartxLoc, StartdLoc); }
+    /// @brief default constructor. Has defualt type and age (0) of a particle
+    /// @author SMM
+    /// @date 01/01/2011
+    tParticle()           { create(); }
+                
+    /// @brief Constructor that simply assigns a type to the particle
+    /// @param StartType The type you want the particle to have
+    /// @author SMM
+    /// @date 01/01/2011
+    tParticle( int StartType)        { create(StartType); }
 
+    /// @brief Constructor that simply assigns a type and age to the particle
+    /// @param StartType The type you want the particle to have
+    /// @param StartAge The starting age of the particle (years). 
+    /// @author SMM
+    /// @date 01/01/2011
+    tParticle( int StartType, double StartAge)   { create(StartType, StartAge); }
+    
+    /// @brief Constructor that has loads of stuff assigned
+    /// @param StartType The type you want the particle to have
+    /// @param StartCI the starting cell index
+    /// @param StartAge The starting age of the particle (years). 
+    /// @param StartOSLage The starting OSL age (years)
+    /// @param StartxLoc The starting x location (or s location in a flowtube) (metres)
+    /// @param StartdLoc The starting depth of the particle (metres)
+    /// @author SMM
+    /// @date 01/01/2011
+    tParticle( int StartType, int StartCI, double StartAge, double StartOSLage, double StartxLoc, double StartdLoc)
+            { create(StartType, StartCI, StartAge, StartOSLage, StartxLoc, StartdLoc); }
+            
+    /// @brief Constructor that has a type and location
+    /// @param StartType The type you want the particle to have
+    /// @param StartxLoc The starting x location (or s location in a flowtube) (metres)
+    /// @param StartdLoc The starting depth of the particle (metres)
+    /// @author SMM
+    /// @date 01/01/2011
+    tParticle( int StartType, double StartxLoc, double StartdLoc)
+            { create(StartType, StartxLoc, StartdLoc); }
+
+    /// @brief This returns the "type", which is an integer key to the type of particle
+    ///  the user can define types
+    /// @return type and integer key to the type
     int    getType() const			{ return Type; }
+    
+    /// @brief This returns the "cell index, whioch is sometimes tracked by the particle
+    ///  So that it knows where it is. 
+    /// @return type and integer key to the type
     int    getCellIndex() const		{ return CellIndex; }
+    
+    // more getter functions
     double getAge() const			{ return Age; }
     double getOSLage() const		{ return OSLage; }
     double getxLoc() const			{ return xLoc; }
     double getdLoc() const			{ return dLoc; }
 
+    // copy functions
     tParticle(const tParticle& tP)
-    	{ create(tP.getType(),tP.getCellIndex(), tP.getAge(),tP.getOSLage(),tP.getxLoc(),tP.getdLoc()); }
+       { create(tP.getType(),tP.getCellIndex(), tP.getAge(),tP.getOSLage(),tP.getxLoc(),tP.getdLoc()); }
     tParticle(tParticle& tP)
-    	{ create(tP.getType(),tP.getCellIndex(), tP.getAge(),tP.getOSLage(),tP.getxLoc(),tP.getdLoc()); }
+       { create(tP.getType(),tP.getCellIndex(), tP.getAge(),tP.getOSLage(),tP.getxLoc(),tP.getdLoc()); }
 
+    // operators
     tParticle& operator=(const tParticle& tP);
-
     std::ostream& operator<< (std::ostream&);
 
+    /// @brief Increase the age of the particle
+    /// @param dt The time increment (years)
+    /// @author SMM
+    /// @date 01/01/2007
     void incrementAge(double dt);
+    
+    /// @brief Updates the cell index of the particle
+    /// @param CI The new cell index
+    /// @author SMM
+    /// @date 01/01/2007
     void setCellIndex(int CI);
+    
+    /// @brief Resets OSL age to zero
+    /// @author SMM
+    /// @date 01/01/2007
     void OSLexpose();
+    
+    /// @brief Need to check what this does
+    /// @author SMM
+    /// @date 01/01/2007
     void SoilAgeExpose();
-	void update_xLoc(double new_xLoc);
+
+    /// @brief Updates the downslope location
+    /// @param new_xLoc The update x location (metres)
+    /// @author SMM
+    /// @date 01/01/2007
+    void update_xLoc(double new_xLoc);
+    
+    /// @brief This is for combined vertical and horizontal motion
+    ///  THe particles have a vertical displacement but the "reflect" off
+    ///  the soil-saprolite and soil-surface boundaries
+    /// @param dx Change in the x location (metres)
+    /// @param dd CHenge in the depth (metres)
+    /// @param h soil thickness (metres)
+    /// @param dt time interval of displacement (years)
+    /// @author SMM
+    /// @date 01/01/2007
     void displaceReflect(double dx,double dd,double h,double dt);
+    
     int  test_domain(double lambda);
 
  protected:
-    int Type;				// note for volumetric calcualtions this
-    						// is an INDEX into the vector that holds the
-    						// type names.
-    int CellIndex;
-    double Age;
-    double OSLage;
-    double xLoc;
-    double dLoc;
+    int Type;        // note for volumetric calcualtions this
+                     // is an INDEX into the vector that holds the
+                     // type names.
+    int CellIndex;   // The cell in which the particle sits if you are using CRN_tParticle_bins
+    double Age;      // Used for age at which particle entered saprolite
+    double OSLage;   // OSL age
+    double xLoc;     // downslope location (metres)
+    double dLoc;     // depth of particle (metres)
 
  private:
     void create();
