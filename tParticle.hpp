@@ -512,17 +512,93 @@ class CRN_tParticle: public tParticle
     /// @author SMM
     /// @date 01/01/2010
     void update_10Be_SSfull(double erosion, CRN_parameters& CRNp);
-	void update_26Al_SSfull(double erosion, CRN_parameters& CRNp);
-	void update_14C_SSfull(double erosion, CRN_parameters& CRNp);
-	void update_36Cl_SSfull(double erosion, CRN_parameters& CRNp);
-	void update_21Ne_SSfull(double erosion, CRN_parameters& CRNp);
-	void update_3He_SSfull(double erosion, CRN_parameters& CRNp);
+    
+    /// @brief Bring the 26Al concentration to steady state based
+    /// on a constant erosion rate using full muogenic production.  
+    /// @details This function solves for the updated concentration assuming
+    /// a constant erosion rate (in g/cm^2/yr). It is an analytical
+    /// steady state solution
+    /// @param erosion the erosion rate in g/cm^2/yr  POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// to approximate production from the different production mechanisms
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_26Al_SSfull(double erosion, CRN_parameters& CRNp);
+    
+    /// @brief Bring the 14C concentration to steady state based
+    /// on a constant erosion rate using full muogenic production.  
+    /// @details This function solves for the updated concentration assuming
+    /// a constant erosion rate (in g/cm^2/yr). It is an analytical
+    /// steady state solution
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// to approximate production from the different production mechanisms
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_14C_SSfull(double erosion, CRN_parameters& CRNp);
+    
+    /// @brief Bring the 36Cl concentration to steady state based
+    /// on a constant erosion rate using full muogenic production.  
+    /// @details This function solves for the updated concentration assuming
+    /// a constant erosion rate (in g/cm^2/yr). It is an analytical
+    /// steady state solution
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// to approximate production from the different production mechanisms
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_36Cl_SSfull(double erosion, CRN_parameters& CRNp);
+    
+    /// @brief Bring the 21Ne concentration to steady state based
+    /// on a constant erosion rate using full muogenic production.  
+    /// @details This function solves for the updated concentration assuming
+    /// a constant erosion rate (in g/cm^2/yr). It is an analytical
+    /// steady state solution
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// to approximate production from the different production mechanisms
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_21Ne_SSfull(double erosion, CRN_parameters& CRNp);
 
-	// functions collecting the updating functions: these update
-	// all nuclides at once
-	void update_all_CRN(double dt, double erosion, CRN_parameters& CRNp);
-	void update_all_CRN_neutron_only(double dt, double erosion, CRN_parameters& CRNp);
-	void update_all_CRN_SSfull(double erosion_rate, CRN_parameters& CRNp);
+    /// @brief Bring the 3He concentration to steady state based
+    /// on a constant erosion rate using full muogenic production.  
+    /// @details This function solves for the updated concentration assuming
+    /// a constant erosion rate (in g/cm^2/yr). It is an analytical
+    /// steady state solution
+    /// @param erosion the erosion rate in g/cm^2/yr   POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// to approximate production from the different production mechanisms
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_3He_SSfull(double erosion, CRN_parameters& CRNp);
+
+    /// @brief A wrapper function to update all the nuclide concentrations
+    /// in one go. It uses full muogenic production
+    /// @param dt the timestep over which the concetrations are updated
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// @author SMM
+    /// @date 01/01/2014
+    void update_all_CRN(double dt, double erosion, CRN_parameters& CRNp);
+  
+    /// @brief A wrapper function to update all the nuclide concentrations
+    /// in one go. It uses NEUTRON PRODUCTION ONLY to save computational
+    /// expense. This is a reasonable approximation in slowly eroding landscapes
+    /// @param dt the timestep over which the concetrations are updated
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// @author SMM
+    /// @date 01/01/2014
+    void update_all_CRN_neutron_only(double dt, double erosion, CRN_parameters& CRNp);
+    
+    /// @brief A wrapper function to update all the nuclide concentrations
+    /// to steady state using full muon production
+    /// @param erosion the erosion rate in g/cm^2/yr    POSITIVE FOR EROSION
+    /// @param CRNp a CRN parameters object that stores the coefficients
+    /// @author SMM
+    /// @date 01/01/2014
+    void update_all_CRN_SSfull(double erosion_rate, CRN_parameters& CRNp);
 
 	// caluclate the apparent erosion from nuclide concentrations
 	double apparent_erosion_10Be_neutron_only(double rho, CRN_parameters& CRNp);
