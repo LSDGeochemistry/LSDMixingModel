@@ -131,7 +131,7 @@ class CRUNCH_bins
     /// will be bundled in a wrapper later)
     /// @author SMM
     /// @date 08/08/2014
-    void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);                                  
+    void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);
 
     /// @brief this function prints the mass fractions and the mineral
     /// depletion ratios to vtk
