@@ -90,13 +90,56 @@ class CRN_parameters
     /// @author SMM
     /// @date 01/01/2010
     void set_Schaller_parameters();
-  
-	//void scale_F_values(double single_scaling);	// parameter values
-	void update_10Be_decay(double new_decay)	{ lambda_10Be = new_decay; }
-	void update_10Be_P0(double new_P0)			{ P0_10Be = new_P0; }
-    
+
+    /// @brief this changes the 10Be decay. It is here because
+    /// 10Be decay rates reported in the literature have changed
+    /// @author SMM
+    /// @date 01/01/2010
+    void update_10Be_decay(double new_decay)	{ lambda_10Be = new_decay; }
+
+    /// @brief this changes the 10Be P0 value. It is here because
+    /// 10Be decay rates reported in the literature have changed
+    /// @author SMM
+    /// @date 01/01/2010	
+    void update_10Be_P0(double new_P0)			{ P0_10Be = new_P0; }
+
+    // WARNING THIS IS AN OLD FUNCTION
+    /// @brief this function takes a single scaling factor for
+    /// elevation scaling, self shielding, snow shielding,
+    /// and latitude scaling and produces scaling factors
+    /// for each production mechamism.
+    /// the scaling follows the approach of vermeesch 2008
+    /// it uses a 'virtual' shielding depth to calculate
+    /// the updated scaling factors
+    /// @param nuclides_for_scaling this is a vector of bool telling the code 
+    ///  which nuclides to calculate. The values are:
+    ///  nuclides_for_scaling[0] = true: calculate 10Be
+    ///  nuclides_for_scaling[1] = true: calculate 26Al
+    ///  nuclides_for_scaling[2] = true: calculate 36Cl
+    ///  nuclides_for_scaling[3] = true: calculate 14C
+    /// @author SMM
+    /// @date 01/01/2010
     void scale_F_values(vector<bool> nuclides_for_scaling);
     
+    /// @brief This calcualtes the atmospheric pressure given latidude, longitude
+    /// and elevation
+    /// @details Looks up surface pressure and 1000 mb temp from NCEP reanalysis
+    /// and calculates site atmospheric pressures using these as inputs to the
+    /// standard atmosphere equation. 
+    /// Also: This function is OK but not great for Antarctica.
+    /// Use antatm.m instead. 
+    /// Remember: it is always better to estimate the average pressure at your 
+    /// site using a pressure-altitude relation obtained from nearby station
+    /// data.
+    ///
+    /// Original m code Written by Greg Balco -- UW Cosmogenic Nuclide Lab
+    /// @param site_lat latitude (DD). Southern hemisphere is negative.
+    /// @param site_lon longitude (DD). Western hemisphere is negative.
+    ///       Tries to deal with 0-360 longitudes gracefully.
+    /// @param site_elv elevation (m).
+    /// @return site pressure in hPa.
+    /// @author SMM
+    /// @date 04/12/2014
     double NCEPatm_2(double lat, double lon, double site_elev); 
     
     /// @brief function for loading parameters that allow pressure calculation
@@ -199,9 +242,7 @@ class CRN_parameters
   
     /// This is a vector of arrays holding something called gp_hgt;
     vector< Array2D<double> > gm_hgt;  
-  
 
-    
 };
 
 #endif

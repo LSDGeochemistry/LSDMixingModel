@@ -344,11 +344,11 @@ class CRN_tParticle: public tParticle
     double geteffective_dLoc() const		{ return effective_dLoc; }
     double get_zetaLoc() const				{ return zetaLoc; }
 
-	// accessing data elements for volumetric data
-	double getMass() const  				{ return Mass; }
-	double getStartingMass() const			{ return StartingMass; }
-	double getSurfaceArea()	const			{ return SurfaceArea; }
-	int getGSDType()	const				{ return GSDType; }
+    // accessing data elements for volumetric data
+    double getMass() const  				{ return Mass; }
+    double getStartingMass() const			{ return StartingMass; }
+    double getSurfaceArea()	const			{ return SurfaceArea; }
+    int getGSDType()	const				{ return GSDType; }
 
     /// @brief update the 10Be concentration based on a constant erosion rate
     /// using the full production range, including muons. 
