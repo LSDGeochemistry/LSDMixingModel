@@ -91,6 +91,15 @@ class CRN_parameters
     /// @date 01/01/2010
     void set_Schaller_parameters();
 
+    /// @brief This resets the F, Gamma and P0 values 
+    /// For 10Be, these correspond to new production curves provided by Shasta Marerro
+    ///  For the rest they conform to 
+    /// Braucher et al (2009) scaling. Adopted from from Vermeesh 2007, 
+    /// @detail From version 2.0 of cosmocalc
+    /// @author SMM
+    /// @date 28/01/2016
+    void set_newCRONUS_parameters();
+
     /// @brief this changes the 10Be decay. It is here because
     /// 10Be decay rates reported in the literature have changed
     /// @author SMM
