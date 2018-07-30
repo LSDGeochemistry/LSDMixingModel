@@ -1,8 +1,49 @@
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
 // CRUNCH_bins.hpp
-// header file for the CRUNCH binning object
-// it is responsible for aggregating geochemical data
+// Object responsible for aggregating geochemical data
 // across multiple columns and also includes printing 
 // capabilities
+//
+// An object within the University
+//  of Edinburgh Land Surface Dynamics group mixing model
+//  for exploring hillslope mixing and particle weathering
+//
+// Developed by:
+//  Simon M. Mudd
+//
+// Copyright (C) 2018 Simon M. Mudd 2018
+//
+// Developer can be contacted by simon.m.mudd _at_ ed.ac.uk
+//
+//    Simon Mudd
+//    University of Edinburgh
+//    School of GeoSciences
+//    Drummond Street
+//    Edinburgh, EH8 9XP
+//    Scotland
+//    United Kingdom
+//
+// This program is free software;
+// you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY;
+// without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// You should have received a copy of the
+// GNU General Public License along with this program;
+// if not, write to:
+// Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor,
+// Boston, MA 02110-1301
+// USA
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 #include <iostream>
 #include <vector>
@@ -19,17 +60,17 @@ using namespace std;
 
 class CRUNCH_bins
 {
-	public:
-	  /// @brief the default constructor which doens't do anything
-	  CRUNCH_bins()			{ create(); }
-	  
-	  /// @brief constructor just initialises the volume particle info
-	  /// object, and the number of cells
-	  /// @author SMM
-	  /// @date 07/08/2014
-	  CRUNCH_bins( int n_pdz_per_bin, int n_caz_per_bin, double b_depth, 
+  public:    
+    /// @brief the default constructor which doens't do anything
+    CRUNCH_bins()			{ create(); }
+    
+    /// @brief constructor just initialises the volume particle info
+    /// object, and the number of cells
+    /// @author SMM
+    /// @date 07/08/2014
+    CRUNCH_bins( int n_pdz_per_bin, int n_caz_per_bin, double b_depth, 
                                  VolumeParticleInfo start_vpi)
-	                    { create(n_pdz_per_bin, n_caz_per_bin, b_depth, start_vpi); }
+                      { create(n_pdz_per_bin, n_caz_per_bin, b_depth, start_vpi); }
 
     /// @brief the data is stored in vectors, you need to get the index into
     /// the vector of from the bin and cell number
@@ -90,7 +131,7 @@ class CRUNCH_bins
     /// will be bundled in a wrapper later)
     /// @author SMM
     /// @date 08/08/2014
-    void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);                                  
+    void vtk_print_cell_mineral_solid_state(ofstream& vtk_cell_out);
 
     /// @brief this function prints the mass fractions and the mineral
     /// depletion ratios to vtk
@@ -204,32 +245,32 @@ class CRUNCH_bins
     map< string, vector<int> > cell_index_map; 
     
     // vec list vecs to hold mineral information
-	  vector< list< vector<double> > > vec_mineral_vpercents_old;
- 	  vector< list< vector<double> > > vec_mineral_ssa_old;
- 	  vector< list< vector<double> > > vec_mineral_mass_old;
- 	  vector< list< vector<double> > > vec_mineral_surface_area_old;  
+    vector< list< vector<double> > > vec_mineral_vpercents_old;
+    vector< list< vector<double> > > vec_mineral_ssa_old;
+    vector< list< vector<double> > > vec_mineral_mass_old;
+    vector< list< vector<double> > > vec_mineral_surface_area_old;  
     vector< list< vector<double> > > vec_mineral_mfracs_old;  
     vector< list< vector<double> > > vec_mineral_depletion_old;        
           
 
     // vecvec to hold details about columns (that is, these are not mineral
     // or species specific)
-	  vector< vector<double> > vec_spacings;
-	  vector< vector<double> > vec_CRUNCH_tdepths;
-	  vector< vector<double> > vec_CRUNCH_bdepths;
-	  vector< vector<double> > vec_pH_vec;
-	  
-	  // these are vlvs to hold information from crunch
+    vector< vector<double> > vec_spacings;
+    vector< vector<double> > vec_CRUNCH_tdepths;
+    vector< vector<double> > vec_CRUNCH_bdepths;
+    vector< vector<double> > vec_pH_vec;
+    
+    // these are vlvs to hold information from crunch
     vector< list< vector<double> > > vec_new_conc;
-	  vector< list< vector<double> > > vec_mineral_vpercents_new;
-	  vector< list< vector<double> > > vec_new_min_ssa;
-	  vector< list< vector<double> > > vec_new_rxn_rates;
+    vector< list< vector<double> > > vec_mineral_vpercents_new;
+    vector< list< vector<double> > > vec_new_min_ssa;
+    vector< list< vector<double> > > vec_new_rxn_rates;
 
 
-	private:
-	  void create();
-	  
-	  void create(int n_pdz_per_bin, int n_caz_per_bin, 
+  private:
+    void create();
+    
+    void create(int n_pdz_per_bin, int n_caz_per_bin, 
                 double bottom_depth, VolumeParticleInfo this_vpi);
   
 };

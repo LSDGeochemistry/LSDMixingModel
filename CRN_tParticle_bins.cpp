@@ -1,3 +1,49 @@
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//
+// CRN_tParticle_bins
+// Cosmogenic nuclide particle bins object
+//
+// An object within the University
+//  of Edinburgh Land Surface Dynamics group mixing model
+//  for exploring hillslope mixing and particle weathering
+//
+// Developed by:
+//  Simon M. Mudd
+//
+// Copyright (C) 2018 Simon M. Mudd 2018
+//
+// Developer can be contacted by simon.m.mudd _at_ ed.ac.uk
+//
+//    Simon Mudd
+//    University of Edinburgh
+//    School of GeoSciences
+//    Drummond Street
+//    Edinburgh, EH8 9XP
+//    Scotland
+//    United Kingdom
+//
+// This program is free software;
+// you can redistribute it and/or modify it under the terms of the
+// GNU General Public License as published by the Free Software Foundation;
+// either version 2 of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY;
+// without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+// See the GNU General Public License for more details.
+//
+// You should have received a copy of the
+// GNU General Public License along with this program;
+// if not, write to:
+// Free Software Foundation, Inc.,
+// 51 Franklin Street, Fifth Floor,
+// Boston, MA 02110-1301
+// USA
+//
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
 #ifndef CRN_tParticle_bins_CPP
 #define CRN_tParticle_bins_CPP
 
@@ -21,6 +67,17 @@ void CRN_tParticle_bins::create()
 	cout << "you need to initialize with a vector!" << endl;
 }
 
+
+// Creates the bins. Bins are hald spaces inside nodes. So there are nodes
+// in the flowtube with zeta and eta information. In between these
+// are node edges. And the bins are between nodes and node edges.
+// Like this:
+// 
+//    |   Bin  |  Bin  |  Bin  |  Bin  |
+//  edge     zeta    edge    zeta    edge
+//    |        |       |       |       |
+//  edge      eta    edge    eta    edge
+//___|_________|_______|_______|_______|
 void CRN_tParticle_bins::create(vector<double> bel,vector<double> s_h,
 						vector<double> s_b, vector<double> b,
 						vector<double> A_bin_temp)
@@ -682,8 +739,14 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 		n_parts_frac = modf(n_parts_doub,&n_parts_int);
 		n_parts_inserted = int(n_parts_int);
 		if( ran3(&seed) <= n_parts_frac )
-		 n_parts_inserted++;
+    {
+      n_parts_inserted++;
+    }
 
+    // The eta node is the bin number over two because bins are half spaces
+    // where there is eta (soil-saprolite elevation) data in the centre of 
+    // two bins and these have bin edges on the outside with no zeta and eta
+    // information
 		eta_node = bn/2;
 		insert_zone_top = old_bottom_depth[eta_node];
 		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
@@ -699,7 +762,9 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 			//cout << "bin number: " << bn << " us: " << bin_edge_loc[bn] << " ds: " << bin_edge_loc[bn+1]
 			//     << " s_loc: " << ran_sl << endl;
 
-
+      // Particles are inserted randomly into the "insert zone" which is the
+      // zone where soil has been produced or a zone in the bedrock
+      // from which we are starting particle insertion
 			ran_zl = (insert_zone_top-insert_zone_bottom)*ran3(&seed) +
 					 insert_zone_bottom;
 
@@ -710,6 +775,13 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 			// in SI
 
 			// first interpolate zeta and eta:
+      // This is needed since the zeta and eta inforamtion are only in the middle of the bins
+      // Like this:
+      //    |   Bin  |  Bin  |  Bin  |  Bin  |
+      //  edge     zeta    edge    zeta    edge
+      //    |        |       |       |       |
+      //  edge      eta    edge    eta    edge
+      //___|_________|_______|_______|_______|
 			interpolated_zeta = ((zeta[ h_node_ds[bn] ] - zeta[ h_node_us[bn] ])/
 								dx_h[bn])*(ran_sl- s_us_h[bn]) + zeta[ h_node_us[bn] ];
 			interpolated_eta = ((eta[ h_node_ds[bn] ] - eta[ h_node_us[bn] ])/
@@ -1831,6 +1903,11 @@ void CRN_tParticle_bins::print_particle_stats_soil(double t_ime, flowtube ft,
 
 }
 
+// This prints the statistics (not all the particles)
+// of the particles that have been eroded from the flowtube
+// The occupy an "eroded_list_vec" which can store multiple
+// timesteps (the interval is set by the user)
+// and then the statistics are calculated and printed in this function
 void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 							vector< list<CRN_tParticle> > eroded_list_vec,
 							flowtube ft,
@@ -1883,7 +1960,7 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 
 }
 
-
+// This prints the particle data out to a vtk file for visualisation
 void CRN_tParticle_bins::print_particle_stats_vtk(double t_ime, flowtube ft,
 								string vtk_fname)
 {
