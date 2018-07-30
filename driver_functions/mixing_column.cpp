@@ -109,16 +109,18 @@ int main(int argc, char *argv[])
 	string eta_out_fname = run_pname+eta_out_ext;
 	string hillslope_out_ext = "hillslope_out.pout";
 	string hillslope_out_fname = run_pname+hillslope_out_ext;
+    string ft_properties_out_ext = "ft_properties.out";
+    string ft_properties_out_fname = run_pname+ft_properties_out_ext;    
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
-  ofstream zeta_out,h_out,eta_out,particle_out,hillslope_out;
-	zeta_out.open(zeta_out_fname.c_str());
+  ofstream zeta_out,h_out,eta_out,particle_out,hillslope_out,ft_properties_out;
 	zeta_out.open(zeta_out_fname.c_str());
 	h_out.open(h_out_fname.c_str());
 	eta_out.open(eta_out_fname.c_str());
     particle_out.open(particle_out_fname.c_str());
     hillslope_out.open(hillslope_out_fname.c_str());
+    ft_properties_out.open(ft_properties_out_fname.c_str());
     
 
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
@@ -545,11 +547,11 @@ int main(int argc, char *argv[])
 		if (particle_trigger == 1 && tt%part_p_i== 0)
 		{
 			cout << "LINE 440, printing particles, time: " << t_ime << endl;
-			ft_test.print_zeta(t_ime, zeta_out);
 			ft_test.print_eta(t_ime, eta_out);
 			ft_test.print_h(t_ime, h_out);
+            ft_test.print_zeta(t_ime, zeta_out);
             ft_test.export_input_profile(hillslope_out);
-			
+			ft_test.print_ft_properties(ft_properties_out);
             CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
             //int ref_frame_switch = 1;
 			
@@ -578,10 +580,11 @@ int main(int argc, char *argv[])
   }
    
   eta_out.close();
+  h_out.close();  
   zeta_out.close();
-  h_out.close();
   particle_out.close();
   hillslope_out.close();
+  ft_properties_out.close();
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
