@@ -167,13 +167,14 @@ void flowtube::create(ifstream& paramfile_in)
 	fluff = fluff_temp;
 	vector<double> MF_temp(n_nodes+1,0.0);
 	Mass_Flux = MF_temp;
+    
 	//cout << "flowtube.cpp LINE 100 size bel: " << bin_edge_loc.size() << endl;
 
-	//cout << "LINE 120 flowtube.cpp" << endl;
-	//for (int i =  0; i<2*n_nodes; i++)
-	//{
-	//	cout << "A_bins [" << i << "]: " << A_bins[i] << endl;
-	//}
+//	cout << "LINE 120 flowtube.cpp" << endl;
+//	for (int i =  0; i<2*n_nodes; i++)
+//	{
+//		cout << "zeta [" << i << "]: " << zeta[i] << endl;
+//	}
 
 }
 
@@ -560,6 +561,7 @@ void flowtube::flux_timestep_flux_bc(double dt,
 			break;
 			default:
 			fluxes[i+1] = -rho_s*K_h*b[i+1]*mean_thick*slopes[i];
+           
 		}
 	}
 
@@ -629,7 +631,10 @@ void flowtube::flux_timestep_flux_bc(double dt,
 
 
 	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
-								// the node boundaries
+//                                // the node boundaries
+//     cout <<"flux us:" << fluxes[0] << endl
+//          <<"flux ds:" << fluxes[1] << endl
+//          <<"flux ds:" << fluxes[2];
 }
 
 // this function updates the hillslope profile using a fixed elevation
