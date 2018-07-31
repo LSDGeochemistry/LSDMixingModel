@@ -113,6 +113,7 @@ class CRN_parameters
     void update_10Be_P0(double new_P0)			{ P0_10Be = new_P0; }
 
     // WARNING THIS IS AN OLD FUNCTION
+    // This is the method taken from LSDCRNParameters.cpp Line 1866 
     /// @brief this function takes a single scaling factor for
     /// elevation scaling, self shielding, snow shielding,
     /// and latitude scaling and produces scaling factors
