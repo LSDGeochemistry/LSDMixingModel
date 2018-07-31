@@ -180,7 +180,7 @@ void CRN_parameters::set_Schaller_parameters()
 // as implemented in cosmocalc v2.0
 // http://www.ucl.ac.uk/~ucfbpve/cosmocalc/updates.html
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-void LSDCRNParameters::set_newCRONUS_parameters()
+void CRN_parameters::set_newCRONUS_parameters()
 {
   //S_t = 1;
 
