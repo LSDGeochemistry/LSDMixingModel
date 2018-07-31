@@ -74,7 +74,7 @@ class CRN_parameters
 {
   public:
     /// @brief The default constructor. It is the only possible constructor
-    CRN_Parameters()         { create(); }
+    CRN_parameters()         { create(); }
   
     /// This is a friend class so that it can be called from the particle 
     friend class LSDCRNParticle;
