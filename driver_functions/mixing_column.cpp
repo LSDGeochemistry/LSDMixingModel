@@ -246,6 +246,7 @@ int main(int argc, char *argv[])
 	// set the parameters for production
 	// 0 == granger
 	// 1 == schaller
+    // 2 == CRONUS
 	int CRN_muon_param_switch;
 
 	// the parameters for the in situ cosmogenics
@@ -394,11 +395,17 @@ int main(int argc, char *argv[])
 	if (CRN_muon_param_switch == 1)
 	{
 		CRNp.set_Schaller_parameters();
+        cout << "scaled to schaller" << endl;
 	}
+    else if (CRN_muon_param_switch == 2)
+    {
+        CRNp.set_newCRONUS_parameters();
+        cout << "scaled to CRONUS" << endl;
+    }
     vector<bool> nuclides_for_scaling;
 	CRNp.scale_F_values(nuclides_for_scaling);
-	cout << "scaled to schaller" << endl;
-
+	
+   
 	// initialize a flowtube
 	flowtube ft_test = flowtube_initializer(sed_trans_param_fname,
 						  ft_parameter_fname,
@@ -580,19 +587,10 @@ int main(int argc, char *argv[])
 		}               // !end particle insertion
 		//cout << "...ran insertion" << endl;
 
-    // now checking weathering clock
-//    if (weathering_time_clock >= weathering_time_interval - dt/2)
-//    {
-//      cout << "Time is: " << t_ime << " and weathering now" << endl;
-//    
-//      // run a crunch timestep
-//      Geochem_bins.run_CRUNCH_timestep(CRN_tpb, ft_test, Ceng);
-//      
-//      weathering_time_clock = 0;
-//    }
+
 
 		//cout << "running printing" << endl;
-		// print the particle data to file
+		// prints various data to file
 		if (particle_trigger == 1 && tt%part_p_i== 0)
 		{
 			cout << "LINE 440, printing particles, time: " << t_ime << endl;

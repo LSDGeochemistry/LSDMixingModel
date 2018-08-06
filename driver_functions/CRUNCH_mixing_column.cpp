@@ -233,6 +233,7 @@ int main(int argc, char *argv[])
 	// set the parameters for production
 	// 0 == granger
 	// 1 == schaller
+    // 2 == CRONUS
 	int CRN_muon_param_switch;
 
 	// the parameters for the in situ cosmogenics
@@ -371,13 +372,18 @@ int main(int argc, char *argv[])
   
   
 	// initialize the CRN parameters
-	if (CRN_muon_param_switch == 1)
+		if (CRN_muon_param_switch == 1)
 	{
 		CRNp.set_Schaller_parameters();
+        cout << "scaled to schaller" << endl;
 	}
+    else if (CRN_muon_param_switch == 2)
+    {
+        CRNp.set_newCRONUS_parameters();
+        cout << "scaled to CRONUS" << endl;
+    }
     vector<bool> nuclides_for_scaling;
 	CRNp.scale_F_values(nuclides_for_scaling);
-	cout << "scaled to schaller" << endl;
 
 	// initialize a flowtube
 	flowtube ft_test = flowtube_initializer(sed_trans_param_fname,
