@@ -253,7 +253,7 @@ void flowtube::export_input_profile(ofstream& outfile)
 
 
 // this function raises the profile such that the downslope
-// boundary is at ds_elev
+// boundary is at ds_elev. Currently the ds_elev is set at 100 within the code. Not entirely sure why atm
 void flowtube::raise_zeta_eta_ds_bound(double ds_elev)
 {
 	double ds_bound = zeta[n_nodes-1];
@@ -267,7 +267,7 @@ void flowtube::raise_zeta_eta_ds_bound(double ds_elev)
 }
 
 // this function raises the profile such that the mean elevation
-// is at mean_elev
+// is at mean_elev. Currently not called anywhere in the models
 void flowtube::raise_zeta_eta_mean(double mean_elev)
 {
 	// get the mean elevation
@@ -461,7 +461,7 @@ void flowtube::set_transport_params(double temp_S_c, double temp_K_h,
 	beta = temp_beta;
 	K_g = temp_K_g;
 }
-
+// Calculates a steady state flux for a erosion rate and upslope flux
 double flowtube::calculate_steady_flux(double br_erosion_rate, double flux_us)
 {
 	double A_tot = 0;
@@ -700,7 +700,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		flux_ds =  -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope
 					  *denom*ds_cos_theta;
 		break;
-		case 5 :
+		case 5 :     
 		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
 		N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*ds_cos_theta/beta));
 		flux_ds = -K_g*N*rho_s*b[n_nodes-1]*ds_slope*denom;

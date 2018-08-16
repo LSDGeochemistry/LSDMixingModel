@@ -299,10 +299,11 @@ double CRN_parameters::NCEPatm_2(double lat, double lon, double site_elev)
   // check to see if data is loaded:
   if (int(gm_hgt.size()) != 8)
   {
-    string path_to_NCEP_data;
-    cout << "You didn't load the NCEP data. Doing that now. " << endl;
-    cout << "Enter path to data files: " << endl;
-    cin >> path_to_NCEP_data;
+    //Assumes NCEP data is in directory above. maybe this should be included in main mixing_column.cpp  
+    string path_to_NCEP_data = "./";
+//      cout << "You didn't load the NCEP data. Doing that now. " << endl;
+//      cout << "Enter path to data files: " << endl;
+//      cin >> path_to_NCEP_data;
     load_parameters_for_atmospheric_scaling(path_to_NCEP_data);
   }
   
