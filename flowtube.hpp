@@ -139,7 +139,7 @@ class flowtube
     void export_input_profile(ofstream& outfile);
     
     /// @brief This raises all elevation points relative to the downslope boundary
-    /// @param ds_elev The elevation at the downslope boundary (in m)
+    /// @param ds_elev The elevation at the downslope boundary (in m) 
     /// @author SMM
     /// @date 01/01/2011
     void raise_zeta_eta_ds_bound(double ds_elev);
@@ -236,6 +236,7 @@ class flowtube
 								{ return Mass_Flux; }
     vector<double> get_fluff()	{ return fluff; }
 
+    /// This gets the ds_elevation for the elevation boundary condition
     double get_zeta_ds()		{ return zeta[n_nodes-1]; }
 	
     /// @brief This sets the transport parameters for the soil transport 
