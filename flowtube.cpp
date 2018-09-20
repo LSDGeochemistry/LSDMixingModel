@@ -596,13 +596,13 @@ void flowtube::flux_timestep_flux_bc(double dt,
 		//     << " dt: " << dt
 		//     << " W_0: " << W_0
 		//     << " gamma: " << gamma << endl;
-
+        ///Calculates the mass present within the node box, if the mass present is less than the fluxes arriving downslope then modifies the downslope flux to account for this.
 		mass_present = dt*fluxes[i] + dt*prod[i] + rho_s*A[i]*old_h[i];
 		if (mass_present < fluxes[i+1]*dt)
 			fluxes[i+1] = mass_present/dt;
 
 
-		// calculate soil thickness and surface eleavtion from
+		// calculate soil thickness and surface elevation from
 		// creep like sediment transport only
 		dh_MassFlux[i] = dt*(fluxes[i]-fluxes[i+1])/(rho_s*A[i]);
 		intermediate_h[i] = dh_MassFlux[i] + old_h[i];

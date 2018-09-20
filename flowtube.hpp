@@ -239,6 +239,13 @@ class flowtube
     /// This gets the ds_elevation for the elevation boundary condition
     double get_zeta_ds()		{ return zeta[n_nodes-1]; }
 	
+    
+    ///20/09/18 LK
+    ///need to update for what N, N_0, N_m and K_g are for using cases 5, 6 and 7 in the flux laws
+    ///beta describes the rate of exponential decline with depth? (see Roering 2008 equations 10 through 16).
+    ///The rest I'm not sure of but will need to make sure they're read in the sed_trans_param file to use these.
+    
+    
     /// @brief This sets the transport parameters for the soil transport 
     /// @param temp_S_c Critical slope (dimensionless)
     /// @param temp_K_h The sediment transport coefficient (units depend on flux law)
