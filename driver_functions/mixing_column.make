@@ -1,8 +1,8 @@
 # make with make -f mixing_column.make
 
 CC=g++
-CFLAGS=-c -O3 -pg
-OFLAGS = -O3 -pg
+CFLAGS=-c -O3
+OFLAGS = -O3
 LDFLAGS=l
 SOURCES=mixing_column.cpp \
 	../VolumeParticleInfo.cpp \

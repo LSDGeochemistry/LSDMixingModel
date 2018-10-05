@@ -1,8 +1,8 @@
 # make with make -f test_CRUNCH_engine.make
 
 CC=g++
-CFLAGS=-c -O3 -pg
-OFLAGS = -O3 -pg
+CFLAGS=-c -O3
+OFLAGS = -O3
 LDFLAGS=l
 SOURCES=CRUNCH_eng_tester.cpp \
 	../CRUNCH_engine.cpp \

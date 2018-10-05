@@ -1,8 +1,8 @@
 # make with make -f make_CRUNCH_test.make
 
 CC=g++
-CFLAGS=-c -O3 -pg
-OFLAGS = -O3 -pg
+CFLAGS=-c -O3
+OFLAGS = -O3
 LDFLAGS=l
 SOURCES=CRUNCH_volume_particle_tester.cpp \
 	../CRUNCH_engine.cpp \
