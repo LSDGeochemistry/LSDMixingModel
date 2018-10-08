@@ -15,7 +15,7 @@ SOURCES=mixing_column.cpp \
     ../LSDStatsTools.cpp \
     ../TNT/tnt.h
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=mixing_column.exe
+EXECUTABLE=mixing_column.out
 
 all: $(SOURCES) $(EXECUTABLE)
 	
