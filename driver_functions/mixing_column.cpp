@@ -194,7 +194,8 @@ int main(int argc, char *argv[])
 	int tt;					// a counter for the time
 
 	int flux_switch;				// see flowtube.h: determines flux law
-	int prod_switch;				// see flowtube.h: determines soil production law
+	int lower_boundary_condition;    // sets the lower boundary condition as either a flux (1) or elevation (2) values
+    int prod_switch;				// see flowtube.h: determines soil production law
 	double flux_us;					// see flowtube.h: flux from upslope
 	double dt;						// time interval
 
@@ -315,7 +316,7 @@ int main(int argc, char *argv[])
 					>> temp >> eroded_catch_window >> temp >> max_age
 					>> temp >> n_spacings >> temp >> insert_interval 
           >> temp >> weathering_time_interval >> temp >> ref_frame_switch
-          >> temp >> SS_flux;
+          >> temp >> SS_flux >> temp >> lower_boundary_condition;
 	model_run_params_in.close();
 	cout << "LINE 209, got model_parameters" << endl;
 	cout << "WTI: " << weathering_time_interval << " RFS: " << ref_frame_switch 
@@ -427,8 +428,8 @@ int main(int argc, char *argv[])
   vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
   list<CRN_tParticle>::iterator part_iter;	// list iterator
 
-	// raise the flowtube so the downstream boundary is at elevation
-	// 100
+	/// raise the flowtube so the downstream boundary is at elevation
+	/// 100, this is done to avoid negative elevations due to lowering over time however this here is set to zeta_zero
 	vector<double> zeta_old = ft_test.get_zeta();
 	double zeta_zero = 100.0;
 	ft_test.raise_zeta_eta_ds_bound(zeta_zero);
@@ -503,15 +504,26 @@ int main(int argc, char *argv[])
                 // weathering. Paricles move about without weathering, then
                 // once a weathering interval has elapsed all particles are weatherd
                 // for that interval and the mass updated. 
-
+    double ds_elevation = ft_test.get_zeta_ds();
 		//ds_elev -= dt*SS_erate;
 
-		// run flux
+		/// Runs a flux timestep
 		//cout << "running flux ";
-		cout << "SS_flux is: " << SS_flux << endl;
-		ft_test.flux_timestep_flux_bc(dt, flux_us, SS_flux,flux_switch, prod_switch,
+        cout << "SS_flux is: " << SS_flux << endl;
+        ///LK 21/8/18 Implementing a statement to allow both a flux and elevation boundary condition
+        ///Flux = 1
+        ///Elevation = 2
+		if (lower_boundary_condition == 1)
+        {    ft_test.flux_timestep_flux_bc(dt, flux_us, SS_flux,flux_switch, prod_switch,
 							surf_erate);
-		//cout << "...ran flux" << endl;
+		
+        }
+        else if (lower_boundary_condition == 2)
+        {  ft_test.flux_timestep_elev_bc(dt,
+							flux_us, ds_elevation,
+							 flux_switch,  prod_switch,
+							 surf_erate);  }
+         //cout << "...ran flux" << endl;
 
 		//cout << "running motion";
 		// run particle motion if particles have been inserted.
