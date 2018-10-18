@@ -519,8 +519,9 @@ void flowtube::flux_timestep_flux_bc(double dt,
 		dx = DeltaXh[i];
 		dy = zeta[i+1]-zeta[i];
 		cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
-		//cout << "i: " << i << " dx = " << dx << " dy: " << dy
-		//     << " cos: " << cos_theta[i] << endl;
+		///Print statements used to test if working
+        //cout << "i: " << i << " dx = " << dx << " dy: " << dy
+		  //   << " cos: " << cos_theta[i] << endl;
 	}
 
 	// calcualte the MASS fluxes along the profile
@@ -682,6 +683,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 	double dx_ds = DeltaXh[n_nodes-1];
 	double dy_ds = ds_elevation-zeta[n_nodes-1];
 	double ds_cos_theta = sqrt( dx_ds*dx_ds / (dx_ds*dx_ds + dy_ds*dy_ds) );
+    
 	double mean_thick_ds = h[n_nodes-1];
 	switch ( flux_switch )
 	{
@@ -724,8 +726,12 @@ void flowtube::flux_timestep_elev_bc(double dt,
 	{
 		slopes[i] = (zeta[i+1]-zeta[i])/(DeltaXh[i]);
 		dx = DeltaXh[i];
+        //cout << "Dx is"<< dx << endl;
 		dy = zeta[i+1]-zeta[i];
-		cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
+        ///Print statements used to see if working properly
+        //cout << "zeta1: "<< zeta[i+1] << "zeta2:" << zeta[i] << "Dy is " << dy << endl;
+		//cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
+        //cout << "Cos theta is" << cos_theta[i] << endl;
 	}
 
 	// calcualte the MASS fluxes along the profile

@@ -321,6 +321,13 @@ int main(int argc, char *argv[])
 	cout << "LINE 209, got model_parameters" << endl;
 	cout << "WTI: " << weathering_time_interval << " RFS: " << ref_frame_switch 
 	     << " SS_f: " << SS_flux << endl;
+    
+    cout << "BC=" << lower_boundary_condition <<endl;
+    
+    if (lower_boundary_condition ==1)
+    {cout << "Flux boundary condition used" << endl;}
+    else if (lower_boundary_condition ==2)
+    {cout << "Elevation boundary condition used" << endl;}
 
 	//cout << "Flux switch: " << flux_switch << " prod_switch: " << prod_switch
 	//	 << " Flux_us: " << flux_us << " CRN switch: " << CRN_switch << endl
@@ -351,7 +358,7 @@ int main(int argc, char *argv[])
 	//     << "Init conc, 10Be: " << C_10Be << " 26Al: " << C_26Al << " C_36Cl: " << C_36Cl << " C_14C: " << C_14C << endl
 	//     << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
 	//    << "K_f10Be: " << k_f10Be << " deltad: " << deltad << endl;
-	     
+   
 
 
   
@@ -412,6 +419,8 @@ int main(int argc, char *argv[])
 						  ft_parameter_fname,
 						  profile_in_fname);
 	cout << "LINE 292 initialized the flowtube" << endl;
+    /// Set the ds elevation for elevation boundary condition
+    double ds_elevation = ft_test.get_zeta_ds();     
 
 	// initialize the surface erosion rate
 	int n_ft_nodes = ft_test.get_n_nodes();
@@ -504,7 +513,7 @@ int main(int argc, char *argv[])
                 // weathering. Paricles move about without weathering, then
                 // once a weathering interval has elapsed all particles are weatherd
                 // for that interval and the mass updated. 
-    double ds_elevation = ft_test.get_zeta_ds();
+   
 		//ds_elev -= dt*SS_erate;
 
 		/// Runs a flux timestep
@@ -516,13 +525,15 @@ int main(int argc, char *argv[])
 		if (lower_boundary_condition == 1)
         {    ft_test.flux_timestep_flux_bc(dt, flux_us, SS_flux,flux_switch, prod_switch,
 							surf_erate);
-		
-        }
+         
+		}
         else if (lower_boundary_condition == 2)
         {  ft_test.flux_timestep_elev_bc(dt,
 							flux_us, ds_elevation,
 							 flux_switch,  prod_switch,
-							 surf_erate);  }
+							 surf_erate);  
+        }
+        
          //cout << "...ran flux" << endl;
 
 		//cout << "running motion";
