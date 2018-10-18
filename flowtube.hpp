@@ -244,7 +244,7 @@ class flowtube
     ///need to update for what N, N_0, N_m and K_g are for using cases 5, 6 and 7 in the flux laws
     ///beta describes the rate of exponential decline with depth? (see Roering 2008 equations 10 through 16).
     ///The rest I'm not sure of but will need to make sure they're read in the sed_trans_param file to use these.
-    
+    ///18/10/
     
     /// @brief This sets the transport parameters for the soil transport 
     /// @param temp_S_c Critical slope (dimensionless)
@@ -278,15 +278,15 @@ class flowtube
 	int n_nodes;			// number of nodes in the flowtube
 	double S_c;				// critical slope (dimensionless)
 	double K_h;				// diffusivity
-	double W_0;
-	double gamma;
-	double rho_s;
-	double rho_r;
-	double N;
-	double N_0;
-	double N_m;
-	double beta;
-	double K_g;
+	double W_0;             // Lowering rate of PDZ-CAZ boundary when no PDZ
+	double gamma;           // Length scale that describes decline in PDZ production as a function of PDZ thickness
+	double rho_s;           // Density of rock
+	double rho_r;           // Density of soil
+	double N;               // DUnno why this is used
+    double N_0;             // Minimum ?gopher? density
+	double N_m;             // Maximum gopherr density
+	double beta;            // rate of exponential decline with depth?
+	double K_g;             // diffusivity used in gopher runs?
 	vector<double> A;		// area (in horizontal plane) of the nodes (m^2)
 	vector<double> A_bins;	// area of the particle bins
 	vector<double> b;		// width of the flowtube (m)

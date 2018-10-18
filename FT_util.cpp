@@ -2535,6 +2535,11 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	double S_c;
 	double W_0;
 	double gamma;
+    double N;
+    double N_0;
+    double N_m;
+    double beta;
+    double K_g;
 	string temp;
 
 	// load the parameters from a parameter file
@@ -2542,7 +2547,7 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	sed_trans_param_in.open(sed_trans_param_fname.c_str());
 	sed_trans_param_in >> temp >> rho_s >> temp >> rho_r
 					   >> temp >> K_h >> temp >> S_c
-					   >> temp >> W_0 >> temp >>gamma;
+					   >> temp >> W_0 >> temp >>gamma >> temp >> N >> temp >> N_0 >> temp >> N_m >> temp >> beta >> temp >> K_g;
 	sed_trans_param_in.close();
 
 	cout << "LINE 2548 loaded sed trans param; gamma = " << gamma << endl;
@@ -2561,7 +2566,7 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	flowtube ft_test(ft_param_in);	// this sets up the s locations
 									// and the areas
 	// load the transport parameters
-	ft_test.set_transport_params(S_c,K_h,W_0,gamma,rho_s,rho_r);
+	ft_test.set_transport_params(S_c,K_h,W_0,gamma,rho_s,rho_r,N,N_0,N_m,beta,K_g);
 
 	cout << "LINE 2566 set the parameters " << endl;
 
@@ -2592,6 +2597,11 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	double S_c;
 	double W_0;
 	double gamma;
+    double N;
+    double N_0;
+    double N_m;
+    double beta;
+    double K_g;
 	string temp;
 
 	// load the parameters from a parameter file
@@ -2599,7 +2609,7 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	sed_trans_param_in.open(sed_trans_param_fname.c_str());
 	sed_trans_param_in >> temp >> rho_s >> temp >> rho_r
 					   >> temp >> K_h >> temp >> S_c
-					   >> temp >> W_0 >> temp >>gamma;
+					   >> temp >> W_0 >> temp >>gamma >> temp >> N >> temp >> N_0 >> temp >> N_m >> temp >> beta >> temp >> K_g;
 	sed_trans_param_in.close();
 
 	// now open the flowtube parameter file
@@ -2610,7 +2620,7 @@ flowtube flowtube_initializer(string sed_trans_param_fname,
 	flowtube ft_test(ft_param_in);	// this sets up the s locations
 									// and the areas
 	// load the transport parameters
-	ft_test.set_transport_params(S_c,K_h,W_0,gamma,rho_s,rho_r);
+	ft_test.set_transport_params(S_c,K_h,W_0,gamma,rho_s,rho_r,N,N_0,N_m,beta,K_g);
 
 	ft_param_in.close();
 

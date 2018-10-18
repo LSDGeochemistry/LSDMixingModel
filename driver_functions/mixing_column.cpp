@@ -421,7 +421,7 @@ int main(int argc, char *argv[])
 	cout << "LINE 292 initialized the flowtube" << endl;
     /// Set the ds elevation for elevation boundary condition
     double ds_elevation = ft_test.get_zeta_ds();     
-
+    cout << "got ds_elevation: " << ds_elevation << endl;
 	// initialize the surface erosion rate
 	int n_ft_nodes = ft_test.get_n_nodes();
 	for (int node = 0; node < n_ft_nodes; node++)
