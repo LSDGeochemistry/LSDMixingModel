@@ -419,9 +419,7 @@ int main(int argc, char *argv[])
 						  ft_parameter_fname,
 						  profile_in_fname);
 	cout << "LINE 292 initialized the flowtube" << endl;
-    /// Set the ds elevation for elevation boundary condition
-    double ds_elevation = ft_test.get_zeta_ds();     
-    cout << "got ds_elevation: " << ds_elevation << endl;
+
 	// initialize the surface erosion rate
 	int n_ft_nodes = ft_test.get_n_nodes();
 	for (int node = 0; node < n_ft_nodes; node++)
@@ -455,6 +453,10 @@ int main(int argc, char *argv[])
 	vector<double> this_insertion_zeta = ft_test.get_zeta();
 	int zeta_sz = Delta_zeta.size();
 	int part_ID_start = 1;
+    
+    /// Set the ds elevation for elevation boundary condition
+    double ds_elevation = ft_test.get_zeta_ds();     
+    cout << "got ds_elevation: " << ds_elevation << endl;
 
 	// reset the time
 	t_ime = 0;

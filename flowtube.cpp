@@ -678,12 +678,21 @@ void flowtube::flux_timestep_elev_bc(double dt,
 	fluxes[0] = flux_us;
 
 	//cout << "LINE 619 FLUX_us: " << fluxes[0] << " and flux_ds: " << flux_ds << endl;
-
+    /// So deltaXh runs from 0 to less than n_nodes-1 which means calling deltaXh[n_nodes-1] in code results in getting a value outside
+    /// since deltaXh actually stores values from 0 to n_nodes-2. At least changing line 648 results in the code working seemingly fine
+    /// Double check this with Simon since otherwise not sure.
 	double ds_slope = (ds_elevation-zeta[n_nodes-1])/DeltaXh[n_nodes-2];
-	double dx_ds = DeltaXh[n_nodes-1];
+	double dx_ds = DeltaXh[n_nodes-2];
 	double dy_ds = ds_elevation-zeta[n_nodes-1];
 	double ds_cos_theta = sqrt( dx_ds*dx_ds / (dx_ds*dx_ds + dy_ds*dy_ds) );
     
+    ///This is the product of far too much time identifying errors
+    //cout << "zeta is: " << zeta[n_nodes-1] << " ds elevation is: " << ds_elevation << endl;
+    //cout << "delta Xh is: " << DeltaXh[n_nodes+1324] <<endl; 
+     //cout << "ds_slope: " << ds_slope
+       //  << "dx_ds: " << dx_ds
+         //<< "dy_ds: " << dy_ds
+         //<< "ds_cos_theta: " << ds_cos_theta << endl;
 	double mean_thick_ds = h[n_nodes-1];
 	switch ( flux_switch )
 	{
@@ -720,7 +729,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		flux_ds = -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope;
 	}
 	fluxes[n_nodes] = flux_ds;
-
+    //cout <<"look at me I'm a potential error: " << flux_ds << endl;
 	// calculate the slopes along the profile
 	for (int i = 0; i<n_nodes-1; i++)
 	{
@@ -730,7 +739,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		dy = zeta[i+1]-zeta[i];
         ///Print statements used to see if working properly
         //cout << "zeta1: "<< zeta[i+1] << "zeta2:" << zeta[i] << "Dy is " << dy << endl;
-		//cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
+		cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
         //cout << "Cos theta is" << cos_theta[i] << endl;
 	}
 
@@ -760,6 +769,9 @@ void flowtube::flux_timestep_elev_bc(double dt,
 			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
 			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
 			fluxes[i+1] = -K_g*N*rho_s*b[i+1]*slopes[i]*denom;
+           
+            //cout << "N is: " << N << endl;    
+            //cout << "Cos theta is: " << cos_theta[i] << endl;    
 			break;
 			case 6:
 			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
@@ -819,13 +831,14 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		if (pre_surface_h[i] < 0)
 			pre_surface_h[i] = 0;
 		pre_surface_zeta[i] = pre_surface_h[i]+eta[i];
-
 		// now calculate the soil thickness and surface elevation
 		// after deposition or erosion on the surface
 		h[i] = dt*surface_change_rate[i] + pre_surface_h[i];
 		if (h[i] < 0)
 			h[i] = 0;
 		zeta[i] = h[i]+eta[i];
+        cout << "eta: " << eta[i] << endl;
+        cout << "zeta: " << zeta[i] << endl;
 	}
 
 	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
