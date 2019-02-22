@@ -624,7 +624,7 @@ int main(int argc, char *argv[])
             ft_test.print_zeta(t_ime, zeta_out);
             ft_test.export_input_profile(hillslope_out);
 			ft_test.print_ft_properties(ft_properties_out);
-            CRN_tpb.print_particle_stats_soil(t_ime, ft_test, particle_out);
+            CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
             //int ref_frame_switch = 1;
 			
 			// print basic particle information

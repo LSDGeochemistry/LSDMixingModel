@@ -1802,6 +1802,7 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, flowtube ft,
 	double pAge;
 	double pOSLage;
 	double C10Be;
+    double Cf10Be;
 	double C14C;
 	double C21Ne;
 
@@ -1825,6 +1826,8 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, flowtube ft,
 			pAge = (*part_iter).getAge();
 			pOSLage = (*part_iter).getOSLage();
 			C10Be = (*part_iter).getConc_10Be();
+            Cf10Be = (*part_iter).getConc_f10Be();
+            //cout << "f10Be:" << Cf10Be << endl;
 			C14C = (*part_iter).getConc_14C();
 			C21Ne = (*part_iter).getConc_21Ne();
 
@@ -1840,7 +1843,7 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, flowtube ft,
 			{
 				particle_out << 0 << " ";
 			}
-			particle_out << pAge << " " << pOSLage << " " << C10Be << " "
+			particle_out << pAge << " " << pOSLage << " " << C10Be << " " << Cf10Be << " "
 			             << C14C << " " << C21Ne << endl;
 			part_iter++;
 		}
