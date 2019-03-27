@@ -492,6 +492,7 @@ class CRN_tParticle: public tParticle
 
     /// @brief This assigns nuclide concentrations with constant values
     /// @param C_10Be the 10Be concentration
+    /// @param C_f10Be the fallout 10Be concentration
     /// @param C_26Al the 26Al concentration
     /// @param C_36Cl the 36Cl concentration
     /// @param C_14C the 14C concentration
