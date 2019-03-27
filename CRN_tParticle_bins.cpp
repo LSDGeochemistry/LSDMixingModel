@@ -460,7 +460,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
-									double C_10Be, double C_26Al, double C_36Cl, double C_14C,
+									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C,
                   double C_21Ne, double C_3He,
 									VolumeParticleInfo vpi)
 {
@@ -628,7 +628,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 						//cout << "s_loc: LINE 560: " << ins_part.getxLoc() << endl;
 
 						// now update the initial cosmo concentrations
-						ins_part.update_cosmo_conc_const(C_10Be, C_26Al, C_36Cl,
+						ins_part.update_cosmo_conc_const(C_10Be, C_f10Be, C_26Al, C_36Cl,
 											 C_14C, C_21Ne, C_3He);
 
 						if (ran_zl>=interpolated_eta)
@@ -683,7 +683,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 int CRN_tParticle_bins::insert_particles(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
-									double C_10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He)
+									double C_10Be, double C_f10Be,  double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He)
 {
 
 	vector<double> new_bottom_depth = old_bottom_depth;
@@ -834,7 +834,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 			CRN_tParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
 
 			// now update the initial cosmo concentrations
-			ins_part.update_cosmo_conc_const(C_10Be, C_26Al, C_36Cl,
+			ins_part.update_cosmo_conc_const(C_10Be, C_f10Be, C_26Al, C_36Cl,
 								 C_14C, C_21Ne, C_3He);
 
 			if (ran_zl>=interpolated_eta)
@@ -1680,7 +1680,7 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 	return eroded_bins;
 }
 
-void CRN_tParticle_bins::update_CRN_conc_const(double C_10Be, double C_26Al,
+void CRN_tParticle_bins::update_CRN_conc_const(double C_10Be, double C_f10Be, double C_26Al,
 										double C_36Cl, double C_14C,
 										 double C_21Ne, double C_3He)
 {
@@ -1694,7 +1694,7 @@ void CRN_tParticle_bins::update_CRN_conc_const(double C_10Be, double C_26Al,
 		while (part_iter != particle_bins[bn].end())
 		{
 			// update the cosmo concentrations
-			(*part_iter).update_cosmo_conc_const(C_10Be, C_26Al, C_36Cl,
+			(*part_iter).update_cosmo_conc_const(C_10Be, C_f10Be, C_26Al, C_36Cl,
 								  C_14C, C_21Ne, C_3He);
 			part_iter++;
 		}

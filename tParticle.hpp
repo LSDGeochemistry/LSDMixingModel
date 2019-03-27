@@ -497,7 +497,7 @@ class CRN_tParticle: public tParticle
     /// @param C_14C the 14C concentration
     /// @param C_21Ne the 21Ne concentration
     /// @param C_3He the 3He concentration
-    void update_cosmo_conc_const(double C_10Be, double C_26Al, double C_36Cl,
+    void update_cosmo_conc_const(double C_10Be, double C_f10Be, double C_26Al, double C_36Cl,
                                  double C_14C, double C_21Ne, double C_3He);
 
 

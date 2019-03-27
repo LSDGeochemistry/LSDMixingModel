@@ -242,7 +242,7 @@ int main(int argc, char *argv[])
   // 
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 	// initial in situ concentrations in atoms per gram
-	double C_10Be,C_26Al,C_36Cl,C_14C,C_21Ne,C_3He;
+	double C_10Be,C_f10Be,C_26Al,C_36Cl,C_14C,C_21Ne,C_3He;
 
 	// set the parameters for production
 	// 0 == granger
@@ -344,7 +344,7 @@ int main(int argc, char *argv[])
 	CRN_parameter_in >> temp >> start_depth >> temp >> vert_mix_vel
 				     >> temp >> horiz_mix_vel >> temp >> Omega
 				     >> temp >> part_conc >> temp >> CRN_muon_param_switch
-				     >> temp >> single_scaling >> temp >> C_10Be >> temp >> C_26Al
+				     >> temp >> single_scaling >> temp >> C_10Be >> temp >> C_f10Be >> temp >> C_26Al
 				     >> temp >> C_36Cl >> temp >> C_14C >> temp >> C_21Ne >> temp
 				     >> C_3He >> temp >> M_supply_surface >> temp >> k_f10Be >> temp
 				     >> deltad >> temp >> k2_f10Be >> temp >> chi_f10Be
@@ -489,7 +489,7 @@ int main(int argc, char *argv[])
 	}
 
   part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
-										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
+										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
 										vpi);
 
 
@@ -604,7 +604,7 @@ int main(int argc, char *argv[])
 			
 			// insert the particles
       part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
-										C_10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
+										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
 										vpi);
       					 
 			last_insertion_zeta = this_insertion_zeta;				// reset old eta

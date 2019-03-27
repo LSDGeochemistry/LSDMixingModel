@@ -414,10 +414,11 @@ CRN_tParticle& CRN_tParticle::operator=(CRN_tParticle& rhs)
 }
 
 // this function just sets the concentration of cosmogenic in situ nuclides
-void CRN_tParticle::update_cosmo_conc_const(double C_10Be, double C_26Al, double C_36Cl,
+void CRN_tParticle::update_cosmo_conc_const(double C_10Be, double C_f10Be, double C_26Al, double C_36Cl,
 								 double C_14C, double C_21Ne, double C_3He)
 {
 	Conc_10Be = C_10Be;
+    Conc_f10Be = C_f10Be;
 	Conc_26Al = C_26Al;
 	Conc_36Cl = C_36Cl;
 	Conc_14C  = C_14C;
@@ -836,9 +837,9 @@ void CRN_tParticle::update_fallout10Be_simple_density(double dt, double M_supply
 	{
 		Conc_f10Be += dt*M_supply_surface*( exp(-k_f10Be*rho_s*d_top) -exp(-k_f10Be*rho_s*d_bottom) )/
 		              (deltad*rho_s*one_min_exp_neg_5) - Conc_f10Be*CRNp.lambda_10Be;
-		//		cout << " added conc: " <<  dt*M_supply_surface*( exp(-k_f10Be*rho_s*d_top)
-		//						-exp(-k_f10Be*rho_s*d_bottom) )/
-		//		              (deltad*rho_s*one_min_exp_neg_5) << endl;
+//				cout << " added conc: " <<  dt*M_supply_surface*( exp(-k_f10Be*rho_s*d_top)
+//								-exp(-k_f10Be*rho_s*d_bottom) )/
+//				              (deltad*rho_s*one_min_exp_neg_5) << endl;
 	}
 }
 

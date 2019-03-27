@@ -90,14 +90,14 @@ class CRN_tParticle_bins
 
 	int insert_particles(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
-									double C_10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He);
+									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He);
 	int insert_particles(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
 									CRN_parameters& CRNp,
 									double erosion_rate_in_mass_per_time_per_area);
 	int insert_particles_volumetric(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
-									double C_10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He,
+									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He,
 									VolumeParticleInfo vpi);
 
     vector< list<CRN_tParticle> > particle_motion(double dt, flowtube ft,
@@ -192,7 +192,7 @@ class CRN_tParticle_bins
 
 
 	// functions for updating CRN concentration
-	void update_CRN_conc_const(double C_10Be, double C_26Al,
+	void update_CRN_conc_const(double C_10Be, double C_f10Be, double C_26Al,
 										double C_36Cl, double C_14C,
 										 double C_21Ne, double C_3He);
 

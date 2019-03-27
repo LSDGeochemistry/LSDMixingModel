@@ -837,8 +837,8 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		if (h[i] < 0)
 			h[i] = 0;
 		zeta[i] = h[i]+eta[i];
-        cout << "eta: " << eta[i] << endl;
-        cout << "zeta: " << zeta[i] << endl;
+        //cout << "eta: " << eta[i] << endl;
+        //cout << "zeta: " << zeta[i] << endl;
 	}
 
 	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
