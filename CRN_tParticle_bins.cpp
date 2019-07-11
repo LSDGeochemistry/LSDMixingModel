@@ -1820,10 +1820,13 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, flowtube ft,
 		{
 			// get the z_location of the particle
 			pID = (*part_iter).getType();
+            //cout << "pII:" << pID << endl;
 			z_loc = (*part_iter).get_zetaLoc();
 			s_loc = (*part_iter).getxLoc();
 			d_loc = (*part_iter).getdLoc();
 			pAge = (*part_iter).getAge();
+            //cout << "age:" << pAge << endl;
+            
 			pOSLage = (*part_iter).getOSLage();
 			C10Be = (*part_iter).getConc_10Be();
             Cf10Be = (*part_iter).getConc_f10Be();

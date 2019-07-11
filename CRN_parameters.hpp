@@ -129,7 +129,7 @@ class CRN_parameters
     ///  nuclides_for_scaling[3] = true: calculate 14C
     /// @author SMM
     /// @date 01/01/2010
-    void scale_F_values(vector<bool> nuclides_for_scaling);
+    void scale_F_values(vector<bool> nuclides_for_scaling, double lat, double lon, double site_elev, double Fsp);
     
     /// @brief This calcualtes the atmospheric pressure given latidude, longitude
     /// and elevation
@@ -158,7 +158,7 @@ class CRN_parameters
     /// @date 02/12/2014
     void load_parameters_for_atmospheric_scaling(string path_to_params);
     
-    double stone2000sp(double lat, double Fsp);
+    double stone2000sp(double lat, double lon, double site_elev, double Fsp);
 
   private:
     /// @brief This is called by the default constructor. 

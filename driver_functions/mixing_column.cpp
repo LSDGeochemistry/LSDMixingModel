@@ -361,8 +361,6 @@ int main(int argc, char *argv[])
    
 
 
-  
-	
 	// an integer used for printing
 	const int part_p_i = int (double(particle_printing_interval/dt+0.5) );
 	cout << "printing interval is: " <<  particle_printing_interval 
@@ -411,7 +409,7 @@ int main(int argc, char *argv[])
         cout << "scaled to CRONUS" << endl;
     }
     vector<bool> nuclides_for_scaling;
-	CRNp.scale_F_values(nuclides_for_scaling);
+	CRNp.scale_F_values(nuclides_for_scaling, lat, lon, site_elev, Fsp);
 	
    
 	// initialize a flowtube

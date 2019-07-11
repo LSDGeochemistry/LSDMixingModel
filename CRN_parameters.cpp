@@ -182,7 +182,7 @@ void CRN_parameters::set_Schaller_parameters()
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 void CRN_parameters::set_newCRONUS_parameters()
 {
-  //S_t = 1;
+  S_t = 1;
 
   // from Vermeesh 2007
   // 10Be from Chmeleff/Korschinek 10Be decay constant;
@@ -329,12 +329,14 @@ double CRN_parameters::NCEPatm_2(double lat, double lon, double site_elev)
   //cout << site_T_degK << endl;
   //cout << "Log term: " << log(site_T_degK) - log(site_T_degK - (site_elev*dtdz)) << endl;
   //cout << "Exp term: " << exp( (gmr/dtdz)*( log(site_T_degK) - log(site_T_degK - (site_elev*dtdz)) ) ) << endl;
-
+//    cout <<"latitude is: " << lat << endl;
+//    cout <<"longitude is: " << lon << endl;
+//cout << "site elevation is: " << site_elev << endl;
   double out = site_slp*exp( (gmr/dtdz)*( log(site_T_degK) - log(site_T_degK - (site_elev*dtdz)) ) );
   
   //cout << endl;
-  //cout << "Site sea level pressure: " << site_slp << " and site Temp: "<< site_T 
-  //     << " and pressure: " << out << endl << endl <<endl;
+//  cout << "Site sea level pressure: " << site_slp << " and site Temp: "<< site_T 
+//      << " and pressure: " << out << endl << endl <<endl;
   return out;
 }
 
@@ -503,12 +505,13 @@ void CRN_parameters::load_parameters_for_atmospheric_scaling(string path_to_NCEP
 // Elevation can be converted to pressure with the functions
 // stdatm.m (general use) and antatm.m (Antarctica).
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-double CRN_parameters::stone2000sp(double lat, double Fsp)
+double CRN_parameters::stone2000sp(double lat, double lon, double site_elev, double Fsp)
 {
     
     string path_to_NCEP_data = "/driver_functions/";
     //Find the pressure 
     double P = NCEPatm_2(lat, lon, site_elev);
+    cout << "p is: " << P << endl;
     
   if (Fsp > 1)
   {
@@ -660,7 +663,7 @@ double CRN_parameters::stone2000sp(double lat, double Fsp)
 // nuclides_for_scaling[3] = true: calculate 14C
 //
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling)
+void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling, double lat, double lon, double site_elev, double Fsp)
 {
   // first check the boolean vector. If it is an incorrect size, print a warning
   // and then default to all true
@@ -673,7 +676,7 @@ void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling)
   }
 
   // set up the parameters for the newton-raphson iteration
-  double single_scaling = stone2000sp(lat, Fsp);    
+  double single_scaling = stone2000sp(lat, lon, site_elev, Fsp);    
   double initial_guess = 0;         // an initial test depth
   double new_x;                 // the new test depth
   double displace_x = 1e-6;     // how far you diplace the test depth
@@ -698,11 +701,11 @@ void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling)
     F[3] =  F_10Be[3];
     new_x = initial_guess;
   
-    //int iterations = 0;
+    int iterations = 0;
   
     do
     {
-      //iterations++;
+      iterations++;
       // get the scaling this step
       scaling_this_step =  exp(-new_x/Gamma[0])*F[0]+
                            exp(-new_x/Gamma[1])*F[1]+
@@ -737,17 +740,18 @@ void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling)
   
     } while(fabs(x_change) > tolerance);      
     
-    //cout << "========================================================" << endl;
-    //cout << "TESTING SCALING IN LSDCRNP" << endl;
-    //cout << "LINE 1742, scaling is: " << new_x << endl;
-    //cout << "Iterations were: " << iterations << endl;
-    //cout << "========================================================" << endl;
-    
+//    cout << "========================================================" << endl;
+//    cout << "TESTING SCALING IN LSDCRNP" << endl;
+//    cout << "LINE 1742, scaling is: " << new_x << endl;
+//    cout << "Iterations were: " << iterations << endl;
+//    cout << "========================================================" << endl;
+//    
     // now reset the F_values
     F_10Be[0] = exp(-new_x/Gamma[0])*F_10Be[0];
     F_10Be[1] = exp(-new_x/Gamma[1])*F_10Be[1];
     F_10Be[2] = exp(-new_x/Gamma[2])*F_10Be[2];
     F_10Be[3] = exp(-new_x/Gamma[3])*F_10Be[3];  
+//    cout << "new scaling is:" << F_10Be[0] << endl;
   }
 
   // now 26Al
