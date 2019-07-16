@@ -1,8 +1,8 @@
 # make with make -f CRUNCH_mixing_column.make
 
 CC=g++
-CFLAGS=-c -O3
-OFLAGS = -O3
+CFLAGS=-c -O3 
+OFLAGS = -O3 
 LDFLAGS=l
 SOURCES=CRUNCH_mixing_column.cpp \
 	../CRUNCH_engine.cpp \

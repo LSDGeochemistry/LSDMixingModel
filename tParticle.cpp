@@ -439,7 +439,7 @@ void CRN_tParticle::update_10Be_conc(double dt,double erosion_rate, CRN_paramete
 	// fist berillium
 	double Be_exp = exp(-dt*CRNp.lambda_10Be);
 	//double Be_depth_exp = exp(-d_0/Gamma_Be1);
-
+    //cout << "F_10Be =" << CRNp.F_10Be[0] << endl;
     //cout << "LINE 236 tParticle.cpp " << endl;
     //cout << lambda_10Be << " " << Be_exp << endl;
     //cout << "starting conc: " << Conc_10Be << endl;

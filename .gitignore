@@ -3,3 +3,8 @@
 *.out
 /Runs/
 
+driver_functions/CRUNCH_mixing_column_new.exe
+driver_functions/CRUNCH_mixing_column_new.exe.stackdump
+driver_functions/crunch_screen.txt
+driver_functions/mixing_column.exe.stackdump
+driver_functions/PestControl.ant
