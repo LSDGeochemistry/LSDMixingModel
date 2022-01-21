@@ -4,10 +4,13 @@ flux_us: 0.0
 dt: 10
 CRN_switch: 2
 end_time: 1000
-surf_erate: -0.0000025
+surf_erate: 0.0
 particle_printing_interval: 100
 eroded_catch_window: 2000
 max_age: 5000
 n_spacings: 500
 particle_insert_interval: 2000
 weathering_time_interval: 100
+ref_frame_switch: 0
+SS_flux: 0
+lower_boundary_condition: 1

@@ -1,5 +1,5 @@
 start_depth: 2
-vert_mix_vel: 0.01
+vert_mix_vel: 0.0
 horiz_mix_vel: 0.0
 Omega: 1.0
 part_conc: 0.5

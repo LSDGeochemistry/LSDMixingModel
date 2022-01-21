@@ -167,7 +167,7 @@ void flowtube::create(ifstream& paramfile_in)
 	fluff = fluff_temp;
 	vector<double> MF_temp(n_nodes+1,0.0);
 	Mass_Flux = MF_temp;
-    
+
 	//cout << "flowtube.cpp LINE 100 size bel: " << bin_edge_loc.size() << endl;
 
 //	cout << "LINE 120 flowtube.cpp" << endl;
@@ -520,8 +520,8 @@ void flowtube::flux_timestep_flux_bc(double dt,
 		dy = zeta[i+1]-zeta[i];
 		cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
 		///Print statements used to test if working
-        //cout << "i: " << i << " dx = " << dx << " dy: " << dy
-		  //   << " cos: " << cos_theta[i] << endl;
+        // cout << "h: " << h[i] << " dx = " << dx << " dy: " << dy
+		    // << " slopes: " << slopes[i] << " K: " << K_h << endl ;
 	}
 
 	// calcualte the MASS fluxes along the profile
@@ -562,7 +562,7 @@ void flowtube::flux_timestep_flux_bc(double dt,
 			break;
 			default:
 			fluxes[i+1] = -rho_s*K_h*b[i+1]*mean_thick*slopes[i];
-           
+
 		}
 	}
 
@@ -589,7 +589,7 @@ void flowtube::flux_timestep_flux_bc(double dt,
 		sap_lowering[i] = dt*sap_lowering_rate;
 		eta[i] = old_eta[i] - dt*sap_lowering_rate;
 		prod[i] = rho_r*A[i]*sap_lowering_rate;
-
+		// cout << "sediment produced: " << prod[i] << endl;
 		//cout << " h: " << h[i]
 		//     << " p: " << sap_lowering_rate
 		//     << " p[i]: " << sap_lowering[i]
@@ -633,6 +633,11 @@ void flowtube::flux_timestep_flux_bc(double dt,
 
 	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
 //                                // the node boundaries
+  // for (int i = 0; i<n_nodes+1; i++)
+	// {
+	// 	cout <<"fluxes at box edge "<< i << " is: "<< fluxes[i] << endl;
+	//
+	// }
 //     cout <<"flux us:" << fluxes[0] << endl
 //          <<"flux ds:" << fluxes[1] << endl
 //          <<"flux ds:" << fluxes[2];
@@ -685,14 +690,14 @@ void flowtube::flux_timestep_elev_bc(double dt,
 	double dx_ds = DeltaXh[n_nodes-2];
 	double dy_ds = ds_elevation-zeta[n_nodes-1];
 	double ds_cos_theta = sqrt( dx_ds*dx_ds / (dx_ds*dx_ds + dy_ds*dy_ds) );
-    
+
     ///This is the product of far too much time identifying errors
-    //cout << "zeta is: " << zeta[n_nodes-1] << " ds elevation is: " << ds_elevation << endl;
-    //cout << "delta Xh is: " << DeltaXh[n_nodes+1324] <<endl; 
-     //cout << "ds_slope: " << ds_slope
-       //  << "dx_ds: " << dx_ds
-         //<< "dy_ds: " << dy_ds
-         //<< "ds_cos_theta: " << ds_cos_theta << endl;
+    // cout << "zeta is: " << zeta[n_nodes-1] << " ds elevation is: " << ds_elevation << endl;
+    // cout << "delta Xh is: " << DeltaXh[n_nodes+1324] <<endl;
+    //  cout << "ds_slope: " << ds_slope
+    //     << "dx_ds: " << dx_ds
+    //      << "dy_ds: " << dy_ds
+    //      << "ds_cos_theta: " << ds_cos_theta << endl;
 	double mean_thick_ds = h[n_nodes-1];
 	switch ( flux_switch )
 	{
@@ -711,7 +716,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		flux_ds =  -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope
 					  *denom*ds_cos_theta;
 		break;
-		case 5 :     
+		case 5 :
 		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
 		N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*ds_cos_theta/beta));
 		flux_ds = -K_g*N*rho_s*b[n_nodes-1]*ds_slope*denom;
@@ -729,7 +734,7 @@ void flowtube::flux_timestep_elev_bc(double dt,
 		flux_ds = -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope;
 	}
 	fluxes[n_nodes] = flux_ds;
-    //cout <<"look at me I'm a potential error: " << flux_ds << endl;
+    // cout <<"look at me I'm a potential error: " << flux_ds << endl;
 	// calculate the slopes along the profile
 	for (int i = 0; i<n_nodes-1; i++)
 	{
@@ -769,9 +774,9 @@ void flowtube::flux_timestep_elev_bc(double dt,
 			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
 			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
 			fluxes[i+1] = -K_g*N*rho_s*b[i+1]*slopes[i]*denom;
-           
-            //cout << "N is: " << N << endl;    
-            //cout << "Cos theta is: " << cos_theta[i] << endl;    
+
+            //cout << "N is: " << N << endl;
+            //cout << "Cos theta is: " << cos_theta[i] << endl;
 			break;
 			case 6:
 			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
@@ -843,9 +848,271 @@ void flowtube::flux_timestep_elev_bc(double dt,
 
 	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
 								// the node boundaries
+	// for (int i = 0; i<n_nodes+1; i++)
+	// 		{
+	// 		cout <<"fluxes at box edge "<< i << " is: "<< fluxes[i] << endl;
+	//
+	// 		}
+ }
+
+///Third boundary condition
+void flowtube::flux_timestep_varying_elev_bc(double dt,
+							double flux_us, double ds_elevation,
+							int flux_switch, int prod_switch,
+							vector<double> surface_change_rate, double constant_surface_change_rate, double base_level_change)
+{
+	// do a timestep
+	double mean_thick;				// mean soil thickness
+	double dx,dy,denom,sap_lowering_rate,mass_present;
+	double flux_ds;
+
+	// reset the 'old' values
+	old_h = h;
+	old_eta = eta;
+	old_zeta = zeta;
+
+	// some data
+	vector<double> prod(n_nodes);
+	vector<double> sap_lowering(n_nodes);
+	vector<double> dh_MassFlux(n_nodes);
+
+	// the second set are stored at the half spaces
+	// because there are two flux conditions, the half nodes are not stored at the edges,
+	// so there are n_nodes-1 half nodes
+	vector<double> slopes(n_nodes-1,0.0);
+	vector<double> cos_theta(n_nodes-1,0.0);
+
+	// the third set is just the fluxes, these occur at the box boundaries, including the
+	// top and bottom boxes, so this vector has n_nodes+1 data elements
+	vector<double> fluxes(n_nodes+1,0.0);	// fluxes in kg/yr
+
+	// calculate fluxes
+	// the two boundary fluxes are assinged
+	fluxes[0] = flux_us;
+
+	//cout << "LINE 619 FLUX_us: " << fluxes[0] << " and flux_ds: " << flux_ds << endl;
+    /// So deltaXh runs from 0 to less than n_nodes-1 which means calling deltaXh[n_nodes-1] in code results in getting a value outside
+    /// since deltaXh actually stores values from 0 to n_nodes-2. At least changing line 648 results in the code working seemingly fine
+    /// Double check this with Simon since otherwise not sure.
+	double ds_slope = (ds_elevation-zeta[n_nodes-1])/DeltaXh[n_nodes-2];
+	double dx_ds = DeltaXh[n_nodes-2];
+	double dy_ds = ds_elevation-zeta[n_nodes-1];
+	double ds_cos_theta = sqrt( dx_ds*dx_ds / (dx_ds*dx_ds + dy_ds*dy_ds) );
+
+    // /This is the product of far too much time identifying errors
+    // cout << "zeta is: " << zeta[n_nodes-1] << " ds elevation is: " << ds_elevation << endl;
+    // cout << "delta Xh is: " << DeltaXh[n_nodes-2] <<endl;
+    //  cout << "ds_slope: " << ds_slope
+    //     << "dx_ds: " << dx_ds
+    //      << "dy_ds: " << dy_ds
+    //      << "ds_cos_theta: " << ds_cos_theta << endl;
+	double mean_thick_ds = h[n_nodes-1];
+	switch ( flux_switch )
+	{
+		case 1 :
+		flux_ds = -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope;
+		break;
+		case 2 :
+		flux_ds =  -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope*ds_cos_theta;
+		break;
+		case 3 :
+		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
+		flux_ds =  -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope*denom;
+		break;
+		case 4 :
+		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
+		flux_ds =  -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope
+					  *denom*ds_cos_theta;
+		break;
+		case 5 :
+		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
+		N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*ds_cos_theta/beta));
+		flux_ds = -K_g*N*rho_s*b[n_nodes-1]*ds_slope*denom;
+		break;
+		case 6:
+		N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*ds_cos_theta/beta));
+		flux_ds = -K_g*N*rho_s*b[n_nodes-1]*ds_slope;
+		break;
+		case 7:
+		denom = 1/(1-ds_slope*ds_slope/(S_c*S_c));
+		N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*ds_cos_theta/beta));
+		flux_ds = -K_g*N*rho_s*b[n_nodes-1]*ds_slope*denom*mean_thick_ds;
+		break;
+		default:
+		flux_ds = -rho_s*K_h*b[n_nodes-1]*mean_thick_ds*ds_slope;
+	}
+	fluxes[n_nodes] = flux_ds;
+	// cout << "looks at me I'm a potenital error: " << flux_ds << endl;
+	// double ds_elev_temp = update_ds_elev(dt, base_level_change, prod_switch,
+	// 			 constant_surface_change_rate, ds_elevation);
+	// 				ds_elevation = ds_elev_temp;
+	// 					cout << "New ds_elev is: "<< ds_elev_temp << endl;
+
+	// calculate the slopes along the profile
+	for (int i = 0; i<n_nodes-1; i++)
+	{
+		slopes[i] = (zeta[i+1]-zeta[i])/(DeltaXh[i]);
+		dx = DeltaXh[i];
+        //cout << "Dx is"<< dx << endl;
+		dy = zeta[i+1]-zeta[i];
+        ///Print statements used to see if working properly
+        //cout << "zeta1: "<< zeta[i+1] << "zeta2:" << zeta[i] << "Dy is " << dy << endl;
+		cos_theta[i] = sqrt( dx*dx / (dx*dx + dy*dy) );
+        //cout << "Cos theta is" << cos_theta[i] << endl;
+	}
+
+	// calcualte the MASS fluxes along the profile
+	// these fluxes are in units of mass per time
+	for (int i = 0; i<n_nodes-1; i++)
+	{
+		mean_thick = 0.5*(h[i+1]+h[i]);
+		switch ( flux_switch )
+		{
+			case 1 :
+			fluxes[i+1] = -rho_s*K_h*b[i+1]*mean_thick*slopes[i];
+			break;
+			case 2 :
+			fluxes[i+1] =  -rho_s*K_h*b[i+1]*mean_thick*slopes[i]*cos_theta[i];
+			break;
+			case 3 :
+			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
+			fluxes[i+1] =  -rho_s*K_h*b[i+1]*mean_thick*slopes[i]*denom;
+			break;
+			case 4 :
+			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
+			fluxes[i+1] =  -rho_s*K_h*b[i+1]*mean_thick*slopes[i]
+						  *denom*cos_theta[i];
+			break;
+			case 5 :
+			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
+			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
+			fluxes[i+1] = -K_g*N*rho_s*b[i+1]*slopes[i]*denom;
+
+            //cout << "N is: " << N << endl;
+            //cout << "Cos theta is: " << cos_theta[i] << endl;
+			break;
+			case 6:
+			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
+			fluxes[i+1] = -K_g*N*rho_s*b[i+1]*slopes[i];
+			break;
+			case 7:
+			denom = 1/(1-slopes[i]*slopes[i]/(S_c*S_c));
+			N = N_m/(1 + (N_m/N_0-1)*exp(-mean_thick*cos_theta[i]/beta));
+			fluxes[i+1] = -K_g*N*rho_s*b[i+1]*slopes[i]*denom*mean_thick;
+			break;
+			default:
+			fluxes[i+1] = -rho_s*K_h*b[i+1]*mean_thick*slopes[i];
+		}
+	}
+
+	// update the hillslope characteristics
+	for (int i = 0; i<n_nodes; i++)
+	{
+		switch (prod_switch)
+		{
+			case 1:
+			sap_lowering_rate = W_0*exp(-h[i]/gamma);
+			break;
+			case 2:
+			if (i == 0)
+			sap_lowering_rate = (W_0/cos_theta[i])*exp(-h[i]*cos_theta[i]/gamma);
+			else
+			sap_lowering_rate = (W_0/cos_theta[i-1])*exp(-h[i]*cos_theta[i-1]/gamma);
+			break;
+			default :
+			sap_lowering_rate = W_0*exp(-h[i]/gamma);
+		}
+
+		sap_lowering[i] = dt*sap_lowering_rate;
+		eta[i] = old_eta[i] - dt*sap_lowering_rate;
+		prod[i] = rho_r*A[i]*sap_lowering_rate;
+
+		mass_present = dt*fluxes[i] + dt*prod[i] + rho_s*A[i]*old_h[i];
+		if (mass_present < fluxes[i+1]*dt)
+			fluxes[i+1] = mass_present/dt;
+
+
+		// calculate soil thickness and surface eleavtion from
+		// creep like sediment transport only
+		dh_MassFlux[i] = dt*(fluxes[i]-fluxes[i+1])/(rho_s*A[i]);
+		intermediate_h[i] = dh_MassFlux[i] + old_h[i];
+		intermediate_zeta[i] = old_eta[i]+intermediate_h[i];
+
+		// calculate the fluffing factor (becuase material changes in
+		// density when converted from bedrock to soil, there is a
+		// vertical component of particle motion in the soil
+		fluff[i] = sap_lowering_rate*dt*((rho_r/rho_s) - 1);
+
+		// calculate surface elevation, and thickness after production and
+		// sediment transport
+		pre_surface_h[i] = dh_MassFlux[i] + dt*prod[i]/(rho_s*A[i]) + old_h[i];
+		if (pre_surface_h[i] < 0)
+			pre_surface_h[i] = 0;
+		pre_surface_zeta[i] = pre_surface_h[i]+eta[i];
+		// now calculate the soil thickness and surface elevation
+		// after deposition or erosion on the surface
+		h[i] = dt*surface_change_rate[i] + pre_surface_h[i];
+		if (h[i] < 0)
+			h[i] = 0;
+		zeta[i] = h[i]+eta[i];
+        //cout << "eta: " << eta[i] << endl;
+        //cout << "zeta: " << zeta[i] << endl;
+	}
+	// for (int i = 0; i<n_nodes+1; i++)
+ 	// 		{
+ 	// 		cout <<"zeta change  "<< i << " is: "<< old_zeta[i]-zeta[i] << endl;
+	//
+ 	// 		}
+
+
+  old_h = h;
+	Mass_Flux = fluxes;			// this is a vector of mass fluxes evaluated at
+								// the node boundaries
+	// for (int i = 0; i<n_nodes+1; i++)
+	// 		{
+	// 		cout <<"fluxes at box edge "<< i << " is: "<< fluxes[i] << endl;
+	//
+	// 		}
+
 }
+///Function to update the lowering rate of ds-elev based on the soil thickness of the final node.
+double flowtube::update_ds_elev(double dt,double base_level_change,int prod_switch,
+			double constant_surface_change_rate, double ds_elev,vector<double> bc_h)
+{
+	///The ds lowering rate variable
+	// double ds_lowering_rate;
+	double ds_elev_new;
+	// double ds_slope = (ds_elev-zeta[n_nodes-1])/DeltaXh[n_nodes-2];
+	// double dx_ds = DeltaXh[n_nodes-2];
+	// double dy_ds = ds_elev-zeta[n_nodes-1];
+	// double ds_cos_theta = sqrt( dx_ds*dx_ds / (dx_ds*dx_ds + dy_ds*dy_ds) );
+	// cout << "The H used will be: " << bc_h[n_nodes-1] << endl;
+	// cout << "zeta is: " << zeta[n_nodes-1] << " ds elevation is: " << ds_elev << endl;
+	// cout << "old h is:" << old_h[n_nodes-1] << endl;
+	// cout << "delta Xh is: " << DeltaXh[n_nodes-2] <<endl;
+	//  cout << "ds_slope: " << ds_slope
+	// 		<< "dx_ds: " << dx_ds
+	// 		 << "dy_ds: " << dy_ds
+	// 		 << "ds_cos_theta: " << ds_cos_theta << endl;
+		// switch (prod_switch)
+		// {
+		// 	case 1:
+		// 	ds_lowering_rate = W_0*exp(-bc_h[n_nodes-1] /gamma);
+		// 	break;
+		// 	case 2:
+		//
+		// 	ds_lowering_rate = (W_0/ds_cos_theta)*exp(-bc_h[n_nodes-1] *ds_cos_theta/gamma);
+		// 	break;
+		// 	default :
+		// 	ds_lowering_rate = W_0*exp(-bc_h[n_nodes-1] /gamma);
+		// }
 
+	 // ds_elev -= dt*(base_level_change-constant_surface_change_rate+ds_lowering_rate);
+	 ds_elev += (zeta[n_nodes-1]-bc_h[n_nodes-1])-(dt*base_level_change);
 
+	 ds_elev_new = ds_elev;
+		return ds_elev_new;
+}
 //=-=-=-=-=-=-=-=-=-=-=
 // printing functions
 //=-=-=-=-=-=-=-=-=-=-=

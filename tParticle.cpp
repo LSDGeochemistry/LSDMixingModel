@@ -456,7 +456,7 @@ void CRN_tParticle::update_10Be_conc(double dt,double erosion_rate, CRN_paramete
 	}
 
     //cout << "and sum term is: " << sum_term << endl;
-
+    
 	Conc_10Be = Conc_10Be*Be_exp +  CRNp.S_t*CRNp.P0_10Be*sum_term;
 	//cout << "and ending 10Be conc is: " << Conc_10Be <<endl;
 }
@@ -971,9 +971,9 @@ double CRN_tParticle::weather_particle(VolumeParticleInfo vpi,
 
 	double Volume = Mass/vpi.get_type_density(Type);
 	return mass_loss;
-	
+
 	if (Mass == 0)
-	{ 
+	{
     mass_loss = -99;
   }
 }

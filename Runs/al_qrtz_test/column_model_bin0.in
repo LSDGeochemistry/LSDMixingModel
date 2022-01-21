@@ -11,7 +11,7 @@ correction_max    2.0
 debye-huckel      true
 speciate_only     false
 database_sweep    true
-database          L:/github/CRUNCH_binary/datacomSC08.dbs
+database          C:/Workspace/github/CRUNCH_binary/datacomSC08.dbs
 screen_output 500
 END
  
@@ -41,7 +41,7 @@ set_temperature 13.5
 END
  
 DISCRETIZATION
-xzones 5 0.100111 10 0.149944
+xzones 5 0.100061 10 0.149969
 END
  
 BOUNDARY_CONDITIONS
@@ -156,8 +156,8 @@ END
 Condition WeatheringCell1
 temperature      13.5
 SolidDensity           2650
-pH 5.59832
-CO2(aq) CO2(g) 0.009642344
+pH 5.598216
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -170,16 +170,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 600.1074 ssa 0.09056604
-Albite 646.6839 ssa 0.09056604
+Quartz 0.3347868 ssa 0.09056604
+Albite 0.344815 ssa 0.09056604
 END
 
 
 Condition WeatheringCell2
 temperature      13.5
 SolidDensity           2650
-pH 5.827161
-CO2(aq) CO2(g) 0.009642344
+pH 5.827057
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -192,16 +192,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 538.7725 ssa 0.09056604
-Albite 624.2035 ssa 0.09056604
+Quartz 0.3347868 ssa 0.09056604
+Albite 0.3301584 ssa 0.09056604
 END
 
 
 Condition WeatheringCell3
 temperature      13.5
 SolidDensity           2650
-pH 5.933566
-CO2(aq) CO2(g) 0.009642344
+pH 5.933462
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -214,16 +214,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 638.4963 ssa 0.09056604
-Albite 584.0816 ssa 0.09056604
+Quartz 0.3239873 ssa 0.09056604
+Albite 0.3509862 ssa 0.09056604
 END
 
 
 Condition WeatheringCell4
 temperature      13.5
 SolidDensity           2650
-pH 6.003653
-CO2(aq) CO2(g) 0.009642344
+pH 6.003549
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -236,16 +236,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 625.8566 ssa 0.09056604
-Albite 578.9804 ssa 0.09056604
+Quartz 0.3324726 ssa 0.09056604
+Albite 0.3517576 ssa 0.09056604
 END
 
 
 Condition WeatheringCell5
 temperature      13.5
 SolidDensity           2650
-pH 6.056002
-CO2(aq) CO2(g) 0.009642344
+pH 6.055898
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -258,16 +258,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 604.231 ssa 0.09056604
-Albite 577.1653 ssa 0.09056604
+Quartz 0.3420723 ssa 0.09056604
+Albite 0.3419008 ssa 0.09056604
 END
 
 
 Condition WeatheringCell6
 temperature      13.5
 SolidDensity           2650
-pH 6.107021
-CO2(aq) CO2(g) 0.009642344
+pH 6.106935
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -280,16 +280,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 600.0587 ssa 0.09056604
-Albite 601.1669 ssa 0.09056604
+Quartz 0.427131 ssa 0.09056604
+Albite 0.4132917 ssa 0.09056604
 END
 
 
 Condition WeatheringCell7
 temperature      13.5
 SolidDensity           2650
-pH 6.15525
-CO2(aq) CO2(g) 0.009642344
+pH 6.155189
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -302,16 +302,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 602.5326 ssa 0.09056604
-Albite 601.3336 ssa 0.09056604
+Quartz 0.4233567 ssa 0.09056604
+Albite 0.4095174 ssa 0.09056604
 END
 
 
 Condition WeatheringCell8
 temperature      13.5
 SolidDensity           2650
-pH 6.194385
-CO2(aq) CO2(g) 0.009642344
+pH 6.19434
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -324,16 +324,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 600.2035 ssa 0.09056604
-Albite 604.1056 ssa 0.09056604
+Quartz 0.4290182 ssa 0.09056604
+Albite 0.3931618 ssa 0.09056604
 END
 
 
 Condition WeatheringCell9
 temperature      13.5
 SolidDensity           2650
-pH 6.227317
-CO2(aq) CO2(g) 0.009642344
+pH 6.227284
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -346,16 +346,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 602.7266 ssa 0.09056604
-Albite 602.48 ssa 0.09056604
+Quartz 0.3963071 ssa 0.09056604
+Albite 0.426502 ssa 0.09056604
 END
 
 
 Condition WeatheringCell10
 temperature      13.5
 SolidDensity           2650
-pH 6.255746
-CO2(aq) CO2(g) 0.009642344
+pH 6.255722
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -368,16 +368,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 599.7457 ssa 0.09056604
-Albite 604.4416 ssa 0.09056604
+Quartz 0.4239857 ssa 0.09056604
+Albite 0.4114046 ssa 0.09056604
 END
 
 
 Condition WeatheringCell11
 temperature      13.5
 SolidDensity           2650
-pH 6.280758
-CO2(aq) CO2(g) 0.009642344
+pH 6.28074
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -390,16 +390,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 602.8936 ssa 0.09056604
-Albite 599.3332 ssa 0.09056604
+Quartz 0.416437 ssa 0.09056604
+Albite 0.4145499 ssa 0.09056604
 END
 
 
 Condition WeatheringCell12
 temperature      13.5
 SolidDensity           2650
-pH 6.303085
-CO2(aq) CO2(g) 0.009642344
+pH 6.303073
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -412,16 +412,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 601.6686 ssa 0.09056604
-Albite 604.6912 ssa 0.09056604
+Quartz 0.4309054 ssa 0.09056604
+Albite 0.4139208 ssa 0.09056604
 END
 
 
 Condition WeatheringCell13
 temperature      13.5
 SolidDensity           2650
-pH 6.323249
-CO2(aq) CO2(g) 0.009642344
+pH 6.323241
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -434,16 +434,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 600.9959 ssa 0.09056604
-Albite 598.2224 ssa 0.09056604
+Quartz 0.395049 ssa 0.09056604
+Albite 0.4007106 ssa 0.09056604
 END
 
 
 Condition WeatheringCell14
 temperature      13.5
 SolidDensity           2650
-pH 6.341632
-CO2(aq) CO2(g) 0.009642344
+pH 6.341628
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -456,16 +456,16 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 600.1951 ssa 0.09056604
-Albite 604.5776 ssa 0.09056604
+Quartz 0.4321635 ssa 0.09056604
+Albite 0.3761773 ssa 0.09056604
 END
 
 
 Condition WeatheringCell15
 temperature      13.5
 SolidDensity           2650
-pH 6.358524
-CO2(aq) CO2(g) 0.009642344
+pH 6.358523
+CO2(aq) CO2(g) 0.0005087035
 Mg++ 6.884807e-05
 Ca++ 9.070104e-05
 K+ 1.896829e-05
@@ -478,8 +478,8 @@ NO3- 0.0001
 SO4-- 0.000161
 Fe++ 2.099804e-08
 Fe+++ 8.359216e-09
-Quartz 598.5407 ssa 0.09056604
-Albite 599.3492 ssa 0.09056604
+Quartz 0.427131 ssa 0.09056604
+Albite 0.4321635 ssa 0.09056604
 END
 
 

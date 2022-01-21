@@ -40,7 +40,7 @@
  
  
  
-   ---> Using database: L:/github/CRUNCH_binary/datacomSC08.dbs                                                             
+   ---> Using database: C:/Workspace/github/CRUNCH_binary/datacomSC08.dbs                                                   
  
  
  Number of components =                    14
@@ -63,5 +63,5 @@
  Number of kinetic minerals =            0
  
  
-  Using database file: L:/github/CRUNCH_binary/datacomSC08.dbs
+  Using database file: C:/Workspace/github/CRUNCH_binary/datacomSC08.dbs
  

@@ -1,11 +1,11 @@
 start_depth: 2
-vert_mix_vel: 0.01
+vert_mix_vel: 0.0
 horiz_mix_vel: 0.0
 Omega: 1.0
 part_conc: 0.5
 CRN_muon_param_switch: 1
 single_scaling: 5.5
-C_10Be_initial: 0.2e5
+C_10Be_initial: 0.0
 C_26Al_initial: 0.0
 C_36Cl_initial: 0.0
 C_14C_initial: 0.0
@@ -18,3 +18,7 @@ k2_f10Be: 0.001
 chi_f10Be: 0.7
 n_PDZ_intervals: 5
 n_CAZ_intervals: 10
+lat: 60
+lon: 0
+site_elev: 1
+Fsp: 0.98

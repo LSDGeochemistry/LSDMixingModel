@@ -4,7 +4,7 @@ CC=g++
 CFLAGS=-c -O3
 OFLAGS = -O3
 LDFLAGS=l
-SOURCES=mixing_column_variable_erosion_new_elev_bc.cpp \
+SOURCES=mixing_column_no_particles.cpp \
 	../VolumeParticleInfo.cpp \
 	../CRN_parameters.cpp \
 	../tParticle.cpp \
@@ -15,7 +15,7 @@ SOURCES=mixing_column_variable_erosion_new_elev_bc.cpp \
     ../LSDStatsTools.cpp \
     ../TNT/tnt.h
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=mixing_column_variable_erosion_new_elev_bc.out
+EXECUTABLE=mixing_column_no_particles.out
 
 all: $(SOURCES) $(EXECUTABLE)
 

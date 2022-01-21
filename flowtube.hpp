@@ -60,19 +60,19 @@ using namespace std;
 class flowtube
 {
   public:
-  
+
     /// @brief default constructor. Doesn't do anything
     /// @author SMM
     /// @date 01/01/2008
     flowtube()				{ create(); }
-    
+
     /// @brief Constructor that loads in input file
     ///  *add input file format here*
     /// @param infile an ifstream object
     /// @author SMM
     /// @date 01/01/2008
     flowtube(ifstream& infile)         { create(infile); }
-    
+
     /// @brief A constructor that assigns all the parameters (used for copying)
     /// @author SMM
     /// @date 01/01/2008
@@ -106,55 +106,55 @@ class flowtube
     /// @author SMM
     /// @date 01/01/2008
     void print_ft_properties(ofstream& outfile);
-  
+
     void initialize_interpolation_nodes(vector<double> interp_x_loc,
                                         vector<int>& ds_interp_node_num,
                                         vector<int>& us_interp_node_num,
                                         vector<double>& interpolated_fractional_distance);
-            
+
     vector<double> interpolated_modeled_h(vector<int> ds_interp_node_num,
                                           vector<int> us_interp_node_num,
                                           vector<double> interpolated_fractional_distance );
-            
+
     vector<double> interpolated_modeled_zeta(vector<int> ds_interp_node_num,
                                              vector<int> us_interp_node_num,
                                              vector<double> interpolated_fractional_distance );
-    
+
     /// @brief This loads a profile. The file has five columns but only the last two
     ///   are read. These are the zeta (elevation of surface) and eta (elevation of saprolite surface)
-    ///   The soil thickness is calculated from these data. The data are reported at the nodes and 
-    ///   not the node boundaries 
+    ///   The soil thickness is calculated from these data. The data are reported at the nodes and
+    ///   not the node boundaries
     /// @author SMM
     /// @date 01/01/2011
     void load_profile(ifstream& infile);
 
     /// @brief Exports a profile. It has data at centre nodes but not boundaries
-    ///  It has 5 columns: 
+    ///  It has 5 columns:
     ///   distance, elevation, soil thickness, elevation, and soil thickness
     ///  yes the elevation and soil thicknesses are repeated. I can't remember
     ///  why I did that. I think maybe before there were old and new thicknesses
-    ///  and elevations. 
+    ///  and elevations.
     /// @author SMM
-    /// @date 01/01/2011    
+    /// @date 01/01/2011
     void export_input_profile(ofstream& outfile);
-    
+
     /// @brief This raises all elevation points relative to the downslope boundary
-    /// @param ds_elev The elevation at the downslope boundary (in m) 
+    /// @param ds_elev The elevation at the downslope boundary (in m)
     /// @author SMM
     /// @date 01/01/2011
     void raise_zeta_eta_ds_bound(double ds_elev);
-    
+
     /// @brief This raises all elevation points relative to the mean elevation
     /// @param mean_elev The mean elevation of the hillslope (in m)
     /// @author SMM
-    /// @date 01/01/2011    
+    /// @date 01/01/2011
     void raise_zeta_eta_mean(double mean_elev);
-    
+
     /// @brief This creates a flat surface with constant soil thickness
     /// @param zeta_flat The elevation of the surface (in m)
     /// @param h_flat The constant soil thickness (in m)
     /// @author SMM
-    /// @date 01/01/2011   
+    /// @date 01/01/2011
     void set_const_zeta_eta_h(double zeta_flat, double h_flat);
 
     /// @brief Runs a timestep with the boundary condition to be a set flux
@@ -166,12 +166,12 @@ class flowtube
     /// @parameter surface_change_rate A vector holding the change in surface elevation
     ///      in m/yr to simulate, for exampe erosion from overland flow
     /// @author SMM
-    /// @date 01/01/2011    
+    /// @date 01/01/2011
     void flux_timestep_flux_bc(double dt,
 							double flux_us, double flux_ds,
 							int flux_switch, int prod_switch,
 							vector<double> surface_change_rate);
-    
+
     /// @brief Runs a timestep with the boundary condition to be a set elevation
     /// @paramater dt The timestep (in years)
     /// @parameter flux_us The flux from upslope in kg/yr
@@ -186,6 +186,23 @@ class flowtube
 							double flux_us, double ds_elevation,
 							int flux_switch, int prod_switch,
 							vector<double> surface_change_rate);
+
+    /// @brief Runs a timestep with the boundary condition to be a varying elevation
+    /// @paramater dt The timestep (in years)
+    /// @parameter flux_us The flux from upslope in kg/yr
+    /// @parameter ds_elevation the elevation of the downslope boundary (in m)
+    /// @parameter flux_switch A switch for the type of flux (need to look up)
+    /// @parameter prod_switch A switch for the trpe of production function
+    /// @parameter surface_change_rate A vector holding the change in surface elevation
+    ///      in m/yr to simulate, for exampe erosion from overland flow
+    void flux_timestep_varying_elev_bc(double dt,
+          		double flux_us, double ds_elevation,
+          		int flux_switch, int prod_switch,
+          		vector<double> surface_change_rate, double constant_surface_change_rate, double base_level_change);
+
+
+    double update_ds_elev(double dt,double SS_erate,int prod_switch,
+    			double surf_erate,double ds_elev, vector<double> bc_h);
 
     // Getter functions
     int get_n_nodes()     { return n_nodes; }
@@ -220,6 +237,7 @@ class flowtube
     // Getter functions, these get old data members
     vector<double> get_old_h()	{ return old_h; }
 
+
     vector<double> get_old_zeta()
 								{ return old_zeta; }
     vector<double> get_old_eta()
@@ -238,15 +256,16 @@ class flowtube
 
     /// This gets the ds_elevation for the elevation boundary condition
     double get_zeta_ds()		{ return zeta[n_nodes-1]; }
-	
-    
+
+
+
     ///20/09/18 LK
     ///need to update for what N, N_0, N_m and K_g are for using cases 5, 6 and 7 in the flux laws
     ///beta describes the rate of exponential decline with depth? (see Roering 2008 equations 10 through 16).
     ///The rest I'm not sure of but will need to make sure they're read in the sed_trans_param file to use these.
     ///18/10/
-    
-    /// @brief This sets the transport parameters for the soil transport 
+
+    /// @brief This sets the transport parameters for the soil transport
     /// @param temp_S_c Critical slope (dimensionless)
     /// @param temp_K_h The sediment transport coefficient (units depend on flux law)
     /// @param temp_W_0 Soil production at zero thickness in m/yr
@@ -258,7 +277,7 @@ class flowtube
     void set_transport_params(double temp_S_c, double temp_K_h,
 								double temp_W_0, double temp_gamma,
 							  	double temp_rho_s, double temp_rho_r);
-    
+
 	void set_transport_params(double temp_S_c, double temp_K_h,
 								double W_0, double temp_gamma,
 							  	double temp_rho_s, double temp_rho_r,
@@ -287,6 +306,7 @@ class flowtube
 	double N_m;             // Maximum gopherr density
 	double beta;            // rate of exponential decline with depth?
 	double K_g;             // diffusivity used in gopher runs?
+
 	vector<double> A;		// area (in horizontal plane) of the nodes (m^2)
 	vector<double> A_bins;	// area of the particle bins
 	vector<double> b;		// width of the flowtube (m)
@@ -303,6 +323,7 @@ class flowtube
 	// a number of vectors store information from timestapes and are used
 	// for particle tracking.
 	vector<double> old_h;
+
 	vector<double> old_zeta;
 	vector<double> old_eta;
 	vector<double> intermediate_zeta;

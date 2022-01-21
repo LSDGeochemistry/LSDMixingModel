@@ -11,7 +11,7 @@ correction_max    2.0
 debye-huckel      true
 speciate_only     false
 database_sweep    true
-database          L:/github/CRUNCH_binary/datacomSC08.dbs
+database          C:/Workspace/github/CRUNCH_binary/datacomSC08.dbs
 screen_output 500
 END
  

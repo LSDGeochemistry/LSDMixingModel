@@ -609,42 +609,42 @@ int main(int argc, char *argv[])
 		//cout << "running motion";
 		// run particle motion if particles have been inserted.
 		// particle_trigger == 1 when particles have been inserted
-		if (particle_trigger == 1)
-		{
-			eroded_bins = CRN_tpb.particle_motion(dt, ft_test,
-										Omega, vert_mix_vel,
-										horiz_mix_vel, CRN_switch, CRNp);
-
-			if (chi_f10Be == 0)
-			{
-				CRN_tpb.update_fallout_10Be_bins(dt, M_supply_surface,
-						rho_s, k_f10Be, deltad, CRNp);
-			}
-			else
-			{
-				CRN_tpb.update_fallout_10Be_bins(dt, M_supply_surface,
-						rho_s, k_f10Be, k2_f10Be, chi_f10Be, deltad, CRNp);
-			}
-
-			// if the time is within the eroded catch window, catch
-			// all the particles in the eroded bin
-			if (t_ime > next_catch-eroded_catch_window)
-			{
-				//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
-				for(int bn = 0; bn<=n_bins; bn++)
-				{
-					if (eroded_bins[bn].size()>0)
-					{
-						part_iter = eroded_bins[bn].begin();
-						while(part_iter != eroded_bins[bn].end())
-						{
-							eroded_catcher[bn].push_back(*part_iter);
-							part_iter++;
-						}
-					}
-				}
-			}
-		}
+		// if (particle_trigger == 1)
+		// {
+		// 	eroded_bins = CRN_tpb.particle_motion(dt, ft_test,
+		// 								Omega, vert_mix_vel,
+		// 								horiz_mix_vel, CRN_switch, CRNp);
+    //
+		// 	if (chi_f10Be == 0)
+		// 	{
+		// 		CRN_tpb.update_fallout_10Be_bins(dt, M_supply_surface,
+		// 				rho_s, k_f10Be, deltad, CRNp);
+		// 	}
+		// 	else
+		// 	{
+		// 		CRN_tpb.update_fallout_10Be_bins(dt, M_supply_surface,
+		// 				rho_s, k_f10Be, k2_f10Be, chi_f10Be, deltad, CRNp);
+		// 	}
+    //
+		// 	// if the time is within the eroded catch window, catch
+		// 	// all the particles in the eroded bin
+		// 	if (t_ime > next_catch-eroded_catch_window)
+		// 	{
+		// 		//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
+		// 		for(int bn = 0; bn<=n_bins; bn++)
+		// 		{
+		// 			if (eroded_bins[bn].size()>0)
+		// 			{
+		// 				part_iter = eroded_bins[bn].begin();
+		// 				while(part_iter != eroded_bins[bn].end())
+		// 				{
+		// 					eroded_catcher[bn].push_back(*part_iter);
+		// 					part_iter++;
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 		//cout << "...ran motion" << endl;
 
 		//cout << "running insertion";
@@ -652,32 +652,32 @@ int main(int argc, char *argv[])
 		// than or equal to the insertion interval, then get the amount of
 		// soil-saprolite boundary lowering that has occurred and insert
 		// particles into the insertion zone
-		if (insert_time_clock >= insert_interval - dt/2)
-		{
-			// if this is the first time we are inserting particles,
-			// set the particle trigger to 1
-			if (particle_trigger == 0)
-			{
-				particle_trigger = 1;
-			}
-			this_insertion_zeta = ft_test.get_zeta(); 	// get the updated eta
-
-			// cout << "Time: " << t_ime << " Delta eta: " << endl;
-			// calculate delta eta
-			for(int ii = 0; ii< zeta_sz; ii++)
-			{
-				Delta_zeta[ii] = last_insertion_zeta[ii]-this_insertion_zeta[ii];
-				// cout << "i = " << ii << " Delta_zeta: " << Delta_zeta[ii] << endl;
-			}
-
-			// insert the particles
-      part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
-										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
-										vpi);
-
-			last_insertion_zeta = this_insertion_zeta;				// reset old eta
-			insert_time_clock = 0;			// reset the insert time clock
-		}               // !end particle insertion
+		// if (insert_time_clock >= insert_interval - dt/2)
+		// {
+		// 	// if this is the first time we are inserting particles,
+		// 	// set the particle trigger to 1
+		// 	if (particle_trigger == 0)
+		// 	{
+		// 		particle_trigger = 1;
+		// 	}
+		// 	this_insertion_zeta = ft_test.get_zeta(); 	// get the updated eta
+    //
+		// 	// cout << "Time: " << t_ime << " Delta eta: " << endl;
+		// 	// calculate delta eta
+		// 	for(int ii = 0; ii< zeta_sz; ii++)
+		// 	{
+		// 		Delta_zeta[ii] = last_insertion_zeta[ii]-this_insertion_zeta[ii];
+		// 		// cout << "i = " << ii << " Delta_zeta: " << Delta_zeta[ii] << endl;
+		// 	}
+    //
+		// 	// insert the particles
+    //   part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
+		// 								C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
+		// 								vpi);
+    //
+		// 	last_insertion_zeta = this_insertion_zeta;				// reset old eta
+		// 	insert_time_clock = 0;			// reset the insert time clock
+		// }               // !end particle insertion
 
 
 
@@ -692,8 +692,8 @@ int main(int argc, char *argv[])
             ft_test.print_zeta(t_ime, zeta_out);
             ft_test.export_input_profile(hillslope_out);
 			ft_test.print_ft_properties(ft_properties_out);
-            CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
-            CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
+            // CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
+            // CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
             //int ref_frame_switch = 1;
 
 			// print basic particle information
