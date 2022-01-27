@@ -484,6 +484,7 @@ int main(int argc, char *argv[])
 	t_ime = 0;
 	start_time = 0;
 	tt = 0;
+	double old_t_time = 0;
   double weathering_time_clock = 0;
 
 
@@ -628,7 +629,23 @@ int main(int argc, char *argv[])
 
 			// if the time is within the eroded catch window, catch
 			// all the particles in the eroded bin
-			if (t_ime > next_catch-eroded_catch_window)
+			// if (t_ime > next_catch-eroded_catch_window)
+			// {
+			// 	//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
+			// 	for(int bn = 0; bn<=n_bins; bn++)
+			// 	{
+			// 		if (eroded_bins[bn].size()>0)
+			// 		{
+			// 			part_iter = eroded_bins[bn].begin();
+			// 			while(part_iter != eroded_bins[bn].end())
+			// 			{
+			// 				eroded_catcher[bn].push_back(*part_iter);
+			// 				part_iter++;
+			// 			}
+			// 		}
+			// 	}
+			// }
+			if (t_ime >= old_t_time+part_p_i-eroded_catch_window && t_ime <= old_t_time+part_p_i)
 			{
 				//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
 				for(int bn = 0; bn<=n_bins; bn++)
@@ -641,7 +658,10 @@ int main(int argc, char *argv[])
 							eroded_catcher[bn].push_back(*part_iter);
 							part_iter++;
 						}
+					CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);	
 					}
+					if (t_ime == old_t_time+part_p_i)
+						old_t_time = t_ime;
 				}
 			}
 		}
@@ -693,7 +713,7 @@ int main(int argc, char *argv[])
             ft_test.export_input_profile(hillslope_out);
 			ft_test.print_ft_properties(ft_properties_out);
             CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
-            CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
+            // CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
             //int ref_frame_switch = 1;
 
 			// print basic particle information
