@@ -1966,6 +1966,67 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 
 }
 
+
+// This prints the statistics (not all the particles)
+// of the particles that have been eroded from the flowtube
+// The occupy an "eroded_list_vec" which can store multiple
+// timesteps (the interval is set by the user)
+// and then the statistics are calculated and printed in this function
+void CRN_tParticle_bins::print_surface_eroded_particles(double print_t_ime,
+							vector< list<CRN_tParticle> > eroded_list_vec,
+							flowtube ft,
+								ofstream& particle_out)
+{
+	double s_loc;				// distance downslope of the particle
+	double z_loc;				// elevation of the particle
+	double d_loc;				// depth of the particle
+	double pID;					// the particle identification number
+	double pAge;
+	double pOSLage;
+	double C10Be;
+	double C14C;
+	double C21Ne;
+
+
+	list<CRN_tParticle>::iterator part_iter;	// list iterator
+
+	// hillslope properties
+	vector<double> eta = ft.get_eta();
+	// loop through all the bins but not the final bin of the dummy node
+	for (int bn = 0; bn< n_bins; bn++)
+	{
+
+		// now loop through each particle in the bin
+		part_iter = eroded_list_vec[bn].begin();
+		while (part_iter != eroded_list_vec[bn].end())
+		{
+			// get the z_location of the particle
+			pID = (*part_iter).getType();
+			z_loc = (*part_iter).get_zetaLoc();
+			s_loc = (*part_iter).getxLoc();
+			d_loc = (*part_iter).getdLoc();
+			pAge = (*part_iter).getAge();
+			pOSLage = (*part_iter).getOSLage();
+			C10Be = (*part_iter).getConc_10Be();
+			C14C = (*part_iter).getConc_14C();
+			C21Ne = (*part_iter).getConc_21Ne();
+
+			particle_out << print_t_ime << " " << bn << " " << pID << " " << "-99"
+						 << " " << s_loc << " " << "-99" << " ";
+
+			particle_out << "-99 ";	// this line is a placeholder where in the normal
+									// particle stats printing it tells you if
+			particle_out << pAge << " " << pOSLage << " " << C10Be << " "
+			             << C14C << " " << C21Ne << endl;
+			part_iter++;
+		}
+	}
+
+}
+
+
+
+
 // This prints the particle data out to a vtk file for visualisation
 void CRN_tParticle_bins::print_particle_stats_vtk(double t_ime, flowtube ft,
 								string vtk_fname)

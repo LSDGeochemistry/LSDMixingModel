@@ -204,6 +204,9 @@ class CRN_tParticle_bins
 	void print_eroded_stats(double t_ime,
 							vector< list<CRN_tParticle> > eroded_list_vec,
 							flowtube ft, ofstream& particle_out);
+	void print_surface_eroded_particles(double t_ime,
+							vector< list<CRN_tParticle> > eroded_list_vec,
+							flowtube ft, ofstream& particle_out);
 	void print_particle_stats_vtk(double t_ime, flowtube ft,
 								string vtk_fname);
 

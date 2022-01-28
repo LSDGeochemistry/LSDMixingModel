@@ -148,6 +148,8 @@ int main(int argc, char *argv[])
 	string particle_out_fname = run_pname+particle_out_ext;
 	string eroded_pout_ext = "ep_trans_out.pout";
 	string eroded_pout_fname = run_pname+eroded_pout_ext;
+	string surface_eroded_pout_ext = "surface_ep_trans_out.pout";
+	string surface_eroded_pout_fname = run_pname+surface_eroded_pout_ext;
 	string zeta_out_ext = "zeta_trans.zdat";
 	string zeta_out_fname = run_pname+zeta_out_ext;
 	string h_out_ext = "h_trans.hdat";
@@ -161,12 +163,13 @@ int main(int argc, char *argv[])
 	//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
 
 
-  ofstream zeta_out,h_out,eta_out,particle_out,hillslope_out,ft_properties_out,eroded_particle_out;
+  ofstream zeta_out,h_out,eta_out,particle_out,hillslope_out,ft_properties_out,eroded_particle_out,surface_eroded_particle_out;
 	zeta_out.open(zeta_out_fname.c_str());
 	h_out.open(h_out_fname.c_str());
 	eta_out.open(eta_out_fname.c_str());
     particle_out.open(particle_out_fname.c_str());
     eroded_particle_out.open(eroded_pout_fname.c_str());
+	surface_eroded_particle_out.open(surface_eroded_pout_fname.c_str());
     hillslope_out.open(hillslope_out_fname.c_str());
     ft_properties_out.open(ft_properties_out_fname.c_str());
 
@@ -598,14 +601,7 @@ int main(int argc, char *argv[])
 
         }
 
-         // cout << "...ran flux" << endl;
-      // if (lower_boundary_condition == 3)
-      //          {   // cout << "Old ds_elev is: "<< ds_elev << endl;
-      //
-      //                double ds_elev_temp = ft_test.update_ds_elev(dt, base_level_change, prod_switch,
-      //                       constant_surface_change_rate, ds_elev);
-      //                        ds_elev= ds_elev_temp;
-      //                          cout << "New ds_elev is: "<< ds_elev << endl;
+
                              // }
 		//cout << "running motion";
 		// run particle motion if particles have been inserted.
@@ -645,8 +641,30 @@ int main(int argc, char *argv[])
 			// 		}
 			// 	}
 			// }
-			if (t_ime >= old_t_time+part_p_i-eroded_catch_window && t_ime <= old_t_time+part_p_i)
+			// if (t_ime >= old_t_time+part_p_i-eroded_catch_window && t_ime <= old_t_time+part_p_i)
+			// {
+			// 	//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
+			// 	for(int bn = 0; bn<=n_bins; bn++)
+			// 	{
+			// 		if (eroded_bins[bn].size()>0)
+			// 		{
+			// 			part_iter = eroded_bins[bn].begin();
+			// 			while(part_iter != eroded_bins[bn].end())
+			// 			{
+			// 				eroded_catcher[bn].push_back(*part_iter);
+			// 				part_iter++;
+			// 			}
+			// 		CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);	
+			// 		}
+			// 		if (t_ime == old_t_time+part_p_i)
+			// 			old_t_time = t_ime;
+			// 	}
+			// }
+
+			// Setup window to catch particles
+			if (t_ime >= old_t_time+part_p_i-eroded_catch_window && t_ime <= old_t_time+part_p_i+eroded_catch_window)
 			{
+				double print_time =	old_t_time+part_p_i;
 				//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
 				for(int bn = 0; bn<=n_bins; bn++)
 				{
@@ -658,10 +676,11 @@ int main(int argc, char *argv[])
 							eroded_catcher[bn].push_back(*part_iter);
 							part_iter++;
 						}
-					CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);	
+					
+					CRN_tpb.print_surface_eroded_particles(print_time,eroded_bins , ft_test, surface_eroded_particle_out);
 					}
-					if (t_ime == old_t_time+part_p_i)
-						old_t_time = t_ime;
+					if (t_ime == old_t_time+part_p_i+eroded_catch_window)
+						old_t_time = t_ime-eroded_catch_window;
 				}
 			}
 		}
@@ -747,6 +766,7 @@ int main(int argc, char *argv[])
   zeta_out.close();
   particle_out.close();
   eroded_particle_out.close();
+  surface_eroded_particle_out.close();
   hillslope_out.close();
   ft_properties_out.close();
 }
