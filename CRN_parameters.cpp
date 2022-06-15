@@ -751,9 +751,12 @@ void CRN_parameters::scale_F_values(vector<bool> nuclides_for_scaling, double la
     F_10Be[1] = exp(-new_x/Gamma[1])*F_10Be[1];
     F_10Be[2] = exp(-new_x/Gamma[2])*F_10Be[2];
     F_10Be[3] = exp(-new_x/Gamma[3])*F_10Be[3];  
-//    cout << "new scaling is:" << F_10Be[0] << endl;
-  }
 
+  }
+    cout << "new scaling is:" << F_10Be[0] << endl;
+    cout << "new scaling is:" << F_10Be[1] << endl;
+    cout << "new scaling is:" << F_10Be[2] << endl;
+    cout << "new scaling is:" << F_10Be[3] << endl;
   // now 26Al
   if(nuclides_for_scaling[1])
   {

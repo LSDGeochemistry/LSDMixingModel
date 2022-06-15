@@ -94,6 +94,9 @@ class VolumeParticleInfo
     string get_type_name(int index);
     
     double get_type_density(int index);
+    vector<double> get_type_mfracs() { return type_mfracs; }
+    vector<int> get_type_index()   { return type_index; }
+
 
  private:
     int n_types;

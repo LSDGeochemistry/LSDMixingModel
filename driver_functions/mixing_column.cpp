@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   string crunch_pname = "C:/Workspace/github/CRUNCH_binary/";
   //string run_pname = "../Runs/Run2/";
 
-  // This sets up the patsh for vtk files, which are used for visualisation
+  // This sets up the paths for vtk files, which are used for visualisation
   string vtk_particle_fname = run_pname+"/basic_particles";
   string vtk_cell_fname = run_pname+"/CRUNCH_cells";
   string vtk_fname = run_pname+"/CRN";
@@ -222,6 +222,8 @@ int main(int argc, char *argv[])
 
 									// the elevation of the introduced particle
 	double part_conc;				// particle concentration in particles per kg
+	int part_switch;				//Particle insert switch, 1 = volumetric insertion, 2 = representative insertion
+
 
 	vector<double> old_eta;			// the elevation of the soil-saprolite boudnary from the
 									// last timestep
@@ -241,6 +243,9 @@ int main(int argc, char *argv[])
 	VolumeParticleInfo vpi(VolumeParticleInfo_fname.c_str());
 	cout << "LINE 115 loaded particle info" << endl;
 	cout << "LINE 117, density type 0: " << vpi.get_type_density(0) << endl;
+
+	vector<double> starting_p_mfrac = vpi.get_type_mfracs();
+	vector<int> starting_pID = vpi.get_type_index();
   //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
@@ -357,7 +362,7 @@ int main(int argc, char *argv[])
 	CRN_parameter_in.open(CRN_parameter_fname.c_str());
 	CRN_parameter_in >> temp >> start_depth >> temp >> vert_mix_vel
 				     >> temp >> horiz_mix_vel >> temp >> Omega
-				     >> temp >> part_conc >> temp >> CRN_muon_param_switch
+				     >> temp >> part_conc >> temp >> part_switch >> temp >> CRN_muon_param_switch
 				     >> temp >> single_scaling >> temp >> C_10Be >> temp >> C_f10Be >> temp >> C_26Al
 				     >> temp >> C_36Cl >> temp >> C_14C >> temp >> C_21Ne >> temp
 				     >> C_3He >> temp >> M_supply_surface >> temp >> k_f10Be >> temp
@@ -367,7 +372,7 @@ int main(int argc, char *argv[])
 	cout << "LINE 228, got CRN_parameters" << endl;
 
 	cout << "start depth: " << start_depth << " vert mix vel: " << vert_mix_vel << endl
-	    << "horiz mix vel: " << horiz_mix_vel << " Omega " << Omega << " part_conc: " << part_conc << endl
+	    << "horiz mix vel: " << horiz_mix_vel << " Omega " << Omega << " part_conc: " << part_conc << " part_switch: " << part_switch << endl
 	    << "Muon switch: " << CRN_muon_param_switch << " scaling: " << single_scaling << endl
 	    << "Init conc, 10Be: " << C_10Be << " 26Al: " << C_26Al << " C_36Cl: " << C_36Cl << " C_14C: " << C_14C << endl
 	    << "C_21Ne: " << C_21Ne << " C_3He: " << C_3He << " M_supp_surface: " << M_supply_surface << endl
@@ -514,10 +519,16 @@ int main(int argc, char *argv[])
 			//     << " and start depth: " << start_depth << " and Delta_eta: " << Delta_eta[i] << endl;
 	}
 
-  part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
-										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
-										vpi);
-
+	switch ( part_switch )
+		{case 1:
+      	part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
+										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He, vpi);
+		break;
+		case 2 :								
+	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He);
+		break;								 									
+		}
 
 	//cout << "LINE 379, n_nodes: " << ft_test.get_n_nodes() << endl;
 
@@ -625,22 +636,23 @@ int main(int argc, char *argv[])
 
 			// if the time is within the eroded catch window, catch
 			// all the particles in the eroded bin
-			// if (t_ime > next_catch-eroded_catch_window)
-			// {
-			// 	//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
-			// 	for(int bn = 0; bn<=n_bins; bn++)
-			// 	{
-			// 		if (eroded_bins[bn].size()>0)
-			// 		{
-			// 			part_iter = eroded_bins[bn].begin();
-			// 			while(part_iter != eroded_bins[bn].end())
-			// 			{
-			// 				eroded_catcher[bn].push_back(*part_iter);
-			// 				part_iter++;
-			// 			}
-			// 		}
-			// 	}
-			// }
+			if (t_ime > next_catch-eroded_catch_window)
+			{
+				//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
+				for(int bn = 0; bn<=n_bins; bn++)
+				{
+					if (eroded_bins[bn].size()>0)
+					{
+						part_iter = eroded_bins[bn].begin();
+						while(part_iter != eroded_bins[bn].end())
+						{
+							eroded_catcher[bn].push_back(*part_iter);
+							part_iter++;
+						}
+						
+					}
+				}
+			}
 			// if (t_ime >= old_t_time+part_p_i-eroded_catch_window && t_ime <= old_t_time+part_p_i)
 			// {
 			// 	//cout << "LINE 423, time is: " << t_ime << " and next_catch: " << next_catch << endl;
@@ -710,10 +722,16 @@ int main(int argc, char *argv[])
 			}
 
 			// insert the particles
-      part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
-										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He,
-										vpi);
-
+		switch ( part_switch )
+		{case 1:
+      	part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
+										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He, vpi);
+		break;
+		case 2 :								
+	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He);
+		break;								 									
+		}
 			last_insertion_zeta = this_insertion_zeta;				// reset old eta
 			insert_time_clock = 0;			// reset the insert time clock
 		}               // !end particle insertion
@@ -732,7 +750,7 @@ int main(int argc, char *argv[])
             ft_test.export_input_profile(hillslope_out);
 			ft_test.print_ft_properties(ft_properties_out);
             CRN_tpb.print_particle_stats(t_ime, ft_test, particle_out);
-            // CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
+            CRN_tpb.print_eroded_stats(t_ime,eroded_bins , ft_test, eroded_particle_out);
             //int ref_frame_switch = 1;
 
 			// print basic particle information

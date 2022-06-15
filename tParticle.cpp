@@ -507,14 +507,18 @@ void CRN_tParticle::update_10Be_conc_linear_increase(double dt,double erosion_ra
 void CRN_tParticle::update_10Be_conc_neutron_only(double dt,double erosion_rate, CRN_parameters& CRNp)
 {
 
-	double Gamma_neutron=CRNp.Gamma[0];			// in g/cm^2
+	// double Gamma_neutron=CRNp.Gamma[0];			// in g/cm^2
 	double Be_exp = exp(-dt*CRNp.lambda_10Be);
 
 	double sum_term = 0;
-	sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-		           (exp(dt*erosion_rate/Gamma_neutron)-
+	// sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
+		        //    (exp(dt*erosion_rate/Gamma_neutron)-
+		        //     exp(-dt*CRNp.lambda_10Be))/
+		        //    (erosion_rate+Gamma_neutron*CRNp.lambda_10Be);
+	sum_term+= (CRNp.F_10Be[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
 		            exp(-dt*CRNp.lambda_10Be))/
-		           (erosion_rate+Gamma_neutron*CRNp.lambda_10Be);
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_10Be);
 
 	Conc_10Be = Conc_10Be*Be_exp +  CRNp.S_t*Be_exp*CRNp.P0_10Be*sum_term;
 }
@@ -564,14 +568,19 @@ void CRN_tParticle::update_26Al_conc(double dt,double erosion_rate, CRN_paramete
 
 void CRN_tParticle::update_26Al_conc_neutron_only(double dt,double erosion_rate, CRN_parameters& CRNp)
 {
-	double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
+	// double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
 	double Al_exp = exp(-dt*CRNp.lambda_26Al);
 
 	double sum_term = 0;
-	sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-		           (exp(dt*erosion_rate/Gamma_neutron)-
+	sum_term+= (CRNp.F_26Al[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
 		            exp(-dt*CRNp.lambda_26Al))/
-		           (erosion_rate+Gamma_neutron*CRNp.lambda_26Al);
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_26Al);	
+
+	// sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
+	// 	           (exp(dt*erosion_rate/Gamma_neutron)-
+	// 	            exp(-dt*CRNp.lambda_26Al))/
+	// 	           (erosion_rate+Gamma_neutron*CRNp.lambda_26Al);
 
 	Conc_26Al = Conc_26Al*Al_exp +  CRNp.S_t*Al_exp*CRNp.P0_26Al*sum_term;
 }
@@ -616,15 +625,19 @@ void CRN_tParticle::update_14C_conc(double dt,double erosion_rate, CRN_parameter
 
 void CRN_tParticle::update_14C_conc_neutron_only(double dt,double erosion_rate, CRN_parameters& CRNp)
 {
-	double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
+	// double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
 
 	double C_exp = exp(-dt*CRNp.lambda_14C);
 
 	double sum_term = 0;
-	sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-		           (exp(dt*erosion_rate/Gamma_neutron)-
+	sum_term+= (CRNp.F_14C[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
 		            exp(-dt*CRNp.lambda_14C))/
-		           (erosion_rate+Gamma_neutron*CRNp.lambda_14C);
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_14C);	
+	// sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
+	// 	           (exp(dt*erosion_rate/Gamma_neutron)-
+	// 	            exp(-dt*CRNp.lambda_14C))/
+	// 	           (erosion_rate+Gamma_neutron*CRNp.lambda_14C);
 
 	Conc_14C = Conc_14C*C_exp +  CRNp.S_t*C_exp*CRNp.P0_14C*sum_term;
 }
@@ -671,15 +684,15 @@ void CRN_tParticle::update_36Cl_conc(double dt,double erosion_rate, CRN_paramete
 
 void CRN_tParticle::update_36Cl_conc_neutron_only(double dt,double erosion_rate, CRN_parameters& CRNp)
 {
-	double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
+	// double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
 
 	double Cl_exp = exp(-dt*CRNp.lambda_36Cl);
 
 	double sum_term = 0;
-	sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-		           (exp(dt*erosion_rate/Gamma_neutron)-
+		sum_term+= (CRNp.F_36Cl[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
 		            exp(-dt*CRNp.lambda_36Cl))/
-		           (erosion_rate+Gamma_neutron*CRNp.lambda_36Cl);
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_36Cl);
 
 
 	Conc_36Cl = Conc_36Cl*Cl_exp +  CRNp.S_t*Cl_exp*CRNp.P0_36Cl*sum_term;
