@@ -55,7 +55,7 @@ void part_ft_steady_erate(double SS_erate, double end_time,
 	int tt;					// a counter for the time
 
 	// the parameters for the in situ cosmogenics
-	CRN_parameters CRNp;
+	LSDCRNParameters CRNp;
 
 	int flux_switch;				// see flowtube.h: determines flux law
 	int prod_switch;				// see flowtube.h: determines soil production law
@@ -84,11 +84,11 @@ void part_ft_steady_erate(double SS_erate, double end_time,
 									// last timestep
 	vector<double> new_eta;			// the elevation of the soil-saprolite boundary from this
 									// timestep
-	vector< list<CRN_tParticle> > eroded_bins;
+	vector< list<LSDCRNParticle> > eroded_bins;
 									// a vector of lists of particles eroded from each hillslope
 									// node
-	vector< list<CRN_tParticle> > temp_part_bins;
-	vector< list<CRN_tParticle> > particle_bins;
+	vector< list<LSDCRNParticle> > temp_part_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 	// get the particle types
 	Particle_info pi(particle_list_fname.c_str());
 	vector<int> starting_pID = pi.get_type_index();
@@ -137,7 +137,7 @@ void part_ft_steady_erate(double SS_erate, double end_time,
 				     >> temp >> part_conc;
 	CRN_parameter_in.close();
 
-	//cout << "LINE 121 got CRN_parameters " << endl;
+	//cout << "LINE 121 got LSDCRNParameters " << endl;
 
 	// open the datafile for the particle information
 	ofstream particle_out;
@@ -156,11 +156,11 @@ void part_ft_steady_erate(double SS_erate, double end_time,
 	//cout << "LINE 135 got flowtube " << endl;
 
 	// initialize a CRN_particle_list
-	CRN_tParticle_bins CRN_tpb(ft_test);
+	LSDCRNParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-    vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-    vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-    list<CRN_tParticle>::iterator part_iter;	// list iterator
+    vector< list<LSDCRNParticle> > eroded_catcher(n_bins+1);
+    vector< list<LSDCRNParticle> > empty_eroded_catcher(n_bins+1);
+    list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
     //cout << "LINE 144 created CRN_tpart_bins " << endl;
 
@@ -422,7 +422,7 @@ void part_ft_steady_flux(double SS_flux, double end_time,
 	int tt;					// a counter for the time
 
 	// the parameters for the in situ cosmogenics
-	CRN_parameters CRNp;
+	LSDCRNParameters CRNp;
 
 	int flux_switch;				// see flowtube.h: determines flux law
 	int prod_switch;				// see flowtube.h: determines soil production law
@@ -451,9 +451,9 @@ void part_ft_steady_flux(double SS_flux, double end_time,
 									// last timestep
 	vector<double> new_eta;			// the elevation of the soil-saprolite boundary from this
 									// timestep
-	vector< list<CRN_tParticle> > eroded_bins;
-	vector< list<CRN_tParticle> > temp_part_bins;
-	vector< list<CRN_tParticle> > particle_bins;
+	vector< list<LSDCRNParticle> > eroded_bins;
+	vector< list<LSDCRNParticle> > temp_part_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 									// a vector of lists of particles eroded from each hillslope
 
 	// get the particle types
@@ -519,9 +519,9 @@ void part_ft_steady_flux(double SS_flux, double end_time,
 	// initialize a CRN_particle_list
 	CRN_tParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-    vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-    vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-    list<CRN_tParticle>::iterator part_iter;	// list iterator
+    vector< list<LSDCRNParticle> > eroded_catcher(n_bins+1);
+    vector< list<LSDCRNParticle> > empty_eroded_catcher(n_bins+1);
+    list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// raise the flowtube so the downstream boundary is at elevation
 	// 100
@@ -826,9 +826,9 @@ void part_ft_erate_from_erh(string run_name, vector<double>& sample_s_locs, vect
 									// last timestep
 	vector<double> new_eta;			// the elevation of the soil-saprolite boundary from this
 									// timestep
-	vector< list<CRN_tParticle> > eroded_bins;
-	vector< list<CRN_tParticle> > temp_part_bins;
-	vector< list<CRN_tParticle> > particle_bins;
+	vector< list<LSDCRNParticle> > eroded_bins;
+	vector< list<LSDCRNParticle> > temp_part_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 									// a vector of lists of particles eroded from each hillslope
 
 	// initial in situ concentrations in atoms per gram
@@ -840,7 +840,7 @@ void part_ft_erate_from_erh(string run_name, vector<double>& sample_s_locs, vect
 	int CRN_muon_param_switch;
 
 	// the parameters for the in situ cosmogenics
-	CRN_parameters CRNp;
+	LSDCRNParameters CRNp;
 
 	// note: scaling determined using cosmocalc:
 	// Schaller reports pinedale at 42 53 26 N
@@ -860,7 +860,7 @@ void part_ft_erate_from_erh(string run_name, vector<double>& sample_s_locs, vect
 	double chi_f10Be;			// fraction of supply that goes into the
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
-								// to cm in tParticle.cpp)
+								// to cm in LSDParticle.cpp)
 
 	// parameters for dealing with time
 	double end_time;
@@ -1032,9 +1032,9 @@ void part_ft_erate_from_erh(string run_name, vector<double>& sample_s_locs, vect
 	// initialize a CRN_particle_list
 	CRN_tParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-    vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-    vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-    list<CRN_tParticle>::iterator part_iter;	// list iterator
+    vector< list<LSDCRNParticle> > eroded_catcher(n_bins+1);
+    vector< list<LSDCRNParticle> > empty_eroded_catcher(n_bins+1);
+    list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// raise the flowtube so the downstream boundary is at elevation
 	// 100
@@ -1408,9 +1408,9 @@ vector<double> part_ft_moraine_fit(string run_name, vector<double>& d_top_insitu
 									// last timestep
 	vector<double> new_eta;			// the elevation of the soil-saprolite boundary from this
 									// timestep
-	vector< list<CRN_tParticle> > eroded_bins;
-	vector< list<CRN_tParticle> > temp_part_bins;
-	vector< list<CRN_tParticle> > particle_bins;
+	vector< list<LSDCRNParticle> > eroded_bins;
+	vector< list<LSDCRNParticle> > temp_part_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 									// a vector of lists of particles eroded from each hillslope
 
 	// initial in situ concentrations in atoms per gram
@@ -1422,7 +1422,7 @@ vector<double> part_ft_moraine_fit(string run_name, vector<double>& d_top_insitu
 	int CRN_muon_param_switch;
 
 	// the parameters for the in situ cosmogenics
-	CRN_parameters CRNp;
+	LSDCRNParameters CRNp;
 
 	// note: scaling determined using cosmocalc:
 	// Schaller reports pinedale at 42 53 26 N
@@ -1442,7 +1442,7 @@ vector<double> part_ft_moraine_fit(string run_name, vector<double>& d_top_insitu
 	double chi_f10Be;			// fraction of supply that goes into the
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
-								// to cm in tParticle.cpp)
+								// to cm in LSDParticle.cpp)
 
 	// parameters for dealing with time
 	double end_time;
@@ -1598,9 +1598,9 @@ vector<double> part_ft_moraine_fit(string run_name, vector<double>& d_top_insitu
 	// initialize a CRN_particle_list
 	CRN_tParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-    vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-    vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-    list<CRN_tParticle>::iterator part_iter;	// list iterator
+    vector< list<LSDCRNParticle> > eroded_catcher(n_bins+1);
+    vector< list<LSDCRNParticle> > empty_eroded_catcher(n_bins+1);
+    list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// raise the flowtube so the downstream boundary is at elevation
 	// 100

@@ -49,11 +49,12 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#include "tParticle.hpp"
+#include "LSDParticle.hpp"
 #include "flowtube.hpp"
 #include "chronos_particle_info.hpp"
-#include "CRN_parameters.hpp"
+#include "LSDCRNParameters.hpp"
 #include "VolumeParticleInfo.hpp"
+#include "mathutil.hpp"
 using namespace std;
 
 
@@ -93,24 +94,24 @@ class CRN_tParticle_bins
 									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He);
 	int insert_particles(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
-									CRN_parameters& CRNp,
+									LSDCRNParameters& CRNp,
 									double erosion_rate_in_mass_per_time_per_area);
 	int insert_particles_volumetric(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He,
 									VolumeParticleInfo vpi);
 
-    vector< list<CRN_tParticle> > particle_motion(double dt, flowtube ft,
+    vector< list<LSDCRNParticle> > particle_motion(double dt, flowtube ft,
 										double Omega,double vert_vel_fluctuating,
 										double horiz_vel_fluctuating,const int CRN_switch,
-										CRN_parameters& CRNp);
+										LSDCRNParameters& CRNp);
 
 	// fallout functions
 	void update_fallout_10Be_bins(double dt, double M_supply_surface,
-					double rho_s, double k_f10Be, double deltad, CRN_parameters& CRNp);
+					double rho_s, double k_f10Be, double deltad, LSDCRNParameters& CRNp);
 	void update_fallout_10Be_bins(double dt, double M_supply_surface,
 					double rho_s, double k1_f10Be, double k2_f10Be, double chi_f10Be,
-					double deltad, CRN_parameters& CRNp);
+					double deltad, LSDCRNParameters& CRNp);
 
 	// functions related to sampling
 	int get_bin_number_of_sloc(double s_loc);
@@ -155,7 +156,7 @@ class CRN_tParticle_bins
 									list< vector<double> >& mineral_ssa,
 									list< vector<double> >& mineral_surface_area,
 									list< vector<double> >& mineral_mass);
-	list<CRN_tParticle> get_particles_in_depth_interval(int bn, double d_top, double d_bottom);
+	list<LSDCRNParticle> get_particles_in_depth_interval(int bn, double d_top, double d_bottom);
 
 	void calculate_sample_averages(int bn, vector<double>& d_top_locs, vector<double>& d_bottom_locs,
 													vector<double>& sample_mean_age,
@@ -202,10 +203,10 @@ class CRN_tParticle_bins
 	void print_particle_stats_soil(double t_ime, flowtube ft,
 								ofstream& particle_out);
 	void print_eroded_stats(double t_ime,
-							vector< list<CRN_tParticle> > eroded_list_vec,
+							vector< list<LSDCRNParticle> > eroded_list_vec,
 							flowtube ft, ofstream& particle_out);
 	void print_surface_eroded_particles(double t_ime,
-							vector< list<CRN_tParticle> > eroded_list_vec,
+							vector< list<LSDCRNParticle> > eroded_list_vec,
 							flowtube ft, ofstream& particle_out);
 	void print_particle_stats_vtk(double t_ime, flowtube ft,
 								string vtk_fname);
@@ -229,13 +230,13 @@ class CRN_tParticle_bins
 						  ofstream& cdf_out,
 						  ofstream& pdf_out);
 	void print_age_cdfpdf_eroded_bulk(double t_ime, double max_age, int n_spacings,
-						  vector< list<CRN_tParticle> >& eroded_particle_bins,
+						  vector< list<LSDCRNParticle> >& eroded_particle_bins,
 						  double K_times_D, double D, double sigma,
 						  ofstream& cdf_out,
 						  ofstream& pdf_out);
 	void print_age_cdfpdf_eroded_bins(double t_ime, double max_age, int n_spacings,
 						  double K_times_D, double D, double sigma,
-						  vector< list<CRN_tParticle> >& particle_bins,
+						  vector< list<LSDCRNParticle> >& particle_bins,
 				     	  ofstream& cdf_out,
 						  ofstream& pdf_out);
 
@@ -256,7 +257,7 @@ class CRN_tParticle_bins
 
 
 	int get_n_bins()			{ return n_bins; }
-	vector< list<CRN_tParticle> > get_particle_bins()
+	vector< list<LSDCRNParticle> > get_particle_bins()
 								{ return particle_bins; }
 	vector<double> get_dx_h()   { return dx_h; }
 	vector<int>    get_h_node_us()
@@ -268,7 +269,7 @@ class CRN_tParticle_bins
 	protected:
 	int n_bins;				// number of bins
 	vector<double> bin_edge_loc;
-	vector< list<CRN_tParticle> > particle_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 
 	vector<int> h_node_us;
 	vector<int> h_node_ds;

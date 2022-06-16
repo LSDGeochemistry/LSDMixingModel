@@ -46,7 +46,7 @@
 #include<iostream>
 #include<vector>
 #include<string>
-#include "tParticle.hpp"
+#include "LSDParticle.hpp"
 using namespace std;
 
 #ifndef Particle_info_H
@@ -116,7 +116,7 @@ class Particle_info
     
     vector<double> calculate_m_0_vec(double dx, double h_0, double phi);
 
-    vector<double> calculate_h_congruent(tParticle& tpart, double deltat, double phi);
+    vector<double> calculate_h_congruent(LSDParticle& tpart, double deltat, double phi);
     
     /// @brief This calculates the weathering extent of a particle at a given time on demand
     ///  Useful if you just want to simulate the evolution of a single particle, but not useful for

@@ -7,11 +7,11 @@ LDFLAGS=l
 SOURCES=mixing_column_old.cpp \
 	../VolumeParticleInfo.cpp \
 	../CRN_parameters.cpp \
-	../tParticle.cpp \
+	../LSDParticle.cpp \
 	../FT_util.cpp \
 	../chronos_particle_info.cpp \
 	../flowtube.cpp \
-	../CRN_tParticle_bins.cpp \
+	../CRN_LSDParticle_bins.cpp \
     ../LSDStatsTools.cpp \
     ../TNT/tnt.h
 OBJECTS=$(SOURCES:.cpp=.o)

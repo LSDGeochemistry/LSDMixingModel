@@ -48,7 +48,7 @@
 #include <string>
 #include <math.h>
 #include "flowtube.hpp"
-#include "tParticle.hpp"
+#include "LSDParticle.hpp"
 #include "CRN_tParticle_bins.hpp"
 using namespace std;
 

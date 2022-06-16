@@ -44,7 +44,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "../tParticle.hpp"
+#include "../LSDParticle.hpp"
 #include "../CRN_tParticle_bins.hpp"
 //#include "../CRUNCH_engine.hpp"
 #include "../flowtube.hpp"
@@ -227,9 +227,9 @@ int main(int argc, char *argv[])
 
     // These a "bins" that contain particles. The plotting functions aggregate these bins and also they are
     // used to create average values.
-    vector< list<CRN_tParticle> > eroded_bins;
-	vector< list<CRN_tParticle> > temp_part_bins;
-	vector< list<CRN_tParticle> > particle_bins;
+    vector< list<LSDCRNParticle> > eroded_bins;
+	vector< list<LSDCRNParticle> > temp_part_bins;
+	vector< list<LSDCRNParticle> > particle_bins;
 									// a vector of lists of particles eroded from each hillslope
 
 	// load a volume particle info object
@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
 	int CRN_muon_param_switch;
 
 	// the parameters for the in situ cosmogenics
-	CRN_parameters CRNp;
+	LSDCRNParameters CRNp;
 
 	////////////////////////This part is superseded following the update to the cosmo code?
     // note: scaling determined using cosmocalc:
@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
 	double chi_f10Be;			// fraction of supply that goes into the
 								// shallow meteoric supply
 	double deltad;				// in m (this gets converted
-								// to cm in tParticle.cpp)
+								// to cm in LSDParticle.cpp)
     //Added in to update the cosmo code to calculate specific site scaling factors
     double lon;                 // longitude
     double lat;                 // latitude
@@ -361,7 +361,7 @@ int main(int argc, char *argv[])
 				     >> deltad >> temp >> k2_f10Be >> temp >> chi_f10Be
              >> temp >> n_PDZ_intervals >> temp >> n_CAZ_intervals >> temp >> lat >> temp >> lon >> temp >> site_elev >> temp >> Fsp;
 	CRN_parameter_in.close();
-	cout << "LINE 228, got CRN_parameters" << endl;
+	cout << "LINE 228, got LSDCRNParameters" << endl;
 
 	cout << "start depth: " << start_depth << " vert mix vel: " << vert_mix_vel << endl
 	    << "horiz mix vel: " << horiz_mix_vel << " Omega " << Omega << " part_conc: " << part_conc << endl
@@ -453,9 +453,9 @@ int main(int argc, char *argv[])
 	// initialize a CRN_particle_list
 	CRN_tParticle_bins CRN_tpb(ft_test);
 	int n_bins = CRN_tpb.get_n_bins();
-  vector< list<CRN_tParticle> > eroded_catcher(n_bins+1);
-  vector< list<CRN_tParticle> > empty_eroded_catcher(n_bins+1);
-  list<CRN_tParticle>::iterator part_iter;	// list iterator
+  vector< list<LSDCRNParticle> > eroded_catcher(n_bins+1);
+  vector< list<LSDCRNParticle> > empty_eroded_catcher(n_bins+1);
+  list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	/// raise the flowtube so the downstream boundary is at elevation
 	/// 100, this is done to avoid negative elevations due to lowering over time however this here is set to zeta_zero

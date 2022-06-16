@@ -7,8 +7,8 @@ LDFLAGS=l
 SOURCES=CRUNCH_mixing_column.cpp \
 	../CRUNCH_engine.cpp \
 	../VolumeParticleInfo.cpp \
-	../CRN_parameters.cpp \
-	../tParticle.cpp \
+	../LSDCRNParameters.cpp \
+	../LSDParticle.cpp \
 	../FT_util.cpp \
 	../chronos_particle_info.cpp \
 	../flowtube.cpp \

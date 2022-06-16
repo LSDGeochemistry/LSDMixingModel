@@ -47,7 +47,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include "tParticle.hpp"
+#include "LSDParticle.hpp"
 //#include "CRN_tParticle_bins.hpp"
 using namespace std;
 

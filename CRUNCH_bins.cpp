@@ -53,7 +53,7 @@
 #include <cctype>
 #include "mathutil.hpp"
 #include "flowtube.hpp"
-#include "CRN_parameters.hpp"
+#include "LSDCRNParameters.hpp"
 #include "CRN_tParticle_bins.hpp"
 #include "CRUNCH_bins.hpp"
 #include "VolumeParticleInfo.hpp"

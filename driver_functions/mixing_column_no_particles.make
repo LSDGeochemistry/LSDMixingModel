@@ -6,8 +6,8 @@ OFLAGS = -O3
 LDFLAGS=l
 SOURCES=mixing_column_no_particles.cpp \
 	../VolumeParticleInfo.cpp \
-	../CRN_parameters.cpp \
-	../tParticle.cpp \
+	../LSDCRNParameters.cpp \
+	../LSDParticle.cpp \
 	../FT_util.cpp \
 	../chronos_particle_info.cpp \
 	../flowtube.cpp \

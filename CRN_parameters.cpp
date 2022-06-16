@@ -1,4 +1,4 @@
-//tParticle.cpp
+//LSDParticle.cpp
 // implementation of the dParticle object
 #include <fstream>
 #include <math.h>

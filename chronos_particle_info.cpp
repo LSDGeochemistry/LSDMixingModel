@@ -446,7 +446,7 @@ vector<double> Particle_info::calculate_m_0_vec(double dx, double h_0, double ph
   return m_0_vec;
  }
 
-vector<double> Particle_info::calculate_h_congruent(tParticle& tpart, double deltat, double phi)
+vector<double> Particle_info::calculate_h_congruent(LSDParticle& tpart, double deltat, double phi)
  {
   vector<double> return_data(4,0.0);
   int Type = tpart.getType();

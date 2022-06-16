@@ -52,8 +52,9 @@
 #include <list>
 #include <time.h>
 #include <math.h>
-#include "tParticle.hpp"
+#include "LSDParticle.hpp"
 #include "chronos_particle_info.hpp"
+#include "mathutil.hpp"
 
 #include "flowtube.hpp"
 #include "CRN_tParticle_bins.hpp"
@@ -86,7 +87,7 @@ void CRN_tParticle_bins::create(vector<double> bel,vector<double> s_h,
 	bin_edge_loc = bel;
 	int sz_bel = bel.size();
 	n_bins = sz_bel-1;
-	vector< list<CRN_tParticle> > temp_pbins(n_bins);
+	vector< list<LSDCRNParticle> > temp_pbins(n_bins);
 	particle_bins = temp_pbins;
 	//cout << "CRN_tParticle_bins.h LINE 20 n_bins = " << particle_bins.size() << endl;
 
@@ -162,7 +163,7 @@ void CRN_tParticle_bins::create(flowtube ft)
 
 	int sz_bel = bin_edge_loc.size();
 	n_bins = sz_bel-1;
-	vector< list<CRN_tParticle> > temp_pbins(n_bins);
+	vector< list<LSDCRNParticle> > temp_pbins(n_bins);
 	particle_bins = temp_pbins;
 	//cout << "CRN_tParticle_bins.h LINE 20 n_bins = " << particle_bins.size() << endl;
 
@@ -406,7 +407,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 				}
 			}
 
-			CRN_tParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
+			LSDCRNParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
 			if (ran_zl>=interpolated_eta)
 			{
 				ins_part.SoilAgeExpose();
@@ -622,7 +623,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 						}
 
 						// create a particle
-						CRN_tParticle ins_part(type, sizet, ran_sl, d,eff_d, ran_zl,
+						LSDCRNParticle ins_part(type, sizet, ran_sl, d,eff_d, ran_zl,
 												insert_particle_mass,insert_particle_surface_area);
 
 						//cout << "s_loc: LINE 560: " << ins_part.getxLoc() << endl;
@@ -831,7 +832,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 			}
 
 			// create a particle
-			CRN_tParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
+			LSDCRNParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
 
 			// now update the initial cosmo concentrations
 			ins_part.update_cosmo_conc_const(C_10Be, C_f10Be, C_26Al, C_36Cl,
@@ -884,7 +885,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft,
 // it also initiates the profile with steady state concentrations
 int CRN_tParticle_bins::insert_particles(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
-									CRN_parameters& CRNp,
+									LSDCRNParameters& CRNp,
 									double erosion_rate_in_mass_per_time_per_area)
 {
 
@@ -1013,7 +1014,7 @@ int CRN_tParticle_bins::insert_particles(flowtube ft, vector<double> Delta_lower
 			}
 
 			// create a particle
-			CRN_tParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
+			LSDCRNParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
 
 			// now update the initial cosmo concentrations
 			ins_part.update_all_CRN_SSfull(erosion_rate_in_mass_per_time_per_area, CRNp);
@@ -1046,9 +1047,9 @@ int CRN_tParticle_bins::insert_particles(flowtube ft, vector<double> Delta_lower
 // withing the CRN_tParticle object
 // the units of k_f10Be here are cm^2/g
 void CRN_tParticle_bins::update_fallout_10Be_bins(double dt, double M_supply_surface,
-					double rho_s, double k_f10Be, double deltad, CRN_parameters& CRNp)
+					double rho_s, double k_f10Be, double deltad, LSDCRNParameters& CRNp)
 {
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	for (int bn = 0; bn<n_bins; bn++)
 	{
@@ -1066,9 +1067,9 @@ void CRN_tParticle_bins::update_fallout_10Be_bins(double dt, double M_supply_sur
 // overloaded function
 void CRN_tParticle_bins::update_fallout_10Be_bins(double dt, double M_supply_surface,
 					double rho_s, double k1_f10Be, double k2_f10Be, double chi_f10Be,
-					double deltad, CRN_parameters& CRNp)
+					double deltad, LSDCRNParameters& CRNp)
 {
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	for (int bn = 0; bn<n_bins; bn++)
 	{
@@ -1085,15 +1086,15 @@ void CRN_tParticle_bins::update_fallout_10Be_bins(double dt, double M_supply_sur
 
 // this function takes several data elements from the flowtube object
 // that have been
-vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flowtube ft,
+vector< list<LSDCRNParticle> > CRN_tParticle_bins::particle_motion(double dt, flowtube ft,
 										double Omega,double vert_vel_fluctuating,
 										double horiz_vel_fluctuating,
 										const int CRN_switch,
-										CRN_parameters& CRNp)
+										LSDCRNParameters& CRNp)
 {
 
-	vector< list<CRN_tParticle> > eroded_bins(n_bins+1);
-	vector< list<CRN_tParticle> > moved_bins(n_bins);
+	vector< list<LSDCRNParticle> > eroded_bins(n_bins+1);
+	vector< list<LSDCRNParticle> > moved_bins(n_bins);
 
 	long seed = time(NULL);             // seed for random number generator
 
@@ -1151,8 +1152,8 @@ vector< list<CRN_tParticle> > CRN_tParticle_bins::particle_motion(double dt, flo
 	double reflect_distance;
 	double type;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
-	list<CRN_tParticle>::iterator remove_iter;	// iterator that points to removed
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator remove_iter;	// iterator that points to removed
 												// particles
 
 
@@ -1684,7 +1685,7 @@ void CRN_tParticle_bins::update_CRN_conc_const(double C_10Be, double C_f10Be, do
 										double C_36Cl, double C_14C,
 										 double C_21Ne, double C_3He)
 {
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through all the bins
 	for (int bn = 0; bn< n_bins; bn++)
@@ -1769,7 +1770,7 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, ofstream& particle_o
 	double d_loc;				// depth of the particle
 	double pID;					// the particle identification number
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through all the bins
 	for (int bn = 0; bn< n_bins; bn++)
@@ -1806,7 +1807,7 @@ void CRN_tParticle_bins::print_particle_stats(double t_ime, flowtube ft,
 	double C14C;
 	double C21Ne;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// hillslope properties
 	vector<double> eta = ft.get_eta();
@@ -1868,7 +1869,7 @@ void CRN_tParticle_bins::print_particle_stats_soil(double t_ime, flowtube ft,
 	double C14C;
 	double C21Ne;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// hillslope properties
 	vector<double> eta = ft.get_eta();
@@ -1915,7 +1916,7 @@ void CRN_tParticle_bins::print_particle_stats_soil(double t_ime, flowtube ft,
 // timesteps (the interval is set by the user)
 // and then the statistics are calculated and printed in this function
 void CRN_tParticle_bins::print_eroded_stats(double t_ime,
-							vector< list<CRN_tParticle> > eroded_list_vec,
+							vector< list<LSDCRNParticle> > eroded_list_vec,
 							flowtube ft,
 								ofstream& particle_out)
 {
@@ -1930,7 +1931,7 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 	double C21Ne;
 
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// hillslope properties
 	vector<double> eta = ft.get_eta();
@@ -1973,7 +1974,7 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 // timesteps (the interval is set by the user)
 // and then the statistics are calculated and printed in this function
 void CRN_tParticle_bins::print_surface_eroded_particles(double print_t_ime,
-							vector< list<CRN_tParticle> > eroded_list_vec,
+							vector< list<LSDCRNParticle> > eroded_list_vec,
 							flowtube ft,
 								ofstream& particle_out)
 {
@@ -1988,7 +1989,7 @@ void CRN_tParticle_bins::print_surface_eroded_particles(double print_t_ime,
 	double C21Ne;
 
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// hillslope properties
 	vector<double> eta = ft.get_eta();
@@ -2042,7 +2043,7 @@ void CRN_tParticle_bins::print_particle_stats_vtk(double t_ime, flowtube ft,
 	vector<double> C21Ne;
 	vector<int> soil_switch;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	string time_bit = itoa( int(t_ime+0.5) );
 	string vtk_ext = ".vtk";
 	string fname = vtk_fname+time_bit+vtk_ext;
@@ -2163,7 +2164,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_bulk(double t_ime, double max_age, int
 	double powT;
 	int age_bin_num;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through the bins collecting data
 	int n_bins = particle_bins.size();
@@ -2324,7 +2325,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_bins(double t_ime, double max_age, int
 	double powT;
 	double f_remaining;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through the bins collecting data
 	int n_bins = particle_bins.size();
@@ -2475,7 +2476,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_bins(double t_ime, double max_age, int
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::print_age_cdfpdf_eroded_bulk(double t_ime, double max_age, int n_spacings,
-						  vector< list<CRN_tParticle> >& eroded_particle_bins,
+						  vector< list<LSDCRNParticle> >& eroded_particle_bins,
 						  double K_times_D, double D, double sigma,
 						  ofstream& cdf_out,
 						  ofstream& pdf_out)
@@ -2508,7 +2509,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bulk(double t_ime, double max_a
 	double powT;
 	double f_remaining;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through the bins collecting data
 	int n_bins = eroded_particle_bins.size();
@@ -2589,7 +2590,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bulk(double t_ime, double max_a
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 void CRN_tParticle_bins::print_age_cdfpdf_eroded_bins(double t_ime, double max_age, int n_spacings,
 								double K_times_D, double D, double sigma,
-						  		vector< list<CRN_tParticle> >& particle_bins,
+						  		vector< list<LSDCRNParticle> >& particle_bins,
 						  		ofstream& cdf_out,
 						  		ofstream& pdf_out)
 {
@@ -2623,7 +2624,7 @@ void CRN_tParticle_bins::print_age_cdfpdf_eroded_bins(double t_ime, double max_a
 	double powT;
 	double f_remaining;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// loop through the bins collecting data
 	int n_bins = particle_bins.size();
@@ -3161,7 +3162,7 @@ void CRN_tParticle_bins::cell_and_particle_printing_vtk(double t_ime, flowtube f
 	vector<double> C21Ne;
 	vector<int> soil_switch;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	string vtk_particle_ext = ".vtk";
 	fname = vtk_particle_fname+time_bit+vtk_particle_ext;
 	//cout << "LINE 1149 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
@@ -3324,7 +3325,7 @@ void CRN_tParticle_bins::vtk_print_basic_volume_particles(double t_ime,
 	double Mass,StartingMass;
 
   // get the iterator and print the filename
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	string vtk_particle_ext = ".vtk";
 	string fname = vtk_particle_fname+time_bit+vtk_particle_ext;
 	cout << "LINE 3177 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
@@ -3614,7 +3615,7 @@ void CRN_tParticle_bins::cell_and_particle_chemistry_printing_vtk(double t_ime, 
 	vector<double> rate_fraction;
 	vector<double> clay_fraction;
 
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	string vtk_particle_ext = ".vtk";
 	fname = vtk_particle_fname+time_bit+vtk_particle_ext;
 	//cout << "LINE 1149 CRN_tparticle_ bins, vtk filename is: " << fname << " and time: " << t_ime << endl;
@@ -4201,7 +4202,7 @@ void CRN_tParticle_bins::update_particles_cell_index(flowtube ft,
 	}
 
 	// now to do the particles
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	int n_parts_in_bin;
 	int depth_interval_index;
@@ -4272,7 +4273,7 @@ void CRN_tParticle_bins::check_particles_in_cells(int bn, vector<double>& verts_
 								vector<int>& cell_node3, vector<int>& cell_node4)
 {
 	// now to do the particles
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// parameters from the cells
 	int cell_index;
@@ -4333,7 +4334,7 @@ void CRN_tParticle_bins::get_data_by_cell(int bn, int n_PDZ_intervals, int n_CAZ
 	vector<int> particles_in_cells(n_cells,0);
 
 	// now to do the particles
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 
 	// parameters from the cells
 	int cell_index;
@@ -4417,7 +4418,7 @@ void CRN_tParticle_bins::get_mineral_mass_loss_and_mfracs_volumetric(int bn, int
 	}
 
 	// now to do the particles
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	list< vector<double> >::iterator mass_iter;
 	list< vector<double> >::iterator starting_mass_iter;
 	list< vector<double> >::iterator mfrac_iter;
@@ -4566,7 +4567,7 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	}
 
 	// now to do the particles
-	list<CRN_tParticle>::iterator part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator part_iter;	// list iterator
 	list< vector<double> >::iterator surf_area_iter;
 	list< vector<double> >::iterator volume_iter;
 	list< vector<double> >::iterator mass_iter;
@@ -4823,7 +4824,7 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 	list< vector<double> >::iterator mvp_new_iter;
 	list< vector<double> >::iterator surface_area_old_iter;
 	list< vector<double> >::iterator loss_per_surface_area_iter;
-	list<CRN_tParticle>::iterator    part_iter;	// list iterator
+	list<LSDCRNParticle>::iterator    part_iter;	// list iterator
 
 	// get some information about the cells so that the list vecs can be built
 	int n_cells = (n_PDZ_intervals+n_CAZ_intervals)*n_bins;
@@ -4978,14 +4979,14 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // this function retrieves copies of particles that are in a sampling interval
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-list<CRN_tParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn,
+list<LSDCRNParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn,
                 double d_top, double d_bottom)
 {
 	// list that evenutally gets returns
-	list<CRN_tParticle> sampled_list;
+	list<LSDCRNParticle> sampled_list;
 
 	// particle iterator
-	list<CRN_tParticle>::iterator part_iter;
+	list<LSDCRNParticle>::iterator part_iter;
 
 	double particle_d;
 	// loop through the bin bn collecting particles within the depth interval
@@ -4995,7 +4996,7 @@ list<CRN_tParticle> CRN_tParticle_bins::get_particles_in_depth_interval(int bn,
 		particle_d = (*part_iter).getdLoc();
 		if (particle_d > d_top && particle_d <= d_bottom)
 		{
-			CRN_tParticle sampled_part = (*part_iter);
+			LSDCRNParticle sampled_part = (*part_iter);
 			sampled_list.push_back(sampled_part);
 		}
 		part_iter++;
@@ -5017,9 +5018,9 @@ void CRN_tParticle_bins::calculate_sample_averages(int bn,
 	int n_samples = d_top_locs.size();
 
 	// initiate some variables for calculating averages
-	list<CRN_tParticle> sample_list;
+	list<LSDCRNParticle> sample_list;
 	double d_top,d_bottom;
-	list<CRN_tParticle>::iterator list_iter;
+	list<LSDCRNParticle>::iterator list_iter;
 
 	// an empty vector for resetting mean vectors
 	vector<double> empty;
@@ -5082,9 +5083,9 @@ void CRN_tParticle_bins::calculate_sample_averages(vector<double>& s_locs,
 	vector<double> weath_info;
 
 	// initiate some variables for calculating averages
-	list<CRN_tParticle> sample_list;
+	list<LSDCRNParticle> sample_list;
 	double d_top,d_bottom;
-	list<CRN_tParticle>::iterator list_iter;
+	list<LSDCRNParticle>::iterator list_iter;
 
 	// an empty vector for resetting mean vectors
 	vector<double> empty;

@@ -77,7 +77,7 @@ class CRN_parameters
     CRN_parameters()         { create(); }
   
     /// This is a friend class so that it can be called from the particle 
-    friend class CRN_tParticle;
+    friend class CRN_LSDParticle;
 
     /// @brief This resets the F, Gamma and P0 values so that they conform to 
     /// Granger and Smith 2000 scaling. Adopted from from Vermeesh 2007

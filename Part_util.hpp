@@ -112,7 +112,7 @@ void age_calculations_bulk(double t_ime, double max_age, int n_spacings,
 							double K_times_D, double D, double sigma,
 						  flowtube& ft,
 						  CRN_tParticle_bins& CRN_tpb,
-						  vector< list<CRN_tParticle> >& particle_bins,
+						  vector< list<LSDCRNParticle> >& particle_bins,
 						  ofstream& cdf_out,
 						  ofstream& pdf_out);
 
@@ -120,7 +120,7 @@ void age_calculations_bins(double t_ime, double max_age, int n_spacings,
 						double K_times_D, double D, double sigma,
 						  flowtube& ft,
 						  CRN_tParticle_bins& CRN_tpb,
-						  vector< list<CRN_tParticle> >& particle_bins,
+						  vector< list<LSDCRNParticle> >& particle_bins,
 						  ofstream& cdf_out,
 						  ofstream& pdf_out);
 
@@ -132,7 +132,7 @@ void age_calculations_eroded_bulk(double t_ime, double max_age, int n_spacings,
 
 void age_calculations_eroded_bins(double t_ime, double max_age, int n_spacings,
 						double K_times_D, double D, double sigma,
-						  vector< list<CRN_tParticle> >& particle_bins,
+						  vector< list<LSDCRNParticle> >& particle_bins,
 						  ofstream& cdf_out,
 						  ofstream& pdf_out);
 
