@@ -222,7 +222,9 @@ int main(int argc, char *argv[])
 
 									// the elevation of the introduced particle
 	double part_conc;				// particle concentration in particles per kg
-	int part_switch;				//Particle insert switch, 1 = volumetric insertion, 2 = representative insertion
+	int part_switch;				// Particle insert switch, 1 = volumetric insertion, 2 = representative insertion 3 = representative insertion at full SS values
+
+	double mass_time_ss_erate;		// The steady state erate
 
 
 	vector<double> old_eta;			// the elevation of the soil-saprolite boudnary from the
@@ -335,7 +337,7 @@ int main(int argc, char *argv[])
 					>> temp >> eroded_catch_window >> temp >> max_age
 					>> temp >> n_spacings >> temp >> insert_interval
           >> temp >> weathering_time_interval >> temp >> ref_frame_switch
-          >> temp >> SS_flux >> temp >> lower_boundary_condition >> temp >> SS_erate >> temp >> ds_elev;
+          >> temp >> SS_flux >> temp >> lower_boundary_condition >> temp >> SS_erate >> temp >> ds_elev >> temp >> mass_time_ss_erate;
 	model_run_params_in.close();
 	cout << "LINE 209, got model_parameters" << endl;
 	cout << "WTI: " << weathering_time_interval << " RFS: " << ref_frame_switch
@@ -524,9 +526,13 @@ int main(int argc, char *argv[])
       	part_ID_start = CRN_tpb.insert_particles_volumetric(ft_test, Delta_zeta, old_bottom_depth,
 										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He, vpi);
 		break;
-		case 2 :								
+		case 2:								
 	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
  										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He);
+		break;	
+		case 3:								
+	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										CRNp, mass_time_ss_erate);	
 		break;								 									
 		}
 
@@ -730,7 +736,11 @@ int main(int argc, char *argv[])
 		case 2 :								
 	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
  										C_10Be, C_f10Be, C_26Al, C_36Cl, C_14C, C_21Ne, C_3He);
-		break;								 									
+		break;			
+		case 3 :								
+	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										CRNp, mass_time_ss_erate);	
+		break;				 									
 		}
 			last_insertion_zeta = this_insertion_zeta;				// reset old eta
 			insert_time_clock = 0;			// reset the insert time clock

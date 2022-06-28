@@ -684,14 +684,14 @@ void LSDCRNParticle::update_10Be_conc_linear_increase(double dt,double erosion_r
 void LSDCRNParticle::update_10Be_conc_neutron_only(double dt,double erosion_rate, LSDCRNParameters& CRNp)
 {
 
-  double Gamma_neutron=CRNp.Gamma[0];			// in g/cm^2
+  // double Gamma_neutron=CRNp.Gamma[0];			// in g/cm^2
   double Be_exp = exp(-dt*CRNp.lambda_10Be);
 
   double sum_term = 0;
-  sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-           (exp(dt*erosion_rate/Gamma_neutron)-
-            exp(-dt*CRNp.lambda_10Be))/
-           (erosion_rate+Gamma_neutron*CRNp.lambda_10Be);
+	sum_term+= (CRNp.F_10Be[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
+		            exp(-dt*CRNp.lambda_10Be))/
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_10Be);
 
   Conc_10Be = Conc_10Be*Be_exp +  CRNp.S_t*Be_exp*CRNp.P0_10Be*sum_term;
 }
@@ -711,7 +711,7 @@ void LSDCRNParticle::update_10Be_SSfull(double erosion_rate, LSDCRNParameters& C
   
   double spall_tot = 0; 
   double muon_tot = 0;
-
+  
   // calculate the steady production based on steady state analytical solution
   // this for starting point at infinite depth and infinite time   
   for (int i = 0; i<4; i++)
@@ -732,7 +732,7 @@ void LSDCRNParticle::update_10Be_SSfull(double erosion_rate, LSDCRNParameters& C
   Conc_10Be = CRNp.S_t*CRNp.P0_10Be*sum_term1;
   spall_tot = CRNp.S_t*CRNp.P0_10Be*spall_tot;
   muon_tot =  CRNp.S_t*CRNp.P0_10Be*muon_tot;
-
+  
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -1032,15 +1032,14 @@ void LSDCRNParticle::update_26Al_conc(double dt,double erosion_rate, LSDCRNParam
 
 void LSDCRNParticle::update_26Al_conc_neutron_only(double dt,double erosion_rate, LSDCRNParameters& CRNp)
 {
-  double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
+  // double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
   double Al_exp = exp(-dt*CRNp.lambda_26Al);
 
   double sum_term = 0;
-  sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-           (exp(dt*erosion_rate/Gamma_neutron)-
-            exp(-dt*CRNp.lambda_26Al))/
-           (erosion_rate+Gamma_neutron*CRNp.lambda_26Al);
-
+	sum_term+= (CRNp.F_26Al[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
+		            exp(-dt*CRNp.lambda_26Al))/
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_26Al);	
   Conc_26Al = Conc_26Al*Al_exp +  CRNp.S_t*Al_exp*CRNp.P0_26Al*sum_term;
 }
 
@@ -1217,8 +1216,8 @@ void LSDCRNParticle::update_26Al_SSfull(double erosion_rate, LSDCRNParameters& C
   Conc_26Al = CRNp.S_t*CRNp.P0_26Al*sum_term;
   spall_tot = CRNp.S_t*CRNp.P0_26Al*spall_tot;
   muon_tot =  CRNp.S_t*CRNp.P0_26Al*muon_tot;
-  cout << "Line 717, Conc 26Al is: " << Conc_26Al << " from spallation: " << spall_tot
-       << " and muons: " << muon_tot << endl;
+  // cout << "Line 717, Conc 26Al is: " << Conc_26Al << " from spallation: " << spall_tot
+  //      << " and muons: " << muon_tot << endl;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -1366,10 +1365,10 @@ void LSDCRNParticle::update_14C_conc_neutron_only(double dt,double erosion_rate,
   double C_exp = exp(-dt*CRNp.lambda_14C);
 
   double sum_term = 0;
-  sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-           (exp(dt*erosion_rate/Gamma_neutron)-
-            exp(-dt*CRNp.lambda_14C))/
-           (erosion_rate+Gamma_neutron*CRNp.lambda_14C);
+	sum_term+= (CRNp.F_14C[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
+		            exp(-dt*CRNp.lambda_14C))/
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_14C);
 
   Conc_14C = Conc_14C*C_exp +  CRNp.S_t*C_exp*CRNp.P0_14C*sum_term;
 }
@@ -1690,15 +1689,15 @@ void LSDCRNParticle::update_36Cl_conc(double dt,double erosion_rate, LSDCRNParam
 
 void LSDCRNParticle::update_36Cl_conc_neutron_only(double dt,double erosion_rate, LSDCRNParameters& CRNp)
 {
-  double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
+  // double Gamma_neutron = CRNp.Gamma[0];					// in g/cm^2
 
   double Cl_exp = exp(-dt*CRNp.lambda_36Cl);
 
   double sum_term = 0;
-  sum_term+= (exp(-effective_dLoc/Gamma_neutron)*Gamma_neutron)*
-           (exp(dt*erosion_rate/Gamma_neutron)-
-            exp(-dt*CRNp.lambda_36Cl))/
-           (erosion_rate+Gamma_neutron*CRNp.lambda_36Cl);
+		sum_term+= (CRNp.F_36Cl[0]*exp(-effective_dLoc/CRNp.Gamma[0])*CRNp.Gamma[0])*
+		           (exp(dt*erosion_rate/CRNp.Gamma[0])-
+		            exp(-dt*CRNp.lambda_36Cl))/
+		           (erosion_rate+CRNp.Gamma[0]*CRNp.lambda_36Cl);
 
 
   Conc_36Cl = Conc_36Cl*Cl_exp +  CRNp.S_t*Cl_exp*CRNp.P0_36Cl*sum_term;
@@ -1852,7 +1851,7 @@ void LSDCRNParticle::update_all_CRN(double dt, double erosion_rate, LSDCRNParame
 // The erosion rate should be in g/cm^2/yr
 void LSDCRNParticle::update_all_CRN_SSfull(double erosion_rate, LSDCRNParameters& CRNp)
 {
-  //cout << "LINE 445 LSDCRNParticle.cpp updating CRN" << endl;
+  // cout << "LINE 445 LSDCRNParticle.cpp updating CRN" << endl;
   update_10Be_SSfull(erosion_rate, CRNp);
   update_26Al_SSfull(erosion_rate, CRNp);
   update_36Cl_SSfull(erosion_rate, CRNp);
