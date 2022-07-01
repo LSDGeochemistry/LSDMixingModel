@@ -793,13 +793,14 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	string ext = ".out";
 	string conc_fname = "totcon";
 	conc_fname  = RUN_path+conc_fname+num+ext;
+	
 	ifstream conc_in;
 	conc_in.open(conc_fname.c_str());
 	string gas_fname = "gas";
 	gas_fname  = RUN_path+gas_fname+num+ext;
 	ifstream gas_in;
 	gas_in.open(gas_fname.c_str());
-
+	
 
 	// initialize the concentration list
 	int n_species = p_species_names.size();
@@ -807,15 +808,17 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	{
 		concentrations.push_back(empty_vec);
 	}
-
+	
 	// first get the concentrations
 	conc_in.getline(data_line,5000);
 	conc_in.getline(data_line,5000);
 	conc_in.getline(data_line,5000);
 	
+	
 	// this third line contains the species names. You need to make sure that 
 	// the CO2(aq) is in the correct place
 	temp_string = data_line;
+	
 	split_string(temp_string, delim, line_words);	
 	int n_line_words = int(line_words.size());
 	int CO2_column = 2;
@@ -824,10 +827,10 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 	  string thisword =  line_words[i];
     //string nospace = remove_if(thisword.begin(), thisword.end(), isspace);    
     string CO2word = "CO2(aq)";
-    //cout << "i is: " << i << " and species is: " <<   thisword << " and word is: " << CO2word << endl;
+    // cout << "i is: " << i << " and species is: " <<   thisword << " and word is: " << CO2word << endl;
     if(thisword == CO2word)
     {
-      //cout << "Found aqueous CO2 in column: " << i << endl;
+      cout << "Found aqueous CO2 in column: " << i << endl;
       CO2_column = i; 
     }
     
@@ -873,7 +876,7 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 
 		lv_iter = concentrations.begin();
 		lv_iter++; 	// advance to CO2
-		//cout << "gas is: " << atof( line_words[1].c_str() ) << endl;
+		cout << "gas is: " << atof( line_words[1].c_str() ) << endl;
 		(*lv_iter)[gcounter] = atof( line_words[1].c_str() );
 		line_words = empty_str_vec;
 		gcounter++;
@@ -891,7 +894,7 @@ list< vector<double> > CRUNCH_engine::get_default_concentrations(int n_ts,
 		vector<double> temp_vec;
 		for (int i = 0; i<n_conditions; i++)
 		{
-		  //cout << endl << "Pushing back temp conc: " << temp_conc << " in cell " << i << endl;
+		//   cout << endl << "Pushing back temp conc: " << temp_conc << " in cell " << i << endl;
 			temp_vec.push_back(temp_conc);
 		}
 		updated_concentrations.push_back(temp_vec);
@@ -1139,7 +1142,7 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
 	//cout << "Checking if processor is available..." << endl;
 	//if (system(NULL)) puts ("Ok");
 	//else exit (1);
-	//cout << "Executing CRUNCH...\n";
+	cout << "Executing CRUNCH...\n";
 	if (not system(NULL))
 	{
     cout << "Processor not available" << endl;
@@ -1148,7 +1151,7 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
 	
 	//string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007";
 	string command_line_str = "cmd /c "+CRUNCH_path+"CrunchFlow2007 > crunch_screen.txt";
-	//cout << "command_line_str is: " << command_line_str << endl;
+	// cout << "command_line_str is: " << command_line_str << endl;
 
 	// this system call is buggy. It works on old laptop (probably an old version of cygwin)
 	// with the latest version of cygwin it only works if CrunchFlow2007 is sitting in the
@@ -1161,6 +1164,7 @@ void CRUNCH_engine::call_CRUNCH(int bin_number)
 	i=system(command_line_str.c_str());
 	
 	int n_ts = 1;
+	// cout << "command_line_str is: " << command_line_str << endl;
 	move_CRUNCH_output_files(n_ts);
 }
 
@@ -1362,7 +1366,7 @@ void CRUNCH_engine::get_mineral_properties()
 	// then load in the database file into a list of strings
 	while(dbase_in.getline(dbase_line,5000))
 	{
-	  //cout << "Line 1195, dbase line is: " << dbase_line << endl;
+	//   cout << "Line 1195, dbase line is: " << dbase_line << endl;
 		linestr = dbase_line;
 		dbase_list.push_back(linestr);
 	}

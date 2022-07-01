@@ -3502,7 +3502,7 @@ double LSDCRNParticle::update_surface_area_and_get_volume(VolumeParticleInfo vpi
 	double new_surface_area;
 	new_surface_area = vpi.return_surface_area(Type, GSDType, Mass);
 	SurfaceArea = new_surface_area;
-
+  // cout << "Surface Area is: " << SurfaceArea << endl;
 	double Volume = Mass/vpi.get_type_density(Type);
 	return Volume;
 }
