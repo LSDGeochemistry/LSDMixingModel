@@ -1954,8 +1954,8 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 			C14C = (*part_iter).getConc_14C();
 			C21Ne = (*part_iter).getConc_21Ne();
 
-			particle_out << t_ime << " " << bn << " " << pID << " " << "-99"
-						 << " " << s_loc << " " << "-99" << " ";
+			particle_out << t_ime << " " << bn << " " << pID << " " << z_loc
+						 << " " << s_loc << " " << d_loc << " ";
 
 			particle_out << "-99 ";	// this line is a placeholder where in the normal
 									// particle stats printing it tells you if
@@ -2012,8 +2012,8 @@ void CRN_tParticle_bins::print_surface_eroded_particles(double print_t_ime,
 			C14C = (*part_iter).getConc_14C();
 			C21Ne = (*part_iter).getConc_21Ne();
 
-			particle_out << print_t_ime << " " << bn << " " << pID << " " << "-99"
-						 << " " << s_loc << " " << "-99" << " ";
+			particle_out << print_t_ime << " " << bn << " " << pID << " " << z_loc
+						 << " " << s_loc << " " << d_loc << " ";
 
 			particle_out << "-99 ";	// this line is a placeholder where in the normal
 									// particle stats printing it tells you if
@@ -4693,31 +4693,31 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		surf_area_iter = surface_areas_of_types_in_cells.begin();
 		volume_iter = volumes_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
-		/*
-    cout << "mass fractions: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*mass_iter)[ci]/mass_in_cell[ci];
-			mass_iter++;
-		}
-		cout << endl;
+		
+    // cout << "mass fractions: " << endl;
+	// 	for (int i = 0; i<n_types; i++)
+	// 	{
+	// 		cout << " " << (*mass_iter)[ci]/mass_in_cell[ci];
+	// 		mass_iter++;
+	// 	}
+	// 	cout << endl;
 
-		cout << "volume fractions: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*volume_iter)[ci]/cell_volume;
-			volume_iter++;
-		}
-		cout << endl;
+		// cout << "volume fractions: " << endl;
+		// for (int i = 0; i<n_types; i++)
+		// {
+		// 	cout << " " << (*volume_iter)[ci]/cell_volume;
+		// 	volume_iter++;
+		// }
+		// cout << endl;
 
-		cout << "surface area: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*surf_area_iter)[ci];
-			surf_area_iter++;
-		}
-		cout << endl;
-    */
+		// cout << "surface area: " << endl;
+		// for (int i = 0; i<n_types; i++)
+		// {
+		// 	cout << " " << (*surf_area_iter)[ci];
+		// 	surf_area_iter++;
+		// }
+		// cout << endl;
+    
 
 		ssa_iter = ssa_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
@@ -4873,8 +4873,8 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 		surface_area_old_iter = surface_area_in_cell_old.begin();
 		loss_per_surface_area_iter = loss_per_surface_area.begin();
 		cout.precision(12);
-		//cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
-		//cout << "volume in cell: " << cell_volume << endl;
+		// cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
+		// cout << "volume in cell: " << cell_volume << endl;
 		for (int i = 0; i<n_types; i++)
 		{
 			//cout << "density: " << vpi.get_type_density(i) << endl;
@@ -4935,9 +4935,9 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			vf_change_in_CRUNCH_precision = vf_in_CRUNCH_precision_new-vf_in_CRUNCH_precision_old;
 			mass_change = vf_change_in_CRUNCH_precision*cell_volume*vpi.get_type_density(i);
 
-			//cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: "
-      //     << vf_in_CRUNCH_precision_new
-			//     << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
+		// 	cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: "
+        //   << vf_in_CRUNCH_precision_new
+		// 	    << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
 
 			if ( (*surface_area_old_iter)[ci] <=0)
 			{
@@ -4948,12 +4948,12 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 				(*loss_per_surface_area_iter)[ci] = mass_change/(*surface_area_old_iter)[ci];
 			}
 
-			// << "mass loss: " << mass_change
-			//     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci]
-      //     << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
+		// 	cout << "mass loss: " << mass_change
+		// 	    << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci]
+        //   << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
 
-			//cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision -
-      // (*mass_old_iter)[ci] <<endl;
+	// 		cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision -
+    //   (*mass_old_iter)[ci] <<endl;
 
 			mvp_old_iter++;
 			mvp_new_iter++;

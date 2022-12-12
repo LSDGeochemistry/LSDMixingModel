@@ -570,7 +570,7 @@ void CRUNCH_engine::parse_CRUNCH_files(int n_ts, int& n_conditions,
 		int counter = 1;
 		while(lv_iter!=mineral_vpercents.end() )
 		{
-			//cout << "pushing back: " << atof(line_words[counter].c_str() ) << endl;
+			// cout << "pushing back: " << atof(line_words[counter].c_str() ) << endl;
 			(*lv_iter)[cell] = atof(line_words[counter].c_str() );
 			lv_iter++;
 			counter++;

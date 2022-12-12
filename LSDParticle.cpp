@@ -3469,8 +3469,10 @@ double LSDCRNParticle::weather_particle(VolumeParticleInfo vpi,
 	{
 		loss_per_surface_area_iter++;
 	}
+  // cout << Mass << endl;
 	mass_loss = (*loss_per_surface_area_iter)[CellIndex] * SurfaceArea;
-	Mass = Mass - mass_loss;
+	Mass = Mass + mass_loss;
+  // cout << Mass << endl;
 	if(Mass < 0)
 	{
     Mass = 0;
