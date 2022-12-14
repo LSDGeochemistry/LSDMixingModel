@@ -260,7 +260,7 @@ void CRUNCH_bins::populate_cells_with_geochemical_data_from_CRNtPb(flowtube& ft,
   // this function also updates the cell indices of the particles
   for (int bn = 0; bn<n_bins; bn++)
   {
-    //cout << "size vmvo: " << vec_mineral_vpercents_old.size() << " and bn: " << bn << endl;
+    cout << "size vmvo: " << vec_mineral_vpercents_old.size() << " and bn: " << bn << endl;
     // now collect the data from from the particles
     // this collects data from each cell in this bin
 	  list< vector<double> > mineral_vpercents_old;
@@ -692,24 +692,25 @@ void CRUNCH_bins::generate_CRUNCH_in_files(CRUNCH_engine& Ceng,
     // get the top and bottom depths in this bin
     CRN_tPb.partition_bins_into_cells(bn, ft,n_pdz_cells_per_bin, 
 										n_caz_cells_per_bin,bottom_depth,d_top_locs,d_bottom_locs);
-
+    cout << "partitioned bins" << endl;
 	  // get the pH vector (note: this is a stand in: will get it from the 
     // parsed data files later. SMM 10/08/2014
  	  vector<double> pH_vec;
 	  double A = 0.2083;			// fitted from kate's data
 	  double B = 6.2221;			//
 	  pH_vec = Ceng.set_up_pH_for_particle(d_top_locs,d_bottom_locs, A, B);
-
+    cout << "set up ph" << endl;
 	  int n_ts = 1;
 	  list < vector<double> > default_concentrations 
             = Ceng.get_default_concentrations(n_ts,d_top_locs,d_bottom_locs);
-
+    cout << "create in files" << endl;
     // create the in files. 
     // the first time you do this you need to have some default concentrations. 
     // after that you use the concentrations from the last run. 
     Ceng.create_CRUNCH_in_file(cells_in_bin, bn, cells_in_bin, pH_vec,
 						d_top_locs, d_bottom_locs, default_concentrations, 
             vec_mineral_vpercents_old[bn], vec_mineral_ssa_old[bn]);
+       
   }
 
 }
@@ -749,24 +750,24 @@ void CRUNCH_bins::call_CRUNCH_and_parse_data(CRUNCH_engine& Ceng)
   {
     // call crunch
     
-    cout << "LINE 472, calling CrunchFlow in bin " << bn << endl;
+    // cout << "LINE 472, calling CrunchFlow in bin " << bn << endl;
     Ceng.call_CRUNCH(bn);
     
     // for bug checking, move the crunch files with bin number names
     int n_ts = 2;
     Ceng.move_CRUNCH_output_files_with_bin_number(n_ts,bn);
-    //cout << "LINE 477, moved output files " << bn << endl;
+    // cout << "LINE 477, moved output files " << bn << endl;
         
     // now read in the resulting data
     int number_timestep = 1;
     int n_cells = n_pdz_cells_per_bin+n_caz_cells_per_bin;
     
-    //cout << "LINE 483 Parsing the crunch data" << endl;
+    // cout << "LINE 483 Parsing the crunch data" << endl;
     // parse the resulting data. 
     Ceng.parse_CRUNCH_files(number_timestep, n_cells, bn, n_bins, n_cells,
 						new_pH_vec, spacings, CRUNCH_tdepths, CRUNCH_bdepths,
 						new_conc, mineral_vperc_new, new_min_ssa, new_rxn_rates);
-		 //cout << "LINE 488 Parsed the crunch data, moving on to updating the vlvs" << endl;
+		// cout << "LINE 488 Parsed the crunch data, moving on to updating the vlvs" << endl;
     				
      // add the listvecs to the vlv
      vec_new_conc[bn] = new_conc;
@@ -811,13 +812,13 @@ void CRUNCH_bins::run_CRUNCH_timestep(CRN_tParticle_bins& CRN_tPb,
 {
   // get the geochemical data from the particles
   populate_cells_with_geochemical_data_from_CRNtPb(ft, CRN_tPb);
-
+  cout << "populated bins" << endl;
   // generate the .in files for CRUNCH
   generate_CRUNCH_in_files(Ceng, ft, CRN_tPb);
-  
+   cout << "generate in files" << endl;
   // call and parse CRUNCH output
   call_CRUNCH_and_parse_data(Ceng);
-
+ cout << "parsed" << endl;
   // weather the particles
   weather_particles_based_on_CRUNCH(CRN_tPb);
 }

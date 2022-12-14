@@ -626,7 +626,7 @@ int CRN_tParticle_bins::insert_particles_volumetric(flowtube ft,
 						LSDCRNParticle ins_part(type, sizet, ran_sl, d,eff_d, ran_zl,
 												insert_particle_mass,insert_particle_surface_area);
 
-						//cout << "s_loc: LINE 560: " << ins_part.getxLoc() << endl;
+						// cout << "test mass LINE 560: " << ins_part.getMass() << endl;
 
 						// now update the initial cosmo concentrations
 						ins_part.update_cosmo_conc_const(C_10Be, C_f10Be, C_26Al, C_36Cl,
@@ -2108,8 +2108,8 @@ void CRN_tParticle_bins::print_eroded_stats(double t_ime,
 			C14C = (*part_iter).getConc_14C();
 			C21Ne = (*part_iter).getConc_21Ne();
 
-			particle_out << t_ime << " " << bn << " " << pID << " " << "-99"
-						 << " " << s_loc << " " << "-99" << " ";
+			particle_out << t_ime << " " << bn << " " << pID << " " << z_loc
+						 << " " << s_loc << " " << d_loc << " ";
 
 			particle_out << "-99 ";	// this line is a placeholder where in the normal
 									// particle stats printing it tells you if
@@ -2166,8 +2166,8 @@ void CRN_tParticle_bins::print_surface_eroded_particles(double print_t_ime,
 			C14C = (*part_iter).getConc_14C();
 			C21Ne = (*part_iter).getConc_21Ne();
 
-			particle_out << print_t_ime << " " << bn << " " << pID << " " << "-99"
-						 << " " << s_loc << " " << "-99" << " ";
+			particle_out << print_t_ime << " " << bn << " " << pID << " " << z_loc
+						 << " " << s_loc << " " << d_loc << " ";
 
 			particle_out << "-99 ";	// this line is a placeholder where in the normal
 									// particle stats printing it tells you if
@@ -4743,8 +4743,8 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	// loop through bins collecting particles in different cells
 	part_iter = particle_bins[bn].begin();
 	int n_particles_in_bin = particle_bins[bn].size();
-	//cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
-	//cout << "LINE 4202 First part, zl: " << (*part_iter).get_zetaLoc() << " sl: " << (*part_iter).getxLoc()
+	// cout << endl << endl << endl << " n_parts in bin: " << n_particles_in_bin << endl;
+	// cout << "LINE 4202 First part, zl: " << (*part_iter).get_zetaLoc() << " sl: " << (*part_iter).getxLoc()
 	//     << " dL: " << (*part_iter).getdLoc() << endl;
 	while (part_iter != particle_bins[bn].end())
 	{
@@ -4754,13 +4754,15 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		dLoc = (*part_iter).getdLoc();
 
 		particleType = (*part_iter).getType();
+		// cout << "particle type is " << particleType << endl;
 		particleVolume = (*part_iter).update_surface_area_and_get_volume(vpi);
+		// cout << "particle volume is " << particleVolume << endl;
 		particleMass = (*part_iter).getMass();
 		particleSurfaceArea =  (*part_iter).getSurfaceArea();
 
-		//cout << "LINE 4091: type: " << particleType << " cell index: " << cell_index << endl
+		// cout << "LINE 4091: type: " << particleType << " cell index: " << cell_index << endl
 		//     <<" Vol:" << particleVolume << " Mass: " << particleMass << " SA: " << particleSurfaceArea << endl;
-		//cout << "zloc: " << zLoc << " sLoc: " << sLoc << " and dLoc: " << dLoc << endl;
+		// cout << "zloc: " << zLoc << " sLoc: " << sLoc << " and dLoc: " << dLoc << endl;
 
 		// collect data elements based on individual particles
 		if (cell_index >= 0)
@@ -4791,8 +4793,8 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		part_iter++;
 	}
 
-	//cout << "starting cell: " << starting_cell << " ending cell: " << ending_cell << endl;
-	//cout << "cell_node size: " << cell_node1.size() << " " << cell_node2.size() << " "
+	// cout << "starting cell: " << starting_cell << " ending cell: " << ending_cell << endl;
+	// cout << "cell_node size: " << cell_node1.size() << " " << cell_node2.size() << " "
 	//     << cell_node3.size() << " " << cell_node4.size() << endl;
 
 	for(int ci = starting_cell; ci< ending_cell; ci++)
@@ -4845,31 +4847,31 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 		surf_area_iter = surface_areas_of_types_in_cells.begin();
 		volume_iter = volumes_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
-		/*
-    cout << "mass fractions: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*mass_iter)[ci]/mass_in_cell[ci];
-			mass_iter++;
-		}
-		cout << endl;
+		
+    // cout << "mass fractions: " << endl;
+	// 	for (int i = 0; i<n_types; i++)
+	// 	{
+	// 		cout << " " << (*mass_iter)[ci]/mass_in_cell[ci];
+	// 		mass_iter++;
+	// 	}
+	// 	cout << endl;
 
-		cout << "volume fractions: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*volume_iter)[ci]/cell_volume;
-			volume_iter++;
-		}
-		cout << endl;
+		// cout << "volume fractions: " << endl;
+		// for (int i = 0; i<n_types; i++)
+		// {
+		// 	cout << " " << (*volume_iter)[ci]/cell_volume;
+		// 	volume_iter++;
+		// }
+		// cout << endl;
 
-		cout << "surface area: " << endl;
-		for (int i = 0; i<n_types; i++)
-		{
-			cout << " " << (*surf_area_iter)[ci];
-			surf_area_iter++;
-		}
-		cout << endl;
-    */
+		// cout << "surface area: " << endl;
+		// for (int i = 0; i<n_types; i++)
+		// {
+		// 	cout << " " << (*surf_area_iter)[ci];
+		// 	surf_area_iter++;
+		// }
+		// cout << endl;
+    
 
 		ssa_iter = ssa_of_types_in_cells.begin();
 		mass_iter = mass_of_types_in_cells.begin();
@@ -4914,7 +4916,7 @@ void CRN_tParticle_bins::get_data_by_cell_volumetric_for_CRUNCH(int bn, int n_PD
 	mineral_ssa = ssa_of_types_in_cells;
 	mineral_surface_area = surface_areas_of_types_in_cells;
 	mineral_mass = mass_of_types_in_cells;
-	//cout << "LINE 4138 finished getting particle data" << endl;
+	// cout << "LINE 4138 finished getting particle data" << endl;
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -5025,8 +5027,8 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 		surface_area_old_iter = surface_area_in_cell_old.begin();
 		loss_per_surface_area_iter = loss_per_surface_area.begin();
 		cout.precision(12);
-		//cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
-		//cout << "volume in cell: " << cell_volume << endl;
+		// cout << endl << "cell: " << ci << " volume percents; type | old | new" << endl;
+		// cout << "volume in cell: " << cell_volume << endl;
 		for (int i = 0; i<n_types; i++)
 		{
 			//cout << "density: " << vpi.get_type_density(i) << endl;
@@ -5087,9 +5089,9 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 			vf_change_in_CRUNCH_precision = vf_in_CRUNCH_precision_new-vf_in_CRUNCH_precision_old;
 			mass_change = vf_change_in_CRUNCH_precision*cell_volume*vpi.get_type_density(i);
 
-			//cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: "
-      //     << vf_in_CRUNCH_precision_new
-			//     << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
+		// 	cout << "vf Cp old: " << vf_in_CRUNCH_precision_old << " and vf Cp new: "
+        //   << vf_in_CRUNCH_precision_new
+		// 	    << " and vf_change: " << vf_change_in_CRUNCH_precision << endl;
 
 			if ( (*surface_area_old_iter)[ci] <=0)
 			{
@@ -5100,12 +5102,12 @@ void CRN_tParticle_bins::weather_particles_from_CRUNCH(int bn, int n_PDZ_interva
 				(*loss_per_surface_area_iter)[ci] = mass_change/(*surface_area_old_iter)[ci];
 			}
 
-			// << "mass loss: " << mass_change
-			//     << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci]
-      //     << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
+		// 	cout << "mass loss: " << mass_change
+		// 	    << " and per surf area loss: " << (*loss_per_surface_area_iter)[ci]
+        //   << " and surf area: " << (*surface_area_old_iter)[ci] << endl;
 
-			//cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision -
-      // (*mass_old_iter)[ci] <<endl;
+	// 		cout << "mass loss in CRUNCH precision: " << mass_in_CRUNCH_precision -
+    //   (*mass_old_iter)[ci] <<endl;
 
 			mvp_old_iter++;
 			mvp_new_iter++;

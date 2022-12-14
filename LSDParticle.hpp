@@ -110,6 +110,13 @@ class LSDParticle
     LSDParticle( int StartType, double StartxLoc, double StartdLoc)
                 { create(StartType, StartxLoc, StartdLoc); }
 
+
+
+
+
+
+
+   
     /// @brief Get the type
     /// @return Type the type of the particle
     int    getType() const			{ return Type; }
@@ -148,6 +155,8 @@ class LSDParticle
     LSDParticle(LSDParticle& tP)
     	{ create(tP.getType(),tP.getCellIndex(), tP.getAge(),tP.getOSLage(),
                tP.getxLoc(),tP.getyLoc(),tP.getdLoc()); }
+
+
 
     /// @brief copy constructor
     LSDParticle& operator=(const LSDParticle& tP);
@@ -331,7 +340,12 @@ class LSDCRNParticle: public LSDParticle
                 start_Cf210Pb, start_Cf137Cs,
                 start_Mass, start_StartingMass,start_SurfaceArea); }
 
-
+    
+                
+              
+	
+                
+	
   /// @brief The copy constructor
   /// @param tP an LSDCRNParticle object
   /// @author SMM
@@ -1421,7 +1435,24 @@ class LSDCRNParticle: public LSDParticle
           double start_Cf210Pb, double start_Cf137Cs, 
           double start_Mass, double start_StartingMass,double startSurfaceArea);
           
+  	void create(int startType, int startCellIndex, double startAge, double startOSLAge,
+	            double startxLoc,double startdLoc, double startefdLoc,
+				double startzLoc, double start_C10Be, double start_C26Al,
+				double start_C36Cl, double start_C14C,
+				double start_C21Ne, double start_C3He,
+				double start_Cf7Be, double start_Cf10Be,
+				double start_Cf210Pb, double start_Cf137Cs,
+				double start_Mass, double start_StartingMass,
+				double start_SurfaceArea,
+				int start_GSDType);
 
+	void create(int startType, int startCellIndex, double startAge, double startOSLAge,
+	            double startxLoc,double startdLoc, double startefdLoc,
+				double startzLoc, double start_C10Be, double start_C26Al,
+				double start_C36Cl, double start_C14C,
+				double start_C21Ne, double start_C3He,
+				double start_Cf7Be, double start_Cf10Be,
+				double start_Cf210Pb, double start_Cf137Cs);
 
 
    

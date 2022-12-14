@@ -3,11 +3,12 @@
 
 #ifndef CRUNCH_engine_H
 #define CRUNCH_engine_H
-
+#include<iostream>
 #include <list>
 #include <string>
 #include <vector>
 #include "LSDStatsTools.hpp"
+#include "VolumeParticleInfo.hpp"
 using namespace std;
 
 

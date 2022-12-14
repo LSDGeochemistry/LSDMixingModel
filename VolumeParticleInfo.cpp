@@ -201,6 +201,7 @@ double VolumeParticleInfo::return_mass_fraction(int Type_index, int GSDindex)
 
 double VolumeParticleInfo::return_surface_area(int Type_index, int GSDindex, double mass)
 {
+	// cout << Type_index << " " << GSDindex << " " << mass << endl;
 	return surface_area_multiplier[Type_index][GSDindex]*mass;
 }
 

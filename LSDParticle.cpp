@@ -3620,8 +3620,10 @@ double LSDCRNParticle::weather_particle(VolumeParticleInfo vpi,
 	{
 		loss_per_surface_area_iter++;
 	}
+  // cout << Mass << endl;
 	mass_loss = (*loss_per_surface_area_iter)[CellIndex] * SurfaceArea;
-	Mass = Mass - mass_loss;
+	Mass = Mass + mass_loss;
+  // cout << Mass << endl;
 	if(Mass < 0)
 	{
     Mass = 0;
@@ -3653,7 +3655,7 @@ double LSDCRNParticle::update_surface_area_and_get_volume(VolumeParticleInfo vpi
 	double new_surface_area;
 	new_surface_area = vpi.return_surface_area(Type, GSDType, Mass);
 	SurfaceArea = new_surface_area;
-
+  // cout << "Surface Area is: " << SurfaceArea << endl;
 	double Volume = Mass/vpi.get_type_density(Type);
 	return Volume;
 }
