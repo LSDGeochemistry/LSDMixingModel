@@ -96,6 +96,10 @@ class CRN_tParticle_bins
 									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
 									LSDCRNParameters& CRNp,
 									double erosion_rate_in_mass_per_time_per_area);
+	int insert_particles_full(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
+									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
+									LSDCRNParameters& CRNp,
+									double saprolite_lowering_const, LSDCRNParticle& LSDCRNp);
 	int insert_particles_volumetric(flowtube ft,
 									vector<double> Delta_lowered, vector<double>& old_bottom_depth,
 									double C_10Be, double C_f10Be, double C_26Al, double C_36Cl, double C_14C, double C_21Ne, double C_3He,

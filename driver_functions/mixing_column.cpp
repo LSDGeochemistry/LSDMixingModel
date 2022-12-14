@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
 	int part_switch;				// Particle insert switch, 1 = volumetric insertion, 2 = representative insertion 3 = representative insertion at full SS values
 
 	double mass_time_ss_erate;		// The steady state erate
-
+	double sap_lowering_rate;		// The steady state saprolite lowering rate
 
 	vector<double> old_eta;			// the elevation of the soil-saprolite boudnary from the
 									// last timestep
@@ -269,6 +269,7 @@ int main(int argc, char *argv[])
 
 	// the parameters for the in situ cosmogenics
 	LSDCRNParameters CRNp;
+	LSDCRNParticle LSDCRNp;
 
 	////////////////////////This part is superseded following the update to the cosmo code?
     // note: scaling determined using cosmocalc:
@@ -337,7 +338,7 @@ int main(int argc, char *argv[])
 					>> temp >> eroded_catch_window >> temp >> max_age
 					>> temp >> n_spacings >> temp >> insert_interval
           >> temp >> weathering_time_interval >> temp >> ref_frame_switch
-          >> temp >> SS_flux >> temp >> lower_boundary_condition >> temp >> SS_erate >> temp >> ds_elev >> temp >> mass_time_ss_erate;
+          >> temp >> SS_flux >> temp >> lower_boundary_condition >> temp >> SS_erate >> temp >> ds_elev >> temp >> mass_time_ss_erate >> temp >> sap_lowering_rate;
 	model_run_params_in.close();
 	cout << "LINE 209, got model_parameters" << endl;
 	cout << "WTI: " << weathering_time_interval << " RFS: " << ref_frame_switch
@@ -533,6 +534,10 @@ int main(int argc, char *argv[])
 		case 3:								
 	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
  										CRNp, mass_time_ss_erate);	
+		break;
+		case 4:								
+	  	part_ID_start = CRN_tpb.insert_particles_full(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										CRNp, sap_lowering_rate, LSDCRNp);	
 		break;								 									
 		}
 
@@ -740,6 +745,10 @@ int main(int argc, char *argv[])
 		case 3 :								
 	  	part_ID_start = CRN_tpb.insert_particles(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
  										CRNp, mass_time_ss_erate);	
+		break;	
+		case 4:								
+	  	part_ID_start = CRN_tpb.insert_particles_full(ft_test, Delta_zeta, old_bottom_depth, part_conc, starting_pID, starting_p_mfrac,
+ 										CRNp, sap_lowering_rate, LSDCRNp);	
 		break;				 									
 		}
 			last_insertion_zeta = this_insertion_zeta;				// reset old eta

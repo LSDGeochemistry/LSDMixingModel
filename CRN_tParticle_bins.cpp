@@ -1038,7 +1038,161 @@ int CRN_tParticle_bins::insert_particles(flowtube ft, vector<double> Delta_lower
 	return 1;
 }
 
+int CRN_tParticle_bins::insert_particles_full(flowtube ft, vector<double> Delta_lowered, vector<double>& old_bottom_depth,
+									double part_conc, vector<int> starting_pID, vector<double> starting_p_mfrac,
+									LSDCRNParameters& CRNp,
+									double saprolite_lowering_const , LSDCRNParticle& LSDCRNp)
 
+	{
+
+	vector<double> new_bottom_depth = old_bottom_depth;
+	vector<double> zeta = ft.get_zeta();		// surface elevation (m)
+	vector<double> eta = ft.get_eta();			// soil-bedrock boundary of the bin (m)
+
+	double rho_r = ft.get_rho_r();
+	double rho_s = ft.get_rho_s();
+
+	long seed = time(NULL);             // seed for random number generator
+	int n_parts_inserted;				// number of particles inserted into a bin
+	double insert_zone_top;				// top of insertion zone (m)
+	double insert_zone_bottom;			// bottom of insertion zone (m)
+	double ran_sl;						// downslope distance of the randomly inserted particle (m)
+	double ran_zl;						// the elevation of the randomly inserted particle (m)
+	//double theta;						//
+	int eta_node;						// teh node index for eta, h, and zeta
+
+	// interpolated hillslope properties
+	double interpolated_zeta;			// surface elevation (m)
+	double interpolated_eta;			// soil-bedrock boundary (m)
+	double interpolated_h;				// soil thickness (m)
+	double d_rock;						// depth of rock overlying particle (m)
+	double d;							// depth of particle (m)
+	double eff_d;						// effective depth of particle (g/cm^2)
+
+	// during a timestep some particles are inserted into a zone in the bedrock
+	// the number of particles is defined by the volume of the insertion zone times
+	// the particle concnetration. The volume times the concentration will typicaly
+	// be an integer, so we need a way to maintin some kind of rasonably constant
+	// and unbiased particle concentration (i.e., avoiding rounding bias)
+	// the approach is to get thh fractional part of the number of particles
+	// and then select a random number from a uniform distribution on 0 to 1
+	// , if the ranom number is less than the fraction a particle is generated,
+	// if not no particle. The below variables are for making this calculation
+	double n_parts_doub;
+	double n_parts_int;
+	double n_parts_frac;
+
+	// this function loops through the bins, inserting particles based on how
+	// much the soil/saprolite boundary has lowered and the particle concnetration,
+	// which is given in particles/kg
+	//
+	// in general we consider the surfaces zeta and eta to be sloping, but for
+	// calculation of the insertion zone the eta location is considered horizontal
+	// this is because if the insertion zone was considered sloping then transient changes
+	// in the bedrock might lead to ovelapping insertion zones. A horizontal insertion
+	// zone ensures that particles are always inserted into 'fresh' rock
+	for (int bn = 0; bn<n_bins; bn++)
+	{
+		// get the number of particles inserted
+		n_parts_doub = A_bins[bn]*Delta_lowered[bn/2]*rho_r*part_conc;
+		n_parts_frac = modf(n_parts_doub,&n_parts_int);
+		n_parts_inserted = int(n_parts_int);
+		if( ran3(&seed) <= n_parts_frac )
+		 n_parts_inserted++;
+
+		eta_node = bn/2;
+		insert_zone_top = old_bottom_depth[eta_node];
+		insert_zone_bottom = insert_zone_top - Delta_lowered[eta_node];
+		new_bottom_depth[eta_node] = insert_zone_bottom;
+
+		for (int part = 0; part<n_parts_inserted; part++)
+		{
+			// randomly generate the s and z locations
+			ran_sl = (bin_edge_loc[bn+1] - bin_edge_loc[bn])*ran3(&seed) +
+					  bin_edge_loc[bn];
+
+			ran_zl = (insert_zone_top-insert_zone_bottom)*ran3(&seed) +
+					 insert_zone_bottom;
+
+			// now create and place the particles
+			// for a given z and s location, you must calculate the depth and effective
+			// d location
+			// the effectve d location is in units g/cm^2, everything else is
+			// in SI
+
+			// first interpolate zeta and eta:
+			interpolated_zeta = ((zeta[ h_node_ds[bn] ] - zeta[ h_node_us[bn] ])/
+								dx_h[bn])*(ran_sl- s_us_h[bn]) + zeta[ h_node_us[bn] ];
+			interpolated_eta = ((eta[ h_node_ds[bn] ] - eta[ h_node_us[bn] ])/
+								dx_h[bn])*(ran_sl- s_us_h[bn]) + eta[ h_node_us[bn] ];
+
+			interpolated_h = interpolated_zeta-interpolated_eta;
+			d = interpolated_zeta-ran_zl;
+
+			// if the depth is greater than the soil thickness,
+			// the effective depth must take into account
+			// the density change
+			if (ran_zl<interpolated_eta)
+			{
+				d_rock = interpolated_eta-ran_zl;
+				eff_d = 0.1*(rho_r*d_rock+rho_s*interpolated_h);
+						// the 0.1 factor is to convert from
+						// kg/m^2 to g/cm^2
+			}
+			// if the depth is less than the soil thickness,
+			// the effective depth only accounts for the density
+			// of the soil
+			else
+			{
+				eff_d = 0.1*(rho_s*d);
+						// the 0.1 factor is to convert from
+						// kg/m^2 to g/cm^2
+				//cout << "LINE 325 the inserted particle is in the soil! ";
+
+			}
+
+			// now create the particle:
+			// determine the starting type
+			double type_prob = ran3(&seed);
+			int n_ptypes = starting_pID.size();
+			int startType = starting_pID[n_ptypes-1];
+			double cum_prob = 0.0;
+			double last_prob = 0.0;
+			for (int ptype_index = 0; ptype_index<n_ptypes; ptype_index++)
+			{
+				last_prob = cum_prob;
+				cum_prob = cum_prob+starting_p_mfrac[ptype_index];
+
+				if (type_prob >= last_prob && type_prob < cum_prob)
+				{
+					startType = starting_pID[ptype_index];
+				}
+			}
+
+			// create a particle
+			LSDCRNParticle ins_part(startType, ran_sl,d,eff_d, ran_zl);
+
+			// now update the initial cosmo concentrations
+			ins_part.update_all_CRN_full(saprolite_lowering_const, CRNp, rho_r, rho_s, LSDCRNp);
+
+			if (ran_zl>=interpolated_eta)
+			{
+				ins_part.SoilAgeExpose();
+			}
+			particle_bins[bn].push_back(ins_part);
+			startType++; 				// increment the particle type
+
+		}
+
+	}
+	old_bottom_depth = new_bottom_depth;
+
+	//for (int i = 0; i< n_bins; i++)
+	//{
+	//	cout << "LINE 347 CRN_tParticle_bins.cpp; n_parts of bin " << i << " = " << particle_bins[i].size() << endl;
+	//}
+	return 1;
+}
 // this updates fallout radionuclides
 // NOTE!!!!
 // the units of M_supply are in atoms/cm^2

@@ -811,6 +811,14 @@ class LSDCRNParticle: public LSDParticle
   /// @date 01/01/2014
   void update_all_CRN_SSfull(double erosion_rate, LSDCRNParameters& CRNp);
 
+  void update_all_CRN_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp);
+
+  void update_10Be_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos,LSDCRNParticle& LSDCRNp);
+  void update_26Al_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos,LSDCRNParticle& LSDCRNp);
+  void update_36Cl_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos,LSDCRNParticle& LSDCRNp);
+  void update_14C_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos,LSDCRNParticle& LSDCRNp);
+  
+
   /// @brief This returns the 'apparent' erosion rate that one would calcualte
   /// based on an assumed density above the sampling depth and for full muon 
   /// production based on COSMOCALC scaling

@@ -246,7 +246,7 @@ void LSDCRNParticle::create()
   OSLage = 0;
   xLoc = 0;			// in metres
   yLoc = 0;     // in metres
-  dLoc = 5;			// in metres
+  dLoc = 0;			// in metres
   zetaLoc = 100;
   Conc_10Be = 0.0;
   Conc_26Al = 0.0;
@@ -621,11 +621,11 @@ void LSDCRNParticle::update_10Be_conc(double dt,double erosion_rate, LSDCRNParam
   double Be_exp = exp(-dt*CRNp.lambda_10Be);
   //double Be_depth_exp = exp(-d_0/Gamma_Be1);
 
-  //cout << "LINE 236 LSDParticle.cpp " << endl;
-  //cout << lambda_10Be << " " << Be_exp << endl;
-  //cout << "starting conc: " << Conc_10Be << endl;
-  //cout << "starting depth: " << effective_dLoc << endl;
-  //cout << "erosion_rate: "<< erosion_rate << endl;
+  // cout << "LINE 236 LSDParticle.cpp " << endl;
+  // cout << "lambda_10Be" << " " << Be_exp << endl;
+  // cout << "starting conc: " << Conc_10Be << endl;
+  // cout << "starting depth: " << effective_dLoc << endl;
+  // cout << "erosion_rate: "<< erosion_rate << endl;
   double sum_term = 0;
   for (int i = 0; i<4; i++)
   {
@@ -633,7 +633,7 @@ void LSDCRNParticle::update_10Be_conc(double dt,double erosion_rate, LSDCRNParam
            (exp(dt*erosion_rate/CRNp.Gamma[i])-
             exp(-dt*CRNp.lambda_10Be))/
            (erosion_rate+CRNp.Gamma[i]*CRNp.lambda_10Be);
-  //cout << "F_10Be["<<i<<"]: " << CRNp.F_10Be[i] << " and sum_term: " << sum_term <<endl;
+  // cout << "F_10Be["<<i<<"]: " << CRNp.F_10Be[i] << " and sum_term: " << sum_term <<endl;
   }
 
   //cout << "and sum term is: " << sum_term << endl;
@@ -732,6 +732,43 @@ void LSDCRNParticle::update_10Be_SSfull(double erosion_rate, LSDCRNParameters& C
   Conc_10Be = CRNp.S_t*CRNp.P0_10Be*sum_term1;
   spall_tot = CRNp.S_t*CRNp.P0_10Be*spall_tot;
   muon_tot =  CRNp.S_t*CRNp.P0_10Be*muon_tot;
+  
+}
+
+// The constant from saprolite
+void LSDCRNParticle::update_10Be_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp)
+{
+  double this_term;
+  double sum_term1 = 0;
+ 
+  
+  double spall_tot = 0; 
+  double muon_tot = 0;
+  double depth = dLoc;
+  // calculate the steady production based on steady state analytical solution
+  // this for starting point at infinite depth and infinite time   
+  for (int i = 0; i<4; i++)
+  {
+    
+    double z_r = CRNp.Gamma[i]/(rhos/1000);
+    double z_s = CRNp.Gamma[i]/(rhor/1000);
+    this_term = (z_s*(CRNp.P0_10Be*CRNp.F_10Be[i]*exp(-(100*depth)/z_r)))/(saprolite_lowering_rate+(CRNp.lambda_10Be*z_s));
+    // cout << depth << " " << z_r << " " << z_s << " " << saprolite_lowering_rate << " " << endl;
+    
+    sum_term1 += this_term;
+    if(i == 0)
+    {
+      spall_tot+=this_term;
+    }             
+    else
+    {
+      muon_tot+=this_term;
+    }
+  }
+
+  Conc_10Be = CRNp.S_t*sum_term1;
+  spall_tot = CRNp.S_t*spall_tot;
+  muon_tot =  CRNp.S_t*muon_tot;
   
 }
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1219,6 +1256,40 @@ void LSDCRNParticle::update_26Al_SSfull(double erosion_rate, LSDCRNParameters& C
   // cout << "Line 717, Conc 26Al is: " << Conc_26Al << " from spallation: " << spall_tot
   //      << " and muons: " << muon_tot << endl;
 }
+
+void LSDCRNParticle::update_26Al_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp)
+{
+  double this_term;
+  double sum_term1 = 0;
+ 
+  
+  double spall_tot = 0; 
+  double muon_tot = 0;
+  
+  // calculate the steady production based on steady state analytical solution
+  // this for starting point at infinite depth and infinite time   
+  for (int i = 0; i<4; i++)
+  {
+    double depth = LSDCRNp.getdLoc();
+    double z_r = CRNp.Gamma[i]/rhos;
+    double z_s = CRNp.Gamma[i]/rhor;
+    this_term = (z_s*(CRNp.P0_26Al*CRNp.F_26Al[i]*exp(-(100*depth)/z_r)))/(saprolite_lowering_rate+(CRNp.lambda_26Al*z_s));
+    sum_term1 += this_term;
+    if(i == 0)
+    {
+      spall_tot+=this_term;
+    }             
+    else
+    {
+      muon_tot+=this_term;
+    }
+  }
+
+  Conc_26Al = CRNp.S_t*sum_term1;
+  spall_tot = CRNp.S_t*spall_tot;
+  muon_tot =  CRNp.S_t*muon_tot;
+  
+}
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
@@ -1410,7 +1481,39 @@ void LSDCRNParticle::update_14C_SSfull(double erosion_rate, LSDCRNParameters& CR
   muon_tot =  CRNp.S_t*CRNp.P0_14C*muon_tot;
 
 }
+void LSDCRNParticle::update_14C_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp)
+{
+  double this_term;
+  double sum_term1 = 0;
+ 
+  
+  double spall_tot = 0; 
+  double muon_tot = 0;
+  
+  // calculate the steady production based on steady state analytical solution
+  // this for starting point at infinite depth and infinite time   
+  for (int i = 0; i<4; i++)
+  {
+    double depth = LSDCRNp.getdLoc();
+    double z_r = CRNp.Gamma[i]/rhos;
+    double z_s = CRNp.Gamma[i]/rhor;
+    this_term = (z_s*(CRNp.P0_14C*CRNp.F_14C[i]*exp(-(100*depth)/z_r)))/(saprolite_lowering_rate+(CRNp.lambda_14C*z_s));
+    sum_term1 += this_term;
+    if(i == 0)
+    {
+      spall_tot+=this_term;
+    }             
+    else
+    {
+      muon_tot+=this_term;
+    }
+  }
 
+  Conc_14C = CRNp.S_t*sum_term1;
+  spall_tot = CRNp.S_t*spall_tot;
+  muon_tot =  CRNp.S_t*muon_tot;
+  
+}
 
 //=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // This is for a step change in the erosion rate
@@ -1738,6 +1841,41 @@ void LSDCRNParticle::update_36Cl_SSfull(double erosion_rate, LSDCRNParameters& C
   Conc_36Cl = CRNp.S_t*CRNp.P0_36Cl*sum_term;
 }
 
+void LSDCRNParticle::update_36Cl_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp)
+{
+  double this_term;
+  double sum_term1 = 0;
+ 
+  
+  double spall_tot = 0; 
+  double muon_tot = 0;
+  
+  // calculate the steady production based on steady state analytical solution
+  // this for starting point at infinite depth and infinite time   
+  for (int i = 0; i<4; i++)
+  {
+    double depth = LSDCRNp.getdLoc();
+    double z_r = CRNp.Gamma[i]/rhos;
+    double z_s = CRNp.Gamma[i]/rhor;
+    this_term = (z_s*(CRNp.P0_36Cl*CRNp.F_36Cl[i]*exp(-(100*depth)/z_r)))/(saprolite_lowering_rate+(CRNp.lambda_36Cl*z_s));
+    sum_term1 += this_term;
+    if(i == 0)
+    {
+      spall_tot+=this_term;
+    }             
+    else
+    {
+      muon_tot+=this_term;
+    }
+  }
+
+  Conc_36Cl = CRNp.S_t*sum_term1;
+  spall_tot = CRNp.S_t*spall_tot;
+  muon_tot =  CRNp.S_t*muon_tot;
+  
+}
+
+
 void LSDCRNParticle::update_21Ne_conc(double dt,double erosion_rate, LSDCRNParameters& CRNp)
 {
   double Gamma_neutron= CRNp.Gamma[0];					// in g/cm^2
@@ -1791,6 +1929,8 @@ void LSDCRNParticle::update_21Ne_SSfull(double erosion_rate, LSDCRNParameters& C
   }
   //cout << "AFTER Conc_21Ne: " << Conc_21Ne << endl;
 }
+
+
 
 void LSDCRNParticle::update_3He_conc(double dt,double erosion_rate, LSDCRNParameters& CRNp)
 {
@@ -1858,6 +1998,17 @@ void LSDCRNParticle::update_all_CRN_SSfull(double erosion_rate, LSDCRNParameters
   update_14C_SSfull(erosion_rate, CRNp);
   update_21Ne_SSfull(erosion_rate, CRNp);
   update_3He_SSfull(erosion_rate, CRNp);
+}
+
+
+void LSDCRNParticle::update_all_CRN_full(double saprolite_lowering_rate, LSDCRNParameters& CRNp, double rhor, double rhos, LSDCRNParticle& LSDCRNp)
+{
+  update_10Be_full(saprolite_lowering_rate, CRNp, rhor, rhos, LSDCRNp);
+  update_26Al_full(saprolite_lowering_rate, CRNp, rhor, rhos, LSDCRNp);
+  update_36Cl_full(saprolite_lowering_rate, CRNp, rhor, rhos, LSDCRNp);
+  update_14C_full(saprolite_lowering_rate, CRNp, rhor, rhos, LSDCRNp);
+  update_21Ne_SSfull(saprolite_lowering_rate, CRNp);
+  update_3He_SSfull(saprolite_lowering_rate, CRNp);
 }
 
 void LSDCRNParticle::update_all_CRN_neutron_only(double dt, double erosion_rate, LSDCRNParameters& CRNp)
